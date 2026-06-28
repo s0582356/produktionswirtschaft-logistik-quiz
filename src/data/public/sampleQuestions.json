@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "category": "Logistik-Grundlagen",
+    "difficulty": "easy",
+    "question": "Welche Aufgabe beschreibt Logistik im Unternehmen am treffendsten?",
+    "options": [
+      "Material- und Informationsflüsse bedarfsgerecht planen und steuern",
+      "Lieferanten auswählen und Einkaufspreise verbindlich verhandeln",
+      "Fertigungsaufträge an Maschinen terminlich einplanen und freigeben",
+      "Unternehmensübergreifende Wertschöpfungsketten strategisch gestalten"
+    ],
+    "correctAnswer": "Material- und Informationsflüsse bedarfsgerecht planen und steuern",
+    "explanation": "Logistik konzentriert sich auf die bedarfsgerechte Planung, Steuerung und Kontrolle von Material-, Waren- und Informationsflüssen. Lieferantenauswahl gehört stärker zum Einkauf, Maschinenplanung zur Produktion bzw. PPS und die strategische Gestaltung ganzer Wertschöpfungsketten zum Supply Chain Management."
+  },
+  {
+    "id": 2,
+    "category": "ABC-Analyse",
+    "difficulty": "easy",
+    "question": "Nach welchem Kriterium ordnet die ABC-Analyse Materialien typischerweise?",
+    "options": [
+      "Nach der Regelmäßigkeit des Verbrauchs im Zeitverlauf",
+      "Nach dem Wertanteil am gesamten Materialverbrauch",
+      "Nach der Lieferzeit zwischen Bestellung und Wareneingang",
+      "Nach der Lagerfähigkeit und technischen Haltbarkeit"
+    ],
+    "correctAnswer": "Nach dem Wertanteil am gesamten Materialverbrauch",
+    "explanation": "Die ABC-Analyse klassifiziert Materialien nach ihrem Wertanteil, etwa in A-, B- und C-Teile. Die Verbrauchsregelmäßigkeit ist Kern der XYZ-Analyse, während Lieferzeit und Lagerfähigkeit wichtige, aber andere Beschaffungskriterien sind."
+  },
+  {
+    "id": 3,
+    "category": "XYZ-Analyse",
+    "difficulty": "medium",
+    "question": "Was kennzeichnet X-Teile in der XYZ-Analyse?",
+    "options": [
+      "Ein hoher Wertanteil bei vergleichsweise kleiner Verbrauchsmenge",
+      "Ein stark schwankender Bedarf mit geringer Prognosegenauigkeit",
+      "Ein regelmäßiger Verbrauch mit relativ guter Vorhersagbarkeit",
+      "Ein direkter Kundenbezug mit auftragsbezogener Einzelplanung"
+    ],
+    "correctAnswer": "Ein regelmäßiger Verbrauch mit relativ guter Vorhersagbarkeit",
+    "explanation": "X-Teile weisen einen regelmäßigen und gut prognostizierbaren Verbrauch auf. Ein hoher Wertanteil beschreibt eher A-Teile der ABC-Analyse, stark schwankender Bedarf passt zu Z-Teilen und auftragsbezogene Einzelplanung ist kein Merkmal der XYZ-Klassifikation."
+  },
+  {
+    "id": 4,
+    "category": "Materialbedarf",
+    "difficulty": "medium",
+    "question": "Was beschreibt der Nettobedarf in der Materialbedarfsplanung?",
+    "options": [
+      "Den gesamten Bedarf vor Abzug verfügbarer Bestände und Zugänge",
+      "Den Bedarf an Betriebsstoffen ohne direkten Produktbezug",
+      "Den geplanten Bedarf an verkaufsfähigen Enderzeugnissen",
+      "Den Bedarf nach Abzug verfügbarer Bestände und Zugänge"
+    ],
+    "correctAnswer": "Den Bedarf nach Abzug verfügbarer Bestände und Zugänge",
+    "explanation": "Der Nettobedarf ergibt sich aus dem Bruttobedarf nach Abzug verfügbarer Bestände und geplanter Zugänge. Der gesamte Bedarf vor diesem Abgleich ist Bruttobedarf, Betriebsstoffe zählen häufig zum Tertiärbedarf und Enderzeugnisse beziehen sich auf den Primärbedarf."
+  },
+  {
+    "id": 5,
+    "category": "Beschaffung",
+    "difficulty": "medium",
+    "question": "Was ist typisch für produktionssynchrone Beschaffung?",
+    "options": [
+      "Material wird langfristig bevorratet, um Lieferengpässe abzufedern",
+      "Material wird zeitnah zum geplanten Produktionsbedarf angeliefert",
+      "Material wird erst nach einem einzelnen Sonderauftrag beschafft",
+      "Material wird unabhängig vom Produktionsprogramm disponiert"
+    ],
+    "correctAnswer": "Material wird zeitnah zum geplanten Produktionsbedarf angeliefert",
+    "explanation": "Produktionssynchrone Beschaffung richtet Lieferzeitpunkte eng am Produktionsbedarf aus. Vorratsbeschaffung setzt stärker auf Lagerbestände, Einzelfallbeschaffung reagiert auf einzelne Bedarfe und eine vom Produktionsprogramm gelöste Disposition wäre gerade nicht produktionssynchron."
+  },
+  {
+    "id": 6,
+    "category": "Lager und Kommissionierung",
+    "difficulty": "easy",
+    "question": "Was bedeutet Kommissionierung im Lager?",
+    "options": [
+      "Waren an geeigneten Lagerplätzen aufnehmen und verwalten",
+      "Artikel transportsicher verpacken und Versandpapiere ergänzen",
+      "Artikel nach einem Auftrag zusammenstellen und bereitstellen",
+      "Lagerbestände bewerten und buchhalterisch abschließen"
+    ],
+    "correctAnswer": "Artikel nach einem Auftrag zusammenstellen und bereitstellen",
+    "explanation": "Kommissionierung ist das auftragsbezogene Zusammenstellen und Bereitstellen von Artikeln. Einlagerung, Verpackung und Bestandsbewertung sind nah verwandte Lager- bzw. Versandaufgaben, aber nicht der Kern der Kommissionierung."
+  },
+  {
+    "id": 7,
+    "category": "PPS",
+    "difficulty": "medium",
+    "question": "Worin liegt der Schwerpunkt von MRP I gegenüber MRP II?",
+    "options": [
+      "MRP I ermittelt vor allem Materialbedarfe aus dem Produktionsprogramm",
+      "MRP I integriert Material-, Kapazitäts- und Finanzplanung vollständig",
+      "MRP I steuert vorrangig Reihenfolgen einzelner Montageaufträge",
+      "MRP I ersetzt die Bedarfsermittlung durch verbrauchsgesteuerte Karten"
+    ],
+    "correctAnswer": "MRP I ermittelt vor allem Materialbedarfe aus dem Produktionsprogramm",
+    "explanation": "MRP I fokussiert die Materialbedarfsplanung aus dem Produktionsprogramm. MRP II erweitert den Ansatz um Ressourcen- und Kapazitätsplanung, reine Reihenfolgesteuerung ist eine andere PPS-Aufgabe und verbrauchsgesteuerte Karten verweisen eher auf Kanban."
+  },
+  {
+    "id": 8,
+    "category": "Lean Management",
+    "difficulty": "medium",
+    "question": "Welche Aussage beschreibt Kanban als Lean-Instrument korrekt?",
+    "options": [
+      "Kanban plant Nachschub zentral auf Basis langfristiger Prognosen",
+      "Kanban beseitigt notwendige Pufferbestände in jedem Prozess vollständig",
+      "Kanban visualisiert Störungen und stoppt Prozesse bei Qualitätsfehlern",
+      "Kanban löst Nachschub verbrauchsgesteuert nach dem Pull-Prinzip aus"
+    ],
+    "correctAnswer": "Kanban löst Nachschub verbrauchsgesteuert nach dem Pull-Prinzip aus",
+    "explanation": "Kanban ist ein Pull-System: Verbrauch oder Entnahme löst Nachschub aus. Prognosebasierte Planung entspricht eher Push-Logik, Kanban ist nicht automatisch bestandslos und das sichtbare Melden bzw. Stoppen bei Fehlern passt stärker zu Andon oder Jidoka."
+  },
+  {
+    "id": 9,
+    "category": "Industrie 4.0",
+    "difficulty": "medium",
+    "question": "Was ist ein zentrales Merkmal von Industrie 4.0 in Produktion und Logistik?",
+    "options": [
+      "Einzelne Maschinen werden nur lokal automatisiert betrieben",
+      "Vernetzte Systeme integrieren Daten über Prozesse hinweg",
+      "Produktionsplanung wird ausschließlich manuell abgestimmt",
+      "Lager- und Produktionsdaten werden bewusst getrennt gehalten"
+    ],
+    "correctAnswer": "Vernetzte Systeme integrieren Daten über Prozesse hinweg",
+    "explanation": "Industrie 4.0 beschreibt vor allem Vernetzung, Datenintegration und digital unterstützte Entscheidungen über Prozessgrenzen hinweg. Reine lokale Automatisierung greift zu kurz, manuelle Abstimmung ist kein Kernmerkmal und getrennte Datensilos widersprechen dem Integrationsgedanken."
+  },
+  {
+    "id": 10,
+    "category": "Umweltmanagement",
+    "difficulty": "easy",
+    "question": "Welches Ziel passt am besten zu Umweltmanagement in der Logistik?",
+    "options": [
+      "Entsorgungswege ausschließlich nach kurzfristigen Kosten auswählen",
+      "Recyclingprozesse unabhängig von Materialströmen betrachten",
+      "Ressourcenverbrauch und Emissionen systematisch reduzieren",
+      "Retouren erst nach der Auslieferung ungeplant bearbeiten"
+    ],
+    "correctAnswer": "Ressourcenverbrauch und Emissionen systematisch reduzieren",
+    "explanation": "Umweltmanagement zielt auf eine systematische Verbesserung der Umweltleistung, etwa durch geringeren Ressourcenverbrauch und weniger Emissionen. Entsorgungslogistik und Recycling können dazu beitragen, sind aber zu eng, wenn sie nur isoliert oder kurzfristig betrachtet werden; ungeplante Retouren verschlechtern meist Transparenz und Steuerung."
+  }
+]
