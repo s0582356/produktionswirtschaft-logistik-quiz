@@ -454,7 +454,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.4.0</span>
+      <span>Version 0.4.1</span>
       <span>Produktionswirtschaft & Logistik edition</span>
       <span>MC-Quiz und lokales Freitext-Training</span>
     </footer>

@@ -572,6 +572,56 @@ h1 {
   outline: 3px solid rgba(24, 96, 91, 0.16);
 }
 
+.dictation-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.dictation-button-active {
+  border-color: #b83f2b;
+  color: #fffaf2;
+  background: #b83f2b;
+}
+
+.dictation-button-active:hover {
+  border-color: #9e3027;
+  background: #9e3027;
+}
+
+.dictation-status {
+  color: #b83f2b;
+  font-weight: 800;
+}
+
+.dictation-status::before {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #c93f36;
+  content: "";
+}
+
+.dictation-message {
+  margin: 10px 0 0;
+  border-left: 4px solid #eeb43e;
+  padding: 9px 12px;
+  color: #4f5d57;
+  background: #fff5d9;
+  line-height: 1.5;
+}
+
+.dictation-hint {
+  margin: 10px 0 0;
+  color: #6f7a75;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 .answer-label {
   display: block;
   margin: 24px 0 8px;
