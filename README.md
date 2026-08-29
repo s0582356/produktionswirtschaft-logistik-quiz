@@ -1,118 +1,104 @@
 # Produktionswirtschaft & Logistik Quiz
 
-Vue.js learning app for practicing production management and logistics concepts with public demo questions and local private JSON question banks.
-
-Live demo: not configured yet  
-GitHub repository: not configured yet
+A responsive Vue/Vite learning app for practicing production management and logistics concepts. The public version combines neutral multiple-choice examples with a browser-only workflow for personal JSON question banks.
 
 ## Features
 
-* Public demo questions for production management and logistics
-* Local JSON question import for private question banks
-* No backend
-* No database
-* No login
-* Session-based quiz flow
-* Shuffled answer options
-* Result summary
-* Wrong-answer review mode
-* Streak tracking
-* Category insights
-* Learning recommendations
-* Responsive design
+- Neutral public multiple-choice demo questions
+- Multiple-choice quiz with shuffled answers, score, streaks, category insights, and wrong-answer review
+- Local import of custom JSON question banks through the browser
+- Automatic detection of multiple-choice and free-text question banks
+- Free-text training with local checkpoint-based feedback
+- Optional voice input through the browser's speech-recognition capability
+- Light and dark themes since version 0.4.2
+- Theme selection stored locally in the browser
+- Responsive layout for desktop and mobile use
+
+The app runs entirely in the browser. It does not require a backend, database, account, external API, or AI service.
 
 ## Public Demo Content
 
-The public repository contains only a small neutral demo question set. It covers general concepts such as:
+The repository contains only a small set of neutral example questions covering general production management and logistics concepts. It does not contain private study materials, examination content, internal institutional information, or private sources.
 
-* Logistics fundamentals
-* ABC analysis
-* XYZ analysis
-* Material requirements
-* Procurement
-* Warehousing and picking
-* Production planning and control
-* Lean management
-* Industry 4.0
-* Environmental management
+Personal learning materials and private question banks remain outside GitHub and the deployed Render site.
 
-The demo content is intentionally generic. It does not contain professor names, university-internal material, private lecture notes, exam hints, or private study documents.
+## Local JSON Workflow
 
-## Private JSON Workflow
+Custom question banks are selected with the browser file picker and processed locally:
 
-The app supports private question banks through the browser file picker:
+- Files stay on the user's device.
+- Nothing is uploaded to a server.
+- Multiple-choice and free-text formats are detected automatically.
+- Imported content is available only for the current browser session.
+- Personal question banks are not bundled with the public application.
 
-* Private JSON files stay on the user's device.
-* Files are read locally in the browser.
-* Files are not uploaded.
-* Files are not stored on a server.
-* Files are not included in the deployed static site.
-* Private folders such as `private/` and `src/data/private/` are ignored by Git.
-
-This keeps the public demo app reviewable while still allowing private local practice with personally created JSON files.
-
-## Tech Stack
-
-* Vue.js
-* Vite
-* JavaScript
-* CSS
-* JSON
-* Render Static Site
-
-## JSON Question Format
-
-Custom question banks use a simple JSON array. Each question contains the prompt, four answer options, the correct answer, and an explanation.
+### Multiple-choice format
 
 ```json
 [
   {
     "id": 1,
-    "category": "Materialbedarf",
+    "category": "Material planning",
     "difficulty": "custom",
-    "question": "What distinguishes gross requirements from net requirements?",
-    "options": [
-      "Gross requirements show total demand before stock is considered",
-      "Gross requirements show demand after stock and receipts",
-      "Gross requirements show only supplier lead times",
-      "Gross requirements show only warehouse locations"
-    ],
-    "correctAnswer": "Gross requirements show total demand before stock is considered",
-    "explanation": "Gross requirements describe total demand before inventory, scheduled receipts, or safety stock are considered. Net requirements are calculated after these factors are included."
+    "question": "Which value describes demand before available stock is considered?",
+    "options": ["Gross requirements", "Net requirements", "Safety stock", "Reorder point"],
+    "correctAnswer": "Gross requirements",
+    "explanation": "Gross requirements describe total demand before stock and scheduled receipts are considered."
   }
 ]
 ```
 
-Required fields:
+Required fields are `question`, `options`, `correctAnswer`, and `explanation`. The correct answer must appear in `options`. The fields `id`, `category`, and `difficulty` are optional.
 
-* `question`
-* `options` with at least two answers
-* `correctAnswer`, which must also appear in `options`
-* `explanation`
+### Free-text format
 
-Optional fields:
+```json
+[
+  {
+    "id": "free-1",
+    "category": "Logistics",
+    "difficulty": "custom",
+    "question": "Explain the purpose of inventory management.",
+    "keywords": ["availability", "cost"],
+    "checkpoints": [
+      {
+        "label": "Availability",
+        "keywords": ["availability", "supply"]
+      }
+    ],
+    "modelAnswer": "Inventory management balances reliable material availability with storage and capital costs.",
+    "typicalErrors": ["Considering only storage capacity"]
+  }
+]
+```
 
-* `id`
-* `category`
-* `difficulty`
+Free-text answers are evaluated locally against the supplied checkpoints. This deterministic training aid uses no backend, API, or AI.
 
-For high-quality multiple-choice questions, see `QUESTION_QUALITY.md`.
+## Voice Input
+
+On supported browsers, free-text answers can optionally be dictated using the browser's built-in speech recognition. Keyboard input remains available at all times. Speech-recognition availability and permissions depend on the browser.
+
+## Light and Dark Themes
+
+Version 0.4.2 adds a light/dark theme switch for all app areas. The selected theme is stored in the browser so it remains active on the next visit. If no choice has been saved yet, the app can use the operating system's preferred color scheme.
+
+## Tech Stack
+
+- Vue.js
+- Vite
+- JavaScript
+- CSS
+- JSON
+- Render Static Site
 
 ## Local Development
 
-Install dependencies:
-
 ```bash
 npm install
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
-Build the static app:
+Create a production build with:
 
 ```bash
 npm run build
@@ -120,14 +106,14 @@ npm run build
 
 ## Deployment
 
-The app can be deployed as a Render Static Site.
+The public app is deployed as a static site on Render.
 
-Render settings:
+- Type: Static Site
+- Build command: `npm install && npm run build`
+- Publish directory: `dist`
 
-* Type: Static Site
-* Build Command: `npm install && npm run build`
-* Publish Directory: `dist`
+No server-side infrastructure is required.
 
 ## Portfolio Value
 
-This project demonstrates a reusable Vue learning-app architecture for a production management and logistics topic area. It shows a clean separation between public demo content and private local question banks, JSON-based content modeling, frontend-only quiz state, and static deployment without backend infrastructure, database operations, or user accounts.
+The project demonstrates a frontend-only learning application with two training modes, local file processing, deterministic free-text feedback, optional browser capabilities, persistent theme preferences, responsive UI design, and a clear separation between public demo content and personal learning material.

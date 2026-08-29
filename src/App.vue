@@ -26,6 +26,33 @@ const incorrectlyAnsweredQuestions = ref([])
 const answeredQuestions = ref([])
 const freeTextQuestionIndex = ref(0)
 
+const THEME_STORAGE_KEY = 'pwl-quiz-theme'
+
+function getInitialTheme() {
+  if (typeof window === 'undefined') return 'light'
+
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY)
+  if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme
+
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+const theme = ref(getInitialTheme())
+
+function applyTheme(nextTheme) {
+  theme.value = nextTheme
+  document.documentElement.dataset.theme = nextTheme
+  document.documentElement.style.colorScheme = nextTheme
+}
+
+function toggleTheme() {
+  const nextTheme = theme.value === 'dark' ? 'light' : 'dark'
+  applyTheme(nextTheme)
+  window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme)
+}
+
+applyTheme(theme.value)
+
 const questionBankName = computed(() => (
   activeMode.value === 'mc' ? mcQuestionBankName.value : freeTextQuestionBankName.value
 ))
@@ -294,6 +321,18 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
 
 <template>
   <main class="app-shell">
+    <div class="theme-toolbar">
+      <button
+        class="theme-toggle"
+        type="button"
+        :aria-pressed="theme === 'dark'"
+        :aria-label="theme === 'dark' ? 'Hellmodus aktivieren' : 'Dunkelmodus aktivieren'"
+        @click="toggleTheme"
+      >
+        {{ theme === 'dark' ? '☀️ Hellmodus' : '🌙 Dunkelmodus' }}
+      </button>
+    </div>
+
     <section class="hero-section">
       <p class="eyebrow">Produktionswirtschaft & Logistik Quiz</p>
       <h1>Trainiere Produktionswirtschaft und Logistik</h1>
@@ -454,7 +493,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.4.1</span>
+      <span>Version 0.4.2</span>
       <span>Produktionswirtschaft & Logistik edition</span>
       <span>MC-Quiz und lokales Freitext-Training</span>
     </footer>
