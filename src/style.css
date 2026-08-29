@@ -28,6 +28,11 @@ button {
   font: inherit;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .app-shell {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
@@ -88,6 +93,33 @@ h1 {
   grid-template-columns: 280px 1fr;
   gap: 22px;
   align-items: start;
+}
+
+.mode-switcher {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: min(100%, 620px);
+  margin: -6px auto 26px;
+  border: 1px solid #c7bba9;
+  border-radius: 10px;
+  padding: 5px;
+  background: #fffdf8;
+  box-shadow: 0 10px 24px rgba(63, 45, 29, 0.07);
+}
+
+.mode-switcher button {
+  min-height: 46px;
+  border: 0;
+  border-radius: 7px;
+  color: #4f5d57;
+  background: transparent;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mode-switcher button.active {
+  color: #fffaf2;
+  background: #18605b;
 }
 
 .score-card,
@@ -520,6 +552,168 @@ h1 {
   background: #e8f5f1;
 }
 
+.free-text-card textarea {
+  display: block;
+  width: 100%;
+  min-height: 180px;
+  resize: vertical;
+  border: 1px solid #c7bba9;
+  border-radius: 8px;
+  padding: 14px;
+  color: #17221f;
+  background: #fffdf8;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.free-text-card textarea:focus {
+  border-color: #18605b;
+  outline: 3px solid rgba(24, 96, 91, 0.16);
+}
+
+.answer-label {
+  display: block;
+  margin: 24px 0 8px;
+  font-weight: 800;
+}
+
+.keyword-details {
+  margin-top: 20px;
+  border: 1px solid #d9cdbb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: #f8f3eb;
+}
+
+.keyword-details summary {
+  list-style: none;
+  color: #18605b;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.keyword-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.keyword-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.keyword-chips span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #4b3508;
+  background: #ffe8ae;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.answer-toolbar,
+.free-text-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.answer-toolbar > span {
+  color: #6f7a75;
+  font-size: 0.9rem;
+}
+
+.answer-toolbar .primary-button,
+.free-text-actions .primary-button,
+.free-text-actions .secondary-button {
+  margin-top: 0;
+}
+
+.free-text-feedback {
+  margin-top: 26px;
+  border-top: 1px solid #dfd4c4;
+  padding-top: 22px;
+}
+
+.traffic-light {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.traffic-light > span {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border: 2px solid rgba(0, 0, 0, 0.16);
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.rating-green { color: #17663b; background: #dff3e5; }
+.rating-yellow { color: #7b4a03; background: #fff0c3; }
+.rating-red { color: #9e3027; background: #f9ddd8; }
+
+.feedback-summary {
+  color: #4f5d57;
+  line-height: 1.5;
+}
+
+.checkpoint-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.checkpoint-box,
+.feedback-section {
+  border: 1px solid #dfd4c4;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fffaf2;
+}
+
+.checkpoint-box h3,
+.feedback-section h3 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.checkpoint-box ul,
+.feedback-section ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.checkpoint-box p,
+.feedback-section p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.checkpoint-found { border-color: #9bc9a8; background: #eff8f1; }
+.checkpoint-missing { border-color: #e5b4ad; background: #fff2ef; }
+
+.feedback-section {
+  margin-top: 12px;
+}
+
+.model-answer {
+  border-left: 5px solid #18605b;
+}
+
+.improvement-box {
+  border-left: 5px solid #eeb43e;
+}
+
 @media (max-width: 860px) {
   .hero-section::after {
     display: none;
@@ -573,5 +767,26 @@ h1 {
   .result-actions .primary-button,
   .result-actions .secondary-button {
     width: 100%;
+  }
+
+  .mode-switcher,
+  .checkpoint-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .answer-toolbar,
+  .free-text-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .answer-toolbar .primary-button,
+  .free-text-actions .primary-button,
+  .free-text-actions .secondary-button {
+    width: 100%;
+  }
+
+  .free-text-card textarea {
+    min-height: 220px;
   }
 }

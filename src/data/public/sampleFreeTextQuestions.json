@@ -1,0 +1,66 @@
+[
+  {
+    "id": "demo-free-1",
+    "category": "Allgemeines Lernen",
+    "difficulty": "leicht",
+    "question": "Warum hilft es beim Lernen, neue Informationen in eigenen Worten zu erklären?",
+    "keywords": ["Verständnis", "Wissenslücken", "Erinnerung"],
+    "minWords": 18,
+    "checkpoints": [
+      { "label": "Aktive Verarbeitung", "anyOf": ["aktive verarbeitung", "selbst formulieren", "eigene worte"] },
+      { "label": "Wissenslücken erkennen", "anyOf": ["wissensluecken bestehen", "wissensluecken bemerken", "luecken erkennen", "luecken sichtbar machen", "merkt ob man etwas verstanden hat", "merkt ob man etwas nicht verstanden hat", "verstaendnis pruefen", "verstanden hat oder nicht"] },
+      { "label": "Besser erinnern", "anyOf": ["besser erinnern", "gedaechtnis", "langfristig behalten"] }
+    ],
+    "modelAnswer": "Eine Erklärung in eigenen Worten zwingt dazu, Informationen aktiv zu verarbeiten. Dabei werden Wissenslücken sichtbar, und die selbst gebildeten Zusammenhänge lassen sich häufig besser erinnern.",
+    "typicalErrors": ["Den Ausgangstext nur wörtlich wiederholen", "Nur einzelne Begriffe ohne Zusammenhang nennen"],
+    "improvementHint": "Erkläre sowohl den aktiven Denkprozess als auch den Nutzen für Kontrolle und Erinnerung."
+  },
+  {
+    "id": "demo-free-2",
+    "category": "Digitale Zusammenarbeit",
+    "difficulty": "leicht",
+    "question": "Was macht eine hilfreiche Rückmeldung in einem Team aus?",
+    "keywords": ["konkret", "respektvoll", "Verbesserung"],
+    "minWords": 16,
+    "checkpoints": [
+      { "label": "Konkrete Beobachtung", "anyOf": ["konkret", "beispiel", "beobachtung"] },
+      { "label": "Respektvolle Formulierung", "anyOf": ["respektvoll", "sachlich", "wertschaetzend"] },
+      { "label": "Umsetzbarer nächster Schritt", "allOf": [["verbesserung", "naechster schritt", "vorschlag"], ["umsetzbar", "konkret", "machbar"]], "near": { "terms": [["verbesserung", "vorschlag"], ["umsetzbar", "machbar"]], "maxDistance": 10 } }
+    ],
+    "modelAnswer": "Hilfreiche Rückmeldung beschreibt eine konkrete Beobachtung sachlich und respektvoll. Sie zeigt außerdem einen machbaren nächsten Schritt, damit die angesprochene Person weiß, was sie verbessern kann.",
+    "typicalErrors": ["Die Person statt des Verhaltens bewerten", "Vage Kritik ohne Beispiel oder nächsten Schritt"],
+    "improvementHint": "Verbinde Beobachtung, respektvolle Wirkung und einen umsetzbaren Vorschlag."
+  },
+  {
+    "id": "demo-free-3",
+    "category": "Alltag und Umwelt",
+    "difficulty": "mittel",
+    "question": "Warum kann eine wiederverwendbare Trinkflasche Abfall reduzieren?",
+    "keywords": ["mehrfach nutzen", "Einweg", "Abfall"],
+    "minWords": 15,
+    "checkpoints": [
+      { "label": "Mehrfache Nutzung", "anyOf": ["wiederverwenden", "mehrfach nutzen", "oft benutzen"] },
+      { "label": "Weniger Einwegbehälter", "allOf": [["weniger", "reduzieren", "vermeiden"], ["einweg", "einwegflasche", "einwegbehaelter"]] },
+      { "label": "Weniger Abfall", "anyOf": ["weniger abfall", "muell reduzieren", "muell vermeiden"], "critical": true }
+    ],
+    "modelAnswer": "Eine wiederverwendbare Flasche wird viele Male benutzt und ersetzt dadurch zahlreiche Einwegbehälter. Wenn weniger Einwegflaschen verbraucht werden, entsteht insgesamt weniger Abfall.",
+    "typicalErrors": ["Nur das Material der Flasche nennen", "Die mehrfache Nutzung nicht mit der Abfallmenge verbinden"],
+    "improvementHint": "Beschreibe die Beziehung zwischen Wiederverwendung, vermiedenen Einwegbehältern und Abfall."
+  },
+  {
+    "id": "demo-free-4",
+    "category": "Zeitmanagement",
+    "difficulty": "mittel",
+    "question": "Wie kann eine kurze Aufgabenliste dabei helfen, einen Arbeitstag zu strukturieren?",
+    "keywords": ["Überblick", "Prioritäten", "Fortschritt"],
+    "minWords": 18,
+    "checkpoints": [
+      { "label": "Überblick schaffen", "anyOf": ["ueberblick", "aufgaben sichtbar", "nichts vergessen"] },
+      { "label": "Prioritäten setzen", "anyOf": ["prioritaet", "reihenfolge", "wichtig zuerst"] },
+      { "label": "Fortschritt verfolgen", "anyOf": ["fortschritt", "abhaken", "erledigt"] }
+    ],
+    "modelAnswer": "Eine kurze Liste macht die anstehenden Aufgaben sichtbar und schafft Überblick. Durch eine sinnvolle Reihenfolge werden Prioritäten klar, und erledigte Punkte zeigen den Fortschritt im Tagesverlauf.",
+    "typicalErrors": ["Zu viele Detailaufgaben ohne Priorisierung sammeln", "Nur das Aufschreiben nennen, aber nicht den Nutzen erklären"],
+    "improvementHint": "Erkläre, wie Überblick, Reihenfolge und sichtbarer Fortschritt zusammenwirken."
+  }
+]

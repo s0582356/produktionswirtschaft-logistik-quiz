@@ -3,10 +3,15 @@ import { computed, ref } from 'vue'
 import QuizCard from './components/QuizCard.vue'
 import ScoreBox from './components/ScoreBox.vue'
 import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
+import FreeTextCard from './components/FreeTextCard.vue'
 import sampleQuestions from './data/public/sampleQuestions.json'
+import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
 
+const activeMode = ref('mc')
 const questions = ref(sampleQuestions)
-const questionBankName = ref('Öffentliche Beispiel-Fragen')
+const mcQuestionBankName = ref('Öffentliche MC-Beispiel-Fragen')
+const freeTextQuestions = ref(sampleFreeTextQuestions)
+const freeTextQuestionBankName = ref('Öffentliche Freitext-Demo')
 const isQuizStarted = ref(false)
 const isQuizComplete = ref(false)
 const isReviewMode = ref(false)
@@ -19,6 +24,14 @@ const currentStreak = ref(0)
 const bestStreak = ref(0)
 const incorrectlyAnsweredQuestions = ref([])
 const answeredQuestions = ref([])
+const freeTextQuestionIndex = ref(0)
+
+const questionBankName = computed(() => (
+  activeMode.value === 'mc' ? mcQuestionBankName.value : freeTextQuestionBankName.value
+))
+const isFreeTextMode = computed(() => activeMode.value === 'freeText')
+const currentFreeTextQuestion = computed(() => freeTextQuestions.value[freeTextQuestionIndex.value])
+const isLastFreeTextQuestion = computed(() => freeTextQuestionIndex.value === freeTextQuestions.value.length - 1)
 
 const totalQuestions = computed(() => questions.value.length)
 const wrongAnswerCount = computed(() => totalQuestions.value - score.value)
@@ -161,6 +174,12 @@ function resetQuizProgress({ clearIncorrectAnswers = true } = {}) {
 }
 
 function startQuiz() {
+  if (isFreeTextMode.value) {
+    freeTextQuestionIndex.value = 0
+    isQuizStarted.value = true
+    return
+  }
+
   questions.value = shuffleOptionsForQuestions(originalQuestions.value)
   isReviewMode.value = false
   resetQuizProgress()
@@ -240,10 +259,33 @@ function showQuestionBankSelection() {
   resetQuizProgress()
 }
 
-function loadPrivateQuestions({ questions: importedQuestions, fileName }) {
+function switchMode(mode) {
+  activeMode.value = mode
+  isQuizStarted.value = false
+  freeTextQuestionIndex.value = 0
+  resetQuizProgress()
+}
+
+function nextFreeTextQuestion() {
+  if (!isLastFreeTextQuestion.value) freeTextQuestionIndex.value++
+}
+
+function restartFreeTextTraining() {
+  freeTextQuestionIndex.value = 0
+}
+
+function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) {
+  if (type === 'freeText') {
+    freeTextQuestions.value = importedQuestions
+    freeTextQuestionBankName.value = `Eigene Freitext-Fragebank: ${fileName}`
+    switchMode('freeText')
+    return
+  }
+
   originalQuestions.value = importedQuestions
   questions.value = shuffleOptionsForQuestions(importedQuestions)
-  questionBankName.value = `Eigene Fragebank: ${fileName}`
+  mcQuestionBankName.value = `Eigene MC-Fragebank: ${fileName}`
+  activeMode.value = 'mc'
   isReviewMode.value = false
   isQuizStarted.value = false
   resetQuizProgress()
@@ -264,20 +306,55 @@ function loadPrivateQuestions({ questions: importedQuestions, fileName }) {
       <p v-if="isReviewMode" class="review-mode-label">Wiederholung falscher Fragen</p>
     </section>
 
+    <nav class="mode-switcher" aria-label="Lernmodus auswählen">
+      <button
+        type="button"
+        :class="{ active: activeMode === 'mc' }"
+        :aria-pressed="activeMode === 'mc'"
+        @click="switchMode('mc')"
+      >
+        Multiple Choice
+      </button>
+      <button
+        type="button"
+        :class="{ active: activeMode === 'freeText' }"
+        :aria-pressed="activeMode === 'freeText'"
+        @click="switchMode('freeText')"
+      >
+        Freitext Training
+      </button>
+    </nav>
+
     <section v-if="!isQuizStarted" class="start-layout" aria-label="Quiz vorbereiten">
       <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
 
       <section class="start-card">
-        <h2>Quiz bereit</h2>
+        <h2>{{ isFreeTextMode ? 'Freitext-Training bereit' : 'Quiz bereit' }}</h2>
         <p>
-          Du kannst mit den öffentlichen Beispiel-Fragen starten oder vorher eine
-          eigene lokale JSON-Fragebank auswählen.
+          Du kannst mit der öffentlichen Demo starten oder vorher eine eigene
+          lokale JSON-Fragebank auswählen.
         </p>
 
         <button class="start-button" type="button" @click="startQuiz">
-          Mit aktueller Fragebank starten
+          {{ isFreeTextMode ? 'Freitext-Training starten' : 'Mit aktueller Fragebank starten' }}
         </button>
       </section>
+    </section>
+
+    <section v-else-if="isFreeTextMode && currentFreeTextQuestion" class="quiz-layout">
+      <aside class="score-card">
+        <h2>Fortschritt</h2>
+        <p>Frage {{ freeTextQuestionIndex + 1 }} von {{ freeTextQuestions.length }}</p>
+        <p>Bewertung erfolgt lokal im Browser.</p>
+      </aside>
+
+      <FreeTextCard
+        :key="currentFreeTextQuestion.id"
+        :question="currentFreeTextQuestion"
+        :is-last-question="isLastFreeTextQuestion"
+        @next-question="nextFreeTextQuestion"
+        @restart-training="restartFreeTextTraining"
+      />
     </section>
 
     <section v-else-if="isQuizComplete" class="result-card">
@@ -377,9 +454,9 @@ function loadPrivateQuestions({ questions: importedQuestions, fileName }) {
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.3.0</span>
+      <span>Version 0.4.0</span>
       <span>Produktionswirtschaft & Logistik edition</span>
-      <span>Öffentliche Demo mit lokalem JSON-Import</span>
+      <span>MC-Quiz und lokales Freitext-Training</span>
     </footer>
   </main>
 </template>

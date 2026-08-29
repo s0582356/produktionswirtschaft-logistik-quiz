@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['questions-loaded'])
 
-const validateQuestions = (data) => {
+const validateMcQuestions = (data) => {
   if (!Array.isArray(data)) {
     throw new Error('Die JSON-Datei muss ein Array von Fragen enthalten.')
   }
@@ -51,6 +51,60 @@ const validateQuestions = (data) => {
   }))
 }
 
+const validateFreeTextQuestions = (data) => {
+  data.forEach((question, index) => {
+    if (!question.question || typeof question.question !== 'string') {
+      throw new Error(`Frage ${index + 1}: "question" fehlt oder ist ungültig.`)
+    }
+    if (!question.modelAnswer || typeof question.modelAnswer !== 'string') {
+      throw new Error(`Frage ${index + 1}: "modelAnswer" fehlt oder ist ungültig.`)
+    }
+    if (!Array.isArray(question.checkpoints) || question.checkpoints.length === 0) {
+      throw new Error(`Frage ${index + 1}: "checkpoints" muss mindestens einen Eintrag enthalten.`)
+    }
+    if (question.keywords !== undefined && !Array.isArray(question.keywords)) {
+      throw new Error(`Frage ${index + 1}: "keywords" muss eine Liste sein.`)
+    }
+    if (question.typicalErrors !== undefined && !Array.isArray(question.typicalErrors)) {
+      throw new Error(`Frage ${index + 1}: "typicalErrors" muss eine Liste sein.`)
+    }
+  })
+
+  return data.map((question, index) => ({
+    ...question,
+    id: question.id ?? `free-${index + 1}`,
+    category: question.category || 'Eigene Fragen',
+    difficulty: question.difficulty || 'custom',
+    keywords: question.keywords || [],
+    typicalErrors: question.typicalErrors || [],
+  }))
+}
+
+const validateQuestions = (parsedData) => {
+  const data = Array.isArray(parsedData) ? parsedData : parsedData?.questions
+
+  if (!Array.isArray(data)) {
+    throw new Error('Die JSON-Datei muss ein Array oder ein Objekt mit "questions" enthalten.')
+  }
+
+  if (data.length === 0) {
+    throw new Error('Die JSON-Datei enthält keine Fragen.')
+  }
+
+  const looksLikeMc = data.every((question) => Array.isArray(question.options) && question.correctAnswer)
+  const looksLikeFreeText = data.every((question) => Array.isArray(question.checkpoints) && question.modelAnswer)
+
+  if (looksLikeMc) {
+    return { type: 'mc', questions: validateMcQuestions(data) }
+  }
+
+  if (looksLikeFreeText) {
+    return { type: 'freeText', questions: validateFreeTextQuestions(data) }
+  }
+
+  throw new Error('Format nicht erkannt. Erwartet wird eine einheitliche MC- oder Freitext-Fragenbank.')
+}
+
 const handleFileChange = async (event) => {
   const file = event.target.files?.[0]
 
@@ -61,10 +115,10 @@ const handleFileChange = async (event) => {
   try {
     const fileContent = await file.text()
     const parsedData = JSON.parse(fileContent)
-    const validatedQuestions = validateQuestions(parsedData)
+    const validatedBank = validateQuestions(parsedData)
 
     emit('questions-loaded', {
-      questions: validatedQuestions,
+      ...validatedBank,
       fileName: file.name,
     })
 
@@ -81,8 +135,8 @@ const handleFileChange = async (event) => {
     <div>
       <h2>Eigene JSON-Fragen importieren</h2>
       <p>
-        Wähle eine lokale JSON-Datei aus. Die Datei wird nur im Browser gelesen,
-        nicht hochgeladen und nicht gespeichert.
+        MC- und Freitext-Fragebanken werden automatisch erkannt. Die Datei wird
+        nur im Browser gelesen, nicht hochgeladen und nicht gespeichert.
       </p>
     </div>
 
