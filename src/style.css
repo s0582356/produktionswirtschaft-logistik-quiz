@@ -989,3 +989,211 @@ button:focus-visible,
 :root[data-theme="dark"] .category-solid > span { color: #ffe7a8; background: #66501d; }
 :root[data-theme="dark"] .category-review { border-color: #9b514c; }
 :root[data-theme="dark"] .category-review > span { color: #ffd3cc; background: #713934; }
+
+.training-start-options {
+  display: grid;
+  gap: 16px;
+}
+
+.saved-progress-notice {
+  border-left: 4px solid #18605b;
+  padding: 10px 12px;
+  color: #18605b;
+  background: #e8f5f1;
+  font-weight: 800;
+}
+
+.start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.start-actions .start-button {
+  width: auto;
+}
+
+.danger-button,
+.danger-link {
+  border: 1px solid #c93f36;
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: #9e3027;
+  background: #fff2ef;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.danger-button:hover,
+.danger-link:hover {
+  color: #fffaf2;
+  background: #b83f2b;
+}
+
+.progress-card {
+  display: grid;
+  gap: 12px;
+}
+
+.progress-card p {
+  margin: 0;
+}
+
+.progress-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dfd4c4;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #2f8f5b;
+  transition: width 0.2s ease;
+}
+
+.progress-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: #4f5d57;
+  font-size: 0.9rem;
+}
+
+.compact-progress {
+  justify-content: center;
+}
+
+.status-green { color: #227244; }
+.status-yellow { color: #7b4a03; }
+.status-red { color: #b83f2b; }
+
+.filter-picker {
+  display: grid;
+  gap: 7px;
+  margin: 4px 0 0;
+  border: 1px solid #d9cdbb;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.filter-picker legend {
+  padding: 0 5px;
+  color: #4f5d57;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.filter-picker button {
+  border: 1px solid #d3c5b3;
+  border-radius: 7px;
+  padding: 9px;
+  color: #17221f;
+  background: #f8f3eb;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filter-picker button.active {
+  border-color: #18605b;
+  color: #fffaf2;
+  background: #18605b;
+}
+
+.active-filter,
+.local-progress-hint {
+  font-size: 0.88rem;
+}
+
+.topic-progress {
+  border-top: 1px solid #dfd4c4;
+  padding-top: 10px;
+}
+
+.topic-progress summary {
+  color: #18605b;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.topic-progress div {
+  display: grid;
+  gap: 3px;
+  margin-top: 9px;
+  font-size: 0.82rem;
+}
+
+.topic-progress div > span {
+  color: #6f7a75;
+}
+
+.danger-link {
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px;
+  font-size: 0.85rem;
+}
+
+:root[data-theme="dark"] .saved-progress-notice {
+  color: #8bd4c8;
+  background: #193631;
+}
+
+:root[data-theme="dark"] .progress-track {
+  background: #344650;
+}
+
+:root[data-theme="dark"] .progress-summary,
+:root[data-theme="dark"] .filter-picker legend,
+:root[data-theme="dark"] .topic-progress div > span {
+  color: #aebeba;
+}
+
+:root[data-theme="dark"] .status-green { color: #79d79c; }
+:root[data-theme="dark"] .status-yellow { color: #f6d478; }
+:root[data-theme="dark"] .status-red { color: #ff9280; }
+
+:root[data-theme="dark"] .filter-picker,
+:root[data-theme="dark"] .topic-progress {
+  border-color: #3a4d57;
+}
+
+:root[data-theme="dark"] .filter-picker button {
+  border-color: #425661;
+  color: #dce7e4;
+  background: #22313b;
+}
+
+:root[data-theme="dark"] .filter-picker button.active {
+  border-color: #69b9ad;
+  color: #f1f6f4;
+  background: #237b74;
+}
+
+:root[data-theme="dark"] .topic-progress summary {
+  color: #8bd4c8;
+}
+
+:root[data-theme="dark"] .danger-button,
+:root[data-theme="dark"] .danger-link {
+  border-color: #b75d58;
+  color: #ffaaa0;
+  background: #43282b;
+}
+
+:root[data-theme="dark"] .danger-button:hover,
+:root[data-theme="dark"] .danger-link:hover {
+  color: #fff2ef;
+  background: #713934;
+}
+
+@media (max-width: 560px) {
+  .start-actions,
+  .start-actions button {
+    width: 100%;
+  }
+}

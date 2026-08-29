@@ -7,7 +7,7 @@ const props = defineProps({
   isLastQuestion: { type: Boolean, required: true },
 })
 
-const emit = defineEmits(['next-question', 'restart-training'])
+const emit = defineEmits(['evaluated', 'next-question', 'restart-training'])
 const answer = ref('')
 const result = ref(null)
 const keywordsOpen = ref(false)
@@ -24,6 +24,11 @@ const ratingLabels = {
 function checkAnswer() {
   stopDictation()
   result.value = evaluateFreeText(props.question, answer.value)
+  emit('evaluated', {
+    rating: result.value.rating,
+    fulfilledCheckpoints: result.value.detected.length,
+    totalCheckpoints: result.value.detected.length + result.value.missing.length,
+  })
 }
 
 function improveAnswer() {

@@ -6,6 +6,16 @@ import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
 import FreeTextCard from './components/FreeTextCard.vue'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
+import {
+  calculateProgressTotals,
+  createBankFingerprint,
+  createEmptyProgress,
+  getBetterStatus,
+  getQuestionId,
+  loadProgress,
+  removeProgress,
+  saveProgress,
+} from './utils/progressStore.js'
 
 const activeMode = ref('mc')
 const questions = ref(sampleQuestions)
@@ -25,6 +35,12 @@ const bestStreak = ref(0)
 const incorrectlyAnsweredQuestions = ref([])
 const answeredQuestions = ref([])
 const freeTextQuestionIndex = ref(0)
+const freeTextFilter = ref('all')
+const freeTextSessionQuestionIds = ref(null)
+const freeTextBankId = ref(createBankFingerprint('freeText', sampleFreeTextQuestions))
+const freeTextProgress = ref(
+  loadProgress(freeTextBankId.value, 'freeText', sampleFreeTextQuestions.length),
+)
 
 const THEME_STORAGE_KEY = 'pwl-quiz-theme'
 
@@ -57,8 +73,52 @@ const questionBankName = computed(() => (
   activeMode.value === 'mc' ? mcQuestionBankName.value : freeTextQuestionBankName.value
 ))
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
-const currentFreeTextQuestion = computed(() => freeTextQuestions.value[freeTextQuestionIndex.value])
-const isLastFreeTextQuestion = computed(() => freeTextQuestionIndex.value === freeTextQuestions.value.length - 1)
+const filteredFreeTextQuestions = computed(() => {
+  if (!freeTextSessionQuestionIds.value) return freeTextQuestions.value
+
+  const includedIds = new Set(freeTextSessionQuestionIds.value)
+  return freeTextQuestions.value.filter((question, index) => {
+    return includedIds.has(getQuestionId(question, index))
+  })
+})
+const currentFreeTextQuestion = computed(
+  () => filteredFreeTextQuestions.value[freeTextQuestionIndex.value],
+)
+const isLastFreeTextQuestion = computed(
+  () => freeTextQuestionIndex.value === filteredFreeTextQuestions.value.length - 1,
+)
+const freeTextStats = computed(
+  () => calculateProgressTotals(freeTextProgress.value, freeTextQuestions.value.length),
+)
+const hasSavedFreeTextProgress = computed(() => freeTextStats.value.answered > 0)
+const freeTextProgressPercent = computed(() => {
+  if (!freeTextStats.value.questions) return 0
+  return Math.round((freeTextStats.value.answered / freeTextStats.value.questions) * 100)
+})
+const freeTextFilterLabel = computed(() => ({
+  all: 'Alle Fragen',
+  new: 'Neue Fragen',
+  review: 'Gelb/Rot wiederholen',
+}[freeTextFilter.value]))
+const freeTextCategoryStats = computed(() => {
+  const categories = new Map()
+
+  freeTextQuestions.value.forEach((question, index) => {
+    const category = question.category || 'Ohne Kategorie'
+    if (!categories.has(category)) {
+      categories.set(category, { name: category, answered: 0, green: 0, yellow: 0, red: 0 })
+    }
+
+    const record = freeTextProgress.value.questions[getQuestionId(question, index)]
+    if (!record) return
+
+    const item = categories.get(category)
+    item.answered++
+    if (record.lastStatus in item) item[record.lastStatus]++
+  })
+
+  return [...categories.values()].filter((category) => category.answered > 0)
+})
 
 const totalQuestions = computed(() => questions.value.length)
 const wrongAnswerCount = computed(() => totalQuestions.value - score.value)
@@ -202,8 +262,7 @@ function resetQuizProgress({ clearIncorrectAnswers = true } = {}) {
 
 function startQuiz() {
   if (isFreeTextMode.value) {
-    freeTextQuestionIndex.value = 0
-    isQuizStarted.value = true
+    startFreeTextTraining('all')
     return
   }
 
@@ -290,21 +349,148 @@ function switchMode(mode) {
   activeMode.value = mode
   isQuizStarted.value = false
   freeTextQuestionIndex.value = 0
+  freeTextSessionQuestionIds.value = null
   resetQuizProgress()
 }
 
+function persistFreeTextProgress() {
+  freeTextProgress.value = saveProgress(
+    freeTextBankId.value,
+    freeTextProgress.value,
+    freeTextQuestions.value.length,
+  )
+}
+
+function setFreeTextPosition(index) {
+  freeTextQuestionIndex.value = Math.max(
+    0,
+    Math.min(index, Math.max(0, filteredFreeTextQuestions.value.length - 1)),
+  )
+
+  const question = currentFreeTextQuestion.value
+  if (!question) return
+
+  freeTextProgress.value.currentIndex = freeTextQuestions.value.indexOf(question)
+  freeTextProgress.value.currentQuestionId = getQuestionId(
+    question,
+    freeTextProgress.value.currentIndex,
+  )
+  persistFreeTextProgress()
+}
+
+function getFreeTextQuestionsForFilter(filter) {
+  if (filter === 'new') {
+    return freeTextQuestions.value.filter((question, index) => {
+      return !freeTextProgress.value.questions[getQuestionId(question, index)]
+    })
+  }
+
+  if (filter === 'review') {
+    return freeTextQuestions.value.filter((question, index) => {
+      const record = freeTextProgress.value.questions[getQuestionId(question, index)]
+      return record && (
+        ['yellow', 'red'].includes(record.lastStatus)
+        || ['yellow', 'red'].includes(record.bestStatus)
+      )
+    })
+  }
+
+  return freeTextQuestions.value
+}
+
+function prepareFreeTextFilter(filter) {
+  freeTextFilter.value = filter
+  freeTextSessionQuestionIds.value = getFreeTextQuestionsForFilter(filter).map((question) => {
+    const bankIndex = freeTextQuestions.value.indexOf(question)
+    return getQuestionId(question, bankIndex)
+  })
+}
+
+function startFreeTextTraining(filter = 'all', resume = false) {
+  prepareFreeTextFilter(filter)
+  let targetIndex = 0
+
+  if (resume && freeTextProgress.value.currentQuestionId) {
+    const savedIndex = filteredFreeTextQuestions.value.findIndex((question, index) => {
+      return getQuestionId(question, index) === freeTextProgress.value.currentQuestionId
+    })
+    if (savedIndex >= 0) targetIndex = savedIndex
+  }
+
+  isQuizStarted.value = true
+  setFreeTextPosition(targetIndex)
+}
+
+function changeFreeTextFilter(filter) {
+  if (filter === 'new' && freeTextStats.value.open === 0) return
+  if (filter === 'review' && filteredQuestionCount('review') === 0) return
+
+  prepareFreeTextFilter(filter)
+  setFreeTextPosition(0)
+}
+
+function filteredQuestionCount(filter) {
+  return getFreeTextQuestionsForFilter(filter).length
+}
+
+function handleFreeTextEvaluation(evaluation) {
+  const question = currentFreeTextQuestion.value
+  if (!question) return
+
+  const bankIndex = freeTextQuestions.value.indexOf(question)
+  const questionId = getQuestionId(question, bankIndex)
+  const previous = freeTextProgress.value.questions[questionId]
+  const practicedAt = new Date().toISOString()
+
+  freeTextProgress.value.questions[questionId] = {
+    lastStatus: evaluation.rating,
+    bestStatus: getBetterStatus(previous?.bestStatus, evaluation.rating),
+    attempts: (previous?.attempts || 0) + 1,
+    fulfilledCheckpoints: evaluation.fulfilledCheckpoints,
+    totalCheckpoints: evaluation.totalCheckpoints,
+    lastPracticedAt: practicedAt,
+  }
+  freeTextProgress.value.answeredQuestionIds = [
+    ...new Set([...freeTextProgress.value.answeredQuestionIds, questionId]),
+  ]
+  freeTextProgress.value.currentIndex = bankIndex
+  freeTextProgress.value.currentQuestionId = questionId
+  freeTextProgress.value.lastPracticedAt = practicedAt
+  persistFreeTextProgress()
+}
+
 function nextFreeTextQuestion() {
-  if (!isLastFreeTextQuestion.value) freeTextQuestionIndex.value++
+  if (!isLastFreeTextQuestion.value) setFreeTextPosition(freeTextQuestionIndex.value + 1)
 }
 
 function restartFreeTextTraining() {
+  setFreeTextPosition(0)
+}
+
+function resetCurrentFreeTextProgress() {
+  const confirmed = window.confirm(
+    'Fortschritt dieser Fragenbank wirklich löschen? Andere Fragenbanken bleiben erhalten.',
+  )
+  if (!confirmed) return
+
+  removeProgress(freeTextBankId.value)
+  freeTextProgress.value = createEmptyProgress('freeText', freeTextQuestions.value.length)
+  freeTextFilter.value = 'all'
+  freeTextSessionQuestionIds.value = null
   freeTextQuestionIndex.value = 0
+  isQuizStarted.value = false
 }
 
 function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) {
   if (type === 'freeText') {
     freeTextQuestions.value = importedQuestions
     freeTextQuestionBankName.value = `Eigene Freitext-Fragebank: ${fileName}`
+    freeTextBankId.value = createBankFingerprint('freeText', importedQuestions)
+    freeTextProgress.value = loadProgress(
+      freeTextBankId.value,
+      'freeText',
+      importedQuestions.length,
+    )
     switchMode('freeText')
     return
   }
@@ -374,23 +560,118 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
           lokale JSON-Fragebank auswählen.
         </p>
 
-        <button class="start-button" type="button" @click="startQuiz">
-          {{ isFreeTextMode ? 'Freitext-Training starten' : 'Mit aktueller Fragebank starten' }}
+        <div v-if="isFreeTextMode" class="training-start-options">
+          <p v-if="hasSavedFreeTextProgress" class="saved-progress-notice">
+            Für diese Fragenbank gibt es gespeicherten Fortschritt.
+          </p>
+          <div class="progress-summary compact-progress">
+            <span>Bearbeitet: <strong>{{ freeTextStats.answered }} / {{ freeTextStats.questions }}</strong></span>
+            <span class="status-green">Grün: <strong>{{ freeTextStats.green }}</strong></span>
+            <span class="status-yellow">Gelb: <strong>{{ freeTextStats.yellow }}</strong></span>
+            <span class="status-red">Rot: <strong>{{ freeTextStats.red }}</strong></span>
+            <span>Offen: <strong>{{ freeTextStats.open }}</strong></span>
+          </div>
+          <div class="start-actions">
+            <button
+              v-if="hasSavedFreeTextProgress"
+              class="start-button"
+              type="button"
+              @click="startFreeTextTraining('all', true)"
+            >
+              Fortsetzen
+            </button>
+            <button class="secondary-button" type="button" @click="startFreeTextTraining('all')">
+              {{ hasSavedFreeTextProgress ? 'Von vorne starten' : 'Freitext-Training starten' }}
+            </button>
+            <button
+              v-if="hasSavedFreeTextProgress"
+              class="danger-button"
+              type="button"
+              @click="resetCurrentFreeTextProgress"
+            >
+              Fortschritt zurücksetzen
+            </button>
+          </div>
+        </div>
+
+        <button v-else class="start-button" type="button" @click="startQuiz">
+          Mit aktueller Fragebank starten
         </button>
       </section>
     </section>
 
     <section v-else-if="isFreeTextMode && currentFreeTextQuestion" class="quiz-layout">
-      <aside class="score-card">
+      <aside class="score-card progress-card">
         <h2>Fortschritt</h2>
-        <p>Frage {{ freeTextQuestionIndex + 1 }} von {{ freeTextQuestions.length }}</p>
-        <p>Bewertung erfolgt lokal im Browser.</p>
+        <p>Frage {{ freeTextQuestionIndex + 1 }} von {{ filteredFreeTextQuestions.length }}</p>
+        <p>Bearbeitet: <strong>{{ freeTextStats.answered }} / {{ freeTextStats.questions }}</strong></p>
+        <div
+          class="progress-track"
+          role="progressbar"
+          :aria-valuenow="freeTextProgressPercent"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <span :style="{ width: freeTextProgressPercent + '%' }"></span>
+        </div>
+        <div class="progress-summary">
+          <span class="status-green">Grün: <strong>{{ freeTextStats.green }}</strong></span>
+          <span class="status-yellow">Gelb: <strong>{{ freeTextStats.yellow }}</strong></span>
+          <span class="status-red">Rot: <strong>{{ freeTextStats.red }}</strong></span>
+          <span>Offen: <strong>{{ freeTextStats.open }}</strong></span>
+        </div>
+
+        <fieldset class="filter-picker">
+          <legend>Fragenauswahl</legend>
+          <button
+            type="button"
+            :class="{ active: freeTextFilter === 'all' }"
+            @click="changeFreeTextFilter('all')"
+          >
+            Alle Fragen
+          </button>
+          <button
+            type="button"
+            :class="{ active: freeTextFilter === 'new' }"
+            :disabled="freeTextStats.open === 0"
+            @click="changeFreeTextFilter('new')"
+          >
+            Neue Fragen
+          </button>
+          <button
+            type="button"
+            :class="{ active: freeTextFilter === 'review' }"
+            :disabled="filteredQuestionCount('review') === 0"
+            @click="changeFreeTextFilter('review')"
+          >
+            Gelb/Rot wiederholen
+          </button>
+        </fieldset>
+
+        <p class="active-filter">Aktuell: <strong>{{ freeTextFilterLabel }}</strong></p>
+        <details v-if="freeTextCategoryStats.length" class="topic-progress">
+          <summary>Themenübersicht</summary>
+          <div v-for="category in freeTextCategoryStats" :key="category.name">
+            <strong>{{ category.name }}</strong>
+            <span>
+              {{ category.answered }} bearbeitet ·
+              <span class="status-green">{{ category.green }} G</span> ·
+              <span class="status-yellow">{{ category.yellow }} Y</span> ·
+              <span class="status-red">{{ category.red }} R</span>
+            </span>
+          </div>
+        </details>
+        <button class="danger-link" type="button" @click="resetCurrentFreeTextProgress">
+          Fortschritt dieser Fragenbank löschen
+        </button>
+        <p class="local-progress-hint">Nur Lernmetadaten werden lokal gespeichert.</p>
       </aside>
 
       <FreeTextCard
         :key="currentFreeTextQuestion.id"
         :question="currentFreeTextQuestion"
         :is-last-question="isLastFreeTextQuestion"
+        @evaluated="handleFreeTextEvaluation"
         @next-question="nextFreeTextQuestion"
         @restart-training="restartFreeTextTraining"
       />
@@ -493,7 +774,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.4.2</span>
+      <span>Version 0.4.3</span>
       <span>Produktionswirtschaft & Logistik edition</span>
       <span>MC-Quiz und lokales Freitext-Training</span>
     </footer>
