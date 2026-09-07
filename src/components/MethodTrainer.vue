@@ -17,8 +17,10 @@ const evaluatorError = ref('')
 
 const method = computed(() => selectedMethod.value)
 const task = computed(() => method.value?.tasks?.[currentTaskIndex.value])
-const totalSteps = computed(() => method.value?.engine === 'abcAnalysis' ? 3 : 3)
-const allStepsDone = computed(() => currentStep.value > totalSteps.value)
+const totalSteps = computed(() => method.value?.steps?.length || 0)
+const allStepsDone = computed(() => totalSteps.value > 0
+  && currentStep.value > totalSteps.value
+  && method.value.steps.every((_, index) => feedback[index + 1]?.status === 'green'))
 const progressPercent = computed(() => Math.min(100, ((currentStep.value - 1) / totalSteps.value) * 100))
 
 watch(() => props.bank, () => showSelection())
@@ -50,31 +52,30 @@ function startPractice() {
 }
 
 function checkStep() {
-  if (!task.value) return
+  if (!task.value || allStepsDone.value) return
   evaluatorError.value = ''
   try {
     const evaluation = evaluateMethodStep(method.value.engine, task.value, currentStep.value, answers)
     feedback[currentStep.value] = evaluation
-    if (evaluation.status !== 'red') currentStep.value++
-    if (currentStep.value > totalSteps.value) recordCompletion()
+    if (evaluation.status === 'green') currentStep.value++
+    if (allStepsDone.value) recordCompletion()
   } catch (error) {
     evaluatorError.value = error.message
   }
 }
 
 function revealCurrentStep() {
-  if (!task.value) return
+  if (!task.value || allStepsDone.value) return
   evaluatorError.value = ''
   try {
     const evaluation = evaluateMethodStep(method.value.engine, task.value, currentStep.value, {})
     feedback[currentStep.value] = {
       ...evaluation,
       status: 'yellow',
-      reason: 'Musterwerte für diesen Schritt angezeigt. Versuche den Rechenweg anschließend selbst nachzuvollziehen.',
+      revealed: true,
+      reason: 'Musterwerte angezeigt. Fülle alle Felder aus und prüfe den Schritt, um fortzufahren.',
     }
     revealedSteps.add(currentStep.value)
-    currentStep.value++
-    if (currentStep.value > totalSteps.value) recordCompletion()
   } catch (error) {
     evaluatorError.value = error.message
   }
@@ -106,8 +107,10 @@ function hasProgress(item) {
   return stats.green + stats.yellow + stats.red > 0
 }
 
-function feedbackLabel(status) {
-  return { green: 'Richtig', yellow: 'Teilweise richtig', red: 'Noch nicht richtig' }[status]
+function feedbackLabel(evaluation) {
+  if (evaluation.revealed) return 'Musterlösung'
+  if (evaluation.missingFields?.length) return 'Eingabe fehlt'
+  return { green: 'Richtig', yellow: 'Teilweise richtig', red: 'Noch nicht richtig' }[evaluation.status]
 }
 
 function formatNumber(value, digits = 2) {
@@ -183,7 +186,7 @@ function displaySolutionValues(step) {
       <h2>{{ method.methodTitle }}</h2>
       <p class="explanation">{{ method.explanation }}</p>
       <details class="method-details" open>
-        <summary>Formel/Rechenweg</summary>
+        <summary>Formeln und Lösungslogik</summary>
         <div class="formula-box"><p v-for="line in method.formula" :key="line">{{ line }}</p></div>
       </details>
       <details class="method-details" open>
@@ -192,13 +195,13 @@ function displaySolutionValues(step) {
       </details>
       <details v-if="method.examples?.length" class="method-details method-examples">
         <summary>Beispiele ansehen</summary>
-        <p class="method-examples-intro">Fiktive Lernbeispiele – folge dem Rechenweg Schritt für Schritt.</p>
+        <p class="method-examples-intro">Fiktive Lernbeispiele – folge dem Lösungsweg Schritt für Schritt.</p>
         <div class="method-example-list">
           <article v-for="(example, index) in method.examples" :key="example.title" class="method-example">
             <header class="method-example-header">
               <span class="method-example-label">Beispiel {{ index + 1 }}</span>
               <h3>{{ example.title }}</h3>
-              <p class="method-example-goal"><strong>Ziel dieses Beispiels:</strong> Den Rechenweg zu „{{ example.title }}“ nachvollziehen.</p>
+              <p class="method-example-goal"><strong>Ziel dieses Beispiels:</strong> Den Lösungsweg zu „{{ example.title }}“ nachvollziehen.</p>
             </header>
             <section class="method-example-data">
               <h4>Ausgangsdaten</h4>
@@ -210,7 +213,7 @@ function displaySolutionValues(step) {
               </div>
             </section>
             <section class="method-example-calculation">
-              <h4>Schritt-für-Schritt-Rechnung</h4>
+              <h4>Schritt-für-Schritt-Lösung</h4>
               <ol role="list">
                 <li v-for="(step, stepIndex) in example.steps" :key="step">
                   <span class="method-example-step-number" aria-hidden="true">{{ stepIndex + 1 }}</span>
@@ -274,14 +277,19 @@ function displaySolutionValues(step) {
         <p><strong>Endproduktmenge:</strong> {{ task.givenData.endProductQuantity }} × {{ task.givenData.endProduct }}</p>
         <ul><li v-for="edge in task.givenData.edges" :key="`${edge.parent}-${edge.child}`">{{ edge.parent }} → {{ edge.qtyPerParent }}× {{ edge.child }}</li></ul>
       </div>
-      <div v-else class="structure-box">
+      <div v-else-if="method.engine === 'monthlyDemandSplit'" class="structure-box">
         <p><strong>Jahresbedarf:</strong> {{ formatNumber(task.givenData.yearlyDemand, 0) }} Stück</p>
         <p><strong>Doppelter Monat:</strong> {{ task.givenData.specialMonths[0] }}</p>
+      </div>
+
+      <div v-else-if="task.displayData" class="structure-box">
+        <ul><li v-for="line in task.displayData" :key="line">{{ line }}</li></ul>
       </div>
 
       <section v-for="stepNumber in totalSteps" v-show="stepNumber <= currentStep" :key="stepNumber" class="method-step" :class="feedback[stepNumber] && `step-${feedback[stepNumber].status}`">
         <h3>Schritt {{ stepNumber }}: {{ method.steps[stepNumber - 1] }}</h3>
 
+        <fieldset class="method-step-fields" :disabled="stepNumber < currentStep" :aria-label="`Eingaben für Schritt ${stepNumber}`">
         <template v-if="method.engine === 'abcAnalysis' && stepNumber === 1">
           <div class="method-fields"><label v-for="position in task.givenData.positions" :key="position.id">Verbrauchswert {{ position.id }} (€)<input v-model="answers[`value.${position.id}`]" type="text" inputmode="decimal" /></label><label>Gesamtverbrauchswert (€)<input v-model="answers.total" type="text" inputmode="decimal" /></label></div>
         </template>
@@ -311,12 +319,25 @@ function displaySolutionValues(step) {
           <div class="method-fields"><label>Sondermonat {{ task.givenData.specialMonths[0] }}<input v-model="answers.special" type="text" inputmode="decimal" /></label><label>Kontrollsumme Jahr<input v-model="answers.sum" type="text" inputmode="decimal" /></label></div>
         </template>
 
-        <div v-if="feedback[stepNumber]" class="traffic-light step-feedback" :class="`rating-${feedback[stepNumber].status}`">
+        <div v-if="task.inputSteps" class="method-fields">
+          <label v-for="field in task.inputSteps[stepNumber - 1]" :key="field.key">
+            {{ field.label }}
+            <select v-if="field.options" v-model="answers[field.key]">
+              <option value="">Bitte wählen</option>
+              <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+            </select>
+            <input v-else v-model="answers[field.key]" type="text" inputmode="decimal" />
+          </label>
+        </div>
+
+        </fieldset>
+
+        <div v-if="feedback[stepNumber]" role="status" class="traffic-light step-feedback" :class="`rating-${feedback[stepNumber].status}`">
           <span></span>
           <div class="method-feedback-content">
-            <strong>{{ feedbackLabel(feedback[stepNumber].status) }}</strong>
+            <strong>{{ feedbackLabel(feedback[stepNumber]) }}</strong>
             <p>{{ feedback[stepNumber].reason }}</p>
-            <section v-if="revealedSteps.has(stepNumber) || feedback[stepNumber].status !== 'green'" class="method-solution-values" aria-label="Musterwerte">
+            <section v-if="revealedSteps.has(stepNumber) || (!feedback[stepNumber].missingFields?.length && feedback[stepNumber].status !== 'green')" class="method-solution-values" aria-label="Musterwerte">
               <h4>Musterwerte</h4>
               <dl>
                 <div v-for="(row, rowIndex) in displaySolutionValues(stepNumber)" :key="rowIndex" class="method-solution-row">

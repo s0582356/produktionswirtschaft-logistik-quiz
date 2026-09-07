@@ -1398,3 +1398,21 @@ button:focus-visible,
   .method-example-calculation li { grid-template-columns: 28px minmax(0, 1fr); padding: 12px; gap: 10px; }
   .method-example-step-number { width: 28px; height: 28px; }
 }
+
+/* Keep native controls and selected text legible in both app themes. */
+.method-step-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+.method-trainer { --method-control-text: #17221f; --method-control-bg: #fffdf8; }
+.method-trainer input, .method-trainer select, .method-trainer option {
+  color-scheme: light;
+  color: var(--method-control-text);
+  background-color: var(--method-control-bg);
+  -webkit-text-fill-color: var(--method-control-text);
+}
+.method-trainer input:disabled, .method-trainer select:disabled { opacity: 1; }
+:root[data-theme="dark"] .method-trainer {
+  --method-control-text: #e5eeeb;
+  --method-control-bg: #152129;
+}
+:root[data-theme="dark"] .method-trainer input,
+:root[data-theme="dark"] .method-trainer select,
+:root[data-theme="dark"] .method-trainer option { color-scheme: dark; }

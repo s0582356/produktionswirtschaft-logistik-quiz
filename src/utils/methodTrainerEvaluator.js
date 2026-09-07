@@ -176,7 +176,93 @@ function evaluateMonthly(task, step, answers) {
   return result(status, status === 'green' ? 'Sondermonat und Kontrollsumme stimmen.' : 'Kontrolliere Doppelbedarf, Rundungsausgleich und Jahressumme.', { special: reference.adjusted, sum: reference.yearlyDemand })
 }
 
-export function evaluateMethodStep(engine, task, step, answers) {
+// Unit-aware parsing is scoped to the new methods to preserve existing input rules.
+function parseMethodNumber(value, unit) {
+  const text = String(value ?? '').trim()
+  const stripped = unit === 'currency'
+    ? text.replace(/^(?:€|EUR)\s*/i, '').replace(/\s*(?:€|EUR)$/i, '')
+    : text.replace(/\s*%$/, '')
+  return parseNumber(stripped)
+}
+
+const normalizedChoice = value => String(value ?? '').trim().toLowerCase().replace(/[\s/-]+/g, '')
+
+export function calculateXyzReference(task) {
+  const xyz = {}
+  const matrix = {}
+  for (const article of task.givenData.articles) {
+    xyz[article.id] = article.xyz
+    matrix[article.id] = article.abc + article.xyz
+  }
+  return { xyz, matrix }
+}
+
+export function calculateSourcingReference(task) {
+  const strategies = task.givenData.strategies.map(strategy => {
+    const material = strategy.unitPrice * strategy.quantity
+    const risk = strategy.riskPercent / 100 * task.givenData.downtimeCost
+    return { id: strategy.id, material, risk, cost: material + strategy.coordination + risk }
+  })
+  const minimum = Math.min(...strategies.map(strategy => strategy.cost))
+  return { strategies, cheapest: strategies.filter(strategy => nearlyEqual(strategy.cost, minimum, 1e-9, 0)).map(strategy => strategy.id) }
+}
+
+export function calculateVerticalReference(task) {
+  const { own, external, purchases, revenue } = task.givenData
+  return { exact: own / (own + external) * 100, approximate: (1 - purchases / revenue) * 100 }
+}
+
+function evaluateXyz(task, step, answers) {
+  const reference = calculateXyzReference(task)
+  const kind = step === 1 ? 'xyz' : 'matrix'
+  const synonyms = { r: 'x', regelmäßig: 'x', gleichmäßig: 'x', s: 'y', saisonal: 'y', u: 'z', unregelmäßig: 'z' }
+  const checks = Object.entries(reference[kind]).map(([id, expected]) => {
+    const value = normalizedChoice(answers[`${kind}.${id}`])
+    return (kind === 'xyz' ? synonyms[value] || value : value) === expected.toLowerCase()
+  })
+  const status = statusFor(checks.filter(Boolean).length, checks.length)
+  return result(status, status === 'green' ? 'Alle Zuordnungen stimmen.' : step === 1
+    ? 'X: gleichmäßig; Y: erkennbare Saison; Z: unregelmäßig. Entscheidend ist der Verbrauch, nicht der Wert.'
+    : 'Schreibe zuerst die gegebene ABC-Klasse, dann die passende XYZ-Klasse.', reference[kind])
+}
+
+function evaluateSourcing(task, step, answers) {
+  const reference = calculateSourcingReference(task)
+  if (step <= 3) {
+    const strategy = reference.strategies[step - 1]
+    const correctValues = Object.fromEntries(['material', 'risk', 'cost'].map(key => [key, strategy[key]]))
+    const checks = Object.entries(correctValues).map(([key, value]) => nearlyEqual(parseMethodNumber(answers[`${key}.${strategy.id}`], 'currency'), value, 0.01, 0))
+    const status = statusFor(checks.filter(Boolean).length, checks.length)
+    return result(status, status === 'green' ? 'Material-, Risiko- und Gesamtkosten stimmen.' : 'Material = Preis × Menge; Risiko = Prozent ÷ 100 × Stillstandskosten; Gesamtkosten enthalten zusätzlich die Koordination.', correctValues)
+  }
+  if (step === 4) {
+    const choice = normalizedChoice(answers.cheapest).replace(/sourcing$/, '')
+    const correct = reference.cheapest.includes(choice)
+    return result(correct ? 'green' : 'red', correct ? 'Die günstigste Strategie wurde erkannt.' : 'Vergleiche die Gesamtkosten einschließlich Risiko und Koordination.', { cheapest: reference.cheapest.map(id => task.givenData.strategies.find(strategy => strategy.id === id).label) })
+  }
+  const correct = answers.reason === 'resilience'
+  return result(correct ? 'green' : 'red', correct ? 'Kosten und qualitative Kriterien werden gemeinsam betrachtet.' : 'Ein niedriger Kostenwert garantiert weder Qualität noch Lieferfähigkeit.', { reason: 'Abhängigkeit, Qualität und Lieferfähigkeit zusätzlich beurteilen.' })
+}
+
+function evaluateVertical(task, step, answers) {
+  if (step === 1) {
+    const checks = ['exact', 'approximate'].map(key => answers[`formula.${key}`] === key)
+    return result(statusFor(checks.filter(Boolean).length, 2), 'Fall A nutzt Eigen- und Fremdwert; Fall B erlaubt nur die Näherung aus Einkauf und Umsatz.', { formulaA: 'Exakt: Eigen ÷ (Eigen + Fremd)', formulaB: 'Näherung: 1 − Materialeinkauf ÷ Umsatz' })
+  }
+  if (step === 2) {
+    const reference = calculateVerticalReference(task)
+    const checks = Object.entries(reference).map(([key, value]) => nearlyEqual(parseMethodNumber(answers[`depth.${key}`], 'percent'), value, 0.1 + 1e-10, 0))
+    const status = statusFor(checks.filter(Boolean).length, 2)
+    return result(status, status === 'green' ? 'Beide Prozentwerte stimmen innerhalb ±0,1 Prozentpunkten.' : 'Berechne zunächst das Verhältnis und multipliziere für die Prozentangabe mit 100.', { depth: reference })
+  }
+  const correct = answers.interpretation === 'ownShare'
+  return result(correct ? 'green' : 'red', correct ? 'Die Fertigungstiefe beschreibt den Eigenanteil.' : 'Hohe Fertigungstiefe bedeutet großen Eigenanteil, nicht automatisch hohen Gewinn.', { interpretation: 'Hoher Wert: großer Eigenanteil. Niedriger Wert: großer Fremdanteil.' })
+}
+
+function evaluateStepValues(engine, task, step, answers) {
+  if (engine === 'xyzAbcMatrix') return evaluateXyz(task, step, answers)
+  if (engine === 'sourcingCostComparison') return evaluateSourcing(task, step, answers)
+  if (engine === 'verticalIntegration') return evaluateVertical(task, step, answers)
   if (engine === 'abcAnalysis') return evaluateAbc(task, step, answers)
   if (engine === 'billOfMaterials') return evaluateBom(task, step, answers)
   if (engine === 'monthlyDemandSplit') return evaluateMonthly(task, step, answers)
@@ -184,8 +270,44 @@ export function evaluateMethodStep(engine, task, step, answers) {
 }
 
 export function getMethodReference(engine, task) {
+  if (engine === 'xyzAbcMatrix') return calculateXyzReference(task)
+  if (engine === 'sourcingCostComparison') return calculateSourcingReference(task)
+  if (engine === 'verticalIntegration') return calculateVerticalReference(task)
   if (engine === 'abcAnalysis') return calculateAbcReference(task)
   if (engine === 'billOfMaterials') return calculateBomReference(task)
   if (engine === 'monthlyDemandSplit') return calculateMonthlyReference(task)
   throw new Error(`Unbekannte Methoden-Engine: ${engine}`)
+}
+
+function requiredAnswerKeys(engine, task, step) {
+  const data = task.givenData
+  if (engine === 'xyzAbcMatrix') return data.articles.map(({ id }) => `${step === 1 ? 'xyz' : 'matrix'}.${id}`)
+  if (engine === 'sourcingCostComparison') return step <= 3
+    ? ['material', 'risk', 'cost'].map(key => `${key}.${data.strategies[step - 1].id}`)
+    : [step === 4 ? 'cheapest' : 'reason']
+  if (engine === 'verticalIntegration') return step === 3 ? ['interpretation']
+    : ['exact', 'approximate'].map(key => `${step === 1 ? 'formula' : 'depth'}.${key}`)
+  if (engine === 'abcAnalysis') {
+    const ids = data.positions.map(({ id }) => id)
+    if (step === 1) return [...ids.map(id => `value.${id}`), 'total']
+    if (step === 2) return [...ids.map((_, index) => `rank.${index}`), ...ids.flatMap(id => [`share.${id}`, `cumulative.${id}`])]
+    return ids.map(id => `class.${id}`)
+  }
+  if (engine === 'billOfMaterials') {
+    const reference = calculateBomReference(task)
+    return (step === 1 ? reference.assemblies : reference.leaves).map(id => `${step === 1 ? 'assembly' : step === 2 ? 'part' : 'yearly'}.${id}`)
+  }
+  if (engine === 'monthlyDemandSplit') return step === 1 ? ['equation'] : step === 2 ? ['normal'] : ['special', 'sum']
+  return []
+}
+
+export function evaluateMethodStep(engine, task, step, answers = {}) {
+  const evaluation = evaluateStepValues(engine, task, step, answers)
+  const missingFields = requiredAnswerKeys(engine, task, step)
+    .filter(key => String(answers[key] ?? '').trim() === '')
+  if (missingFields.length) {
+    return { ...evaluation, status: 'red', missingFields,
+      reason: 'Eingabe fehlt – bitte alle Felder dieses Schritts ausfüllen.' }
+  }
+  return evaluation
 }

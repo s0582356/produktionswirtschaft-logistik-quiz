@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['questions-loaded'])
 
-const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit'])
+const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit', 'xyzAbcMatrix', 'sourcingCostComparison', 'verticalIntegration'])
 
 const validateMcQuestions = (data) => {
   if (!Array.isArray(data)) {
@@ -96,7 +96,7 @@ const validateMethodTrainer = (data) => {
     if (methodIds.has(method.methodId)) throw new Error(`Doppelte methodId: ${method.methodId}`)
     methodIds.add(method.methodId)
     if (!SUPPORTED_METHOD_ENGINES.has(method.engine)) {
-      throw new Error(`Unbekannte Methoden-Engine: ${method.engine} – diese App-Version unterstützt nur ABC-Analyse, Mengenstückliste und monatliche Bedarfsverteilung.`)
+      throw new Error(`Unbekannte Methoden-Engine: ${method.engine} – diese Methoden-Engine wird nicht unterstützt.`)
     }
     if (!Array.isArray(method.steps) || !method.steps.length || !Array.isArray(method.tasks) || !method.tasks.length) {
       throw new Error(`Methode ${method.methodId}: steps und tasks dürfen nicht leer sein.`)

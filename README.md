@@ -1,5 +1,7 @@
 # Produktionswirtschaft & Logistik Quiz
 
+Version **0.5.1**
+
 A responsive Vue/Vite learning app for practicing production management and logistics concepts. The public version combines neutral multiple-choice examples with a browser-only workflow for personal JSON question banks.
 
 ## Features
@@ -9,16 +11,23 @@ A responsive Vue/Vite learning app for practicing production management and logi
 - Local import of custom JSON question banks through the browser
 - Automatic detection of multiple-choice, free-text, and method-trainer banks
 - Free-text training with local checkpoint-based feedback
-- Methods training for ABC analysis, multi-level bills of materials, and monthly demand distribution
-- Step-by-step numerical feedback with green, yellow, and red status
+- Methods training with six public demo methods covering calculations and qualitative classification
+- Step-by-step feedback with green, yellow, and red status
 - Optional voice input through the browser's speech-recognition capability
 - Light and dark themes since version 0.4.2
 - Theme selection stored locally in the browser
 - Responsive layout for desktop and mobile use
 
-The new **Methoden-Training** mode practices calculation and application methods through compact explanations, formulas, intermediate inputs, and worked solutions.
+The **Methoden-Training** mode practices calculation and application methods through compact explanations, formulas, intermediate inputs, and worked solutions. Version 0.5.1 includes six public demo methods:
 
-The app runs entirely in the browser. It does not require a backend, database, account, external API, or AI service.
+1. ABC-Analyse
+2. Stücklistenauflösung / Mengenstückliste
+3. Monatliche Bedarfsverteilung
+4. XYZ-Analyse + ABC/XYZ-Matrix (qualitative)
+5. Sourcing-Kostenvergleich
+6. Fertigungstiefe
+
+The app runs as a static application entirely in the browser, without a backend, database, account, external API, or AI service. Complete free-text answers are not persisted.
 
 ## Public Demo Content
 
@@ -88,7 +97,7 @@ On supported browsers, free-text answers can optionally be dictated using the br
 
 ## Light and Dark Themes
 
-Version 0.5.0 includes a light/dark theme switch for all app areas. The selected theme is stored in the browser so it remains active on the next visit. If no choice has been saved yet, the app can use the operating system's preferred color scheme.
+Version 0.5.1 includes a light/dark theme switch for all app areas. The selected theme is stored in the browser so it remains active on the next visit. If no choice has been saved yet, the app can use the operating system's preferred color scheme.
 
 ## Tech Stack
 

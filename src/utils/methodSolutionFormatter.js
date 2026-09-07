@@ -1,4 +1,8 @@
 const labels = {
+  material: 'Materialkosten', risk: 'Risikokosten', cost: 'Gesamtkosten',
+  cheapest: 'Günstigste Strategie', reason: 'Begründung', depth: 'Fertigungstiefe',
+  exact: 'Fall A (exakt)', approximate: 'Fall B (Näherung)',
+  formulaA: 'Formel Fall A', formulaB: 'Formel Fall B', interpretation: 'Interpretation',
   values: 'Verbrauchswerte', total: 'Gesamtverbrauchswert', order: 'Sortierung',
   shares: 'Anteile', cumulative: 'Kumuliert', classes: 'Klassen',
   equation: 'Gleichung', divisor: 'Bedarfseinheiten', normal: 'Normaler Monatsbedarf',
@@ -14,8 +18,8 @@ export function formatMethodSolution(values, engine, step) {
   const defaultUnit = engine === 'abcAnalysis' && step === 1 ? '€'
     : engine === 'billOfMaterials' ? 'Stück' : ''
   const unitFor = (key, inherited) => {
-    if (['shares', 'cumulative'].includes(key)) return '%'
-    if (['values', 'total'].includes(key)) return '€'
+    if (['shares', 'cumulative', 'depth'].includes(key)) return '%'
+    if (['values', 'total', 'material', 'risk', 'cost'].includes(key)) return '€'
     if (['normal', 'special', 'sum', 'yearlyDemand', 'doubled', 'adjusted', 'assemblyQuantities', 'perProduct', 'yearly'].includes(key)) return 'Stück'
     if (['divisor', 'equation', 'classes', 'order', 'specialMonth', 'leaves', 'assemblies'].includes(key)) return ''
     return inherited
