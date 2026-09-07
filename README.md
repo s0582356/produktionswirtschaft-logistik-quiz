@@ -7,12 +7,16 @@ A responsive Vue/Vite learning app for practicing production management and logi
 - Neutral public multiple-choice demo questions
 - Multiple-choice quiz with shuffled answers, score, streaks, category insights, and wrong-answer review
 - Local import of custom JSON question banks through the browser
-- Automatic detection of multiple-choice and free-text question banks
+- Automatic detection of multiple-choice, free-text, and method-trainer banks
 - Free-text training with local checkpoint-based feedback
+- Methods training for ABC analysis, multi-level bills of materials, and monthly demand distribution
+- Step-by-step numerical feedback with green, yellow, and red status
 - Optional voice input through the browser's speech-recognition capability
 - Light and dark themes since version 0.4.2
 - Theme selection stored locally in the browser
 - Responsive layout for desktop and mobile use
+
+The new **Methoden-Training** mode practices calculation and application methods through compact explanations, formulas, intermediate inputs, and worked solutions.
 
 The app runs entirely in the browser. It does not require a backend, database, account, external API, or AI service.
 
@@ -28,7 +32,7 @@ Custom question banks are selected with the browser file picker and processed lo
 
 - Files stay on the user's device.
 - Nothing is uploaded to a server.
-- Multiple-choice and free-text formats are detected automatically.
+- Multiple-choice, free-text, and method-trainer formats are detected automatically.
 - Imported content is available only for the current browser session.
 - Personal question banks are not bundled with the public application.
 
@@ -74,13 +78,17 @@ Required fields are `question`, `options`, `correctAnswer`, and `explanation`. T
 
 Free-text answers are evaluated locally against the supplied checkpoints. This deterministic training aid uses no backend, API, or AI.
 
+### Method-trainer format
+
+Method banks use `type` or `bankType` set to `methodTrainer` and a `methods[]` list. Each method contains a supported engine, explanation, steps, and tasks. Private method banks can be selected locally and stay outside the repository and deployment. The public demo tasks are entirely synthetic.
+
 ## Voice Input
 
 On supported browsers, free-text answers can optionally be dictated using the browser's built-in speech recognition. Keyboard input remains available at all times. Speech-recognition availability and permissions depend on the browser.
 
 ## Light and Dark Themes
 
-Version 0.4.2 adds a light/dark theme switch for all app areas. The selected theme is stored in the browser so it remains active on the next visit. If no choice has been saved yet, the app can use the operating system's preferred color scheme.
+Version 0.5.0 includes a light/dark theme switch for all app areas. The selected theme is stored in the browser so it remains active on the next visit. If no choice has been saved yet, the app can use the operating system's preferred color scheme.
 
 ## Tech Stack
 
@@ -116,4 +124,4 @@ No server-side infrastructure is required.
 
 ## Portfolio Value
 
-The project demonstrates a frontend-only learning application with two training modes, local file processing, deterministic free-text feedback, optional browser capabilities, persistent theme preferences, responsive UI design, and a clear separation between public demo content and personal learning material.
+The project demonstrates a frontend-only learning application with three training modes, local file processing, deterministic free-text feedback, optional browser capabilities, persistent theme preferences, responsive UI design, and a clear separation between public demo content and personal learning material.

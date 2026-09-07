@@ -1,6 +1,8 @@
 <script setup>
 const emit = defineEmits(['questions-loaded'])
 
+const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit'])
+
 const validateMcQuestions = (data) => {
   if (!Array.isArray(data)) {
     throw new Error('Die JSON-Datei muss ein Array von Fragen enthalten.')
@@ -80,7 +82,48 @@ const validateFreeTextQuestions = (data) => {
   }))
 }
 
+const validateMethodTrainer = (data) => {
+  if (!data || Array.isArray(data) || !Array.isArray(data.methods) || data.methods.length === 0) {
+    throw new Error('Die Methodentrainer-Datei muss ein Objekt mit einem nicht leeren "methods"-Array sein.')
+  }
+
+  const methodIds = new Set()
+  const taskIds = new Set()
+  data.methods.forEach((method, methodIndex) => {
+    if (!method.methodId || !method.methodTitle || !method.explanation) {
+      throw new Error(`Methode ${methodIndex + 1}: methodId, methodTitle und explanation sind erforderlich.`)
+    }
+    if (methodIds.has(method.methodId)) throw new Error(`Doppelte methodId: ${method.methodId}`)
+    methodIds.add(method.methodId)
+    if (!SUPPORTED_METHOD_ENGINES.has(method.engine)) {
+      throw new Error(`Unbekannte Methoden-Engine: ${method.engine} – diese App-Version unterstützt nur ABC-Analyse, Mengenstückliste und monatliche Bedarfsverteilung.`)
+    }
+    if (!Array.isArray(method.steps) || !method.steps.length || !Array.isArray(method.tasks) || !method.tasks.length) {
+      throw new Error(`Methode ${method.methodId}: steps und tasks dürfen nicht leer sein.`)
+    }
+    method.tasks.forEach((task) => {
+      if (!task.taskId || !task.taskText || !task.givenData) {
+        throw new Error(`Methode ${method.methodId}: Jede Aufgabe braucht taskId, taskText und givenData.`)
+      }
+      if (taskIds.has(task.taskId)) throw new Error(`Doppelte taskId: ${task.taskId}`)
+      taskIds.add(task.taskId)
+    })
+  })
+
+  return { ...data, type: 'methodTrainer', title: data.title || 'Eigene Methodenbank', description: data.description || 'Lokal importierte Methodenaufgaben' }
+}
+
 const validateQuestions = (parsedData) => {
+  const explicitlyMethodTrainer = !Array.isArray(parsedData)
+    && (parsedData?.type === 'methodTrainer' || parsedData?.bankType === 'methodTrainer')
+  const structurallyMethodTrainer = !Array.isArray(parsedData)
+    && Array.isArray(parsedData?.methods)
+    && parsedData.methods.length > 0
+    && parsedData.methods.every((method) => method?.methodId && Array.isArray(method.tasks))
+
+  if (explicitlyMethodTrainer || structurallyMethodTrainer) {
+    return { type: 'methodTrainer', bank: validateMethodTrainer(parsedData) }
+  }
   const data = Array.isArray(parsedData) ? parsedData : parsedData?.questions
 
   if (!Array.isArray(data)) {
@@ -102,7 +145,7 @@ const validateQuestions = (parsedData) => {
     return { type: 'freeText', questions: validateFreeTextQuestions(data) }
   }
 
-  throw new Error('Format nicht erkannt. Erwartet wird eine einheitliche MC- oder Freitext-Fragenbank.')
+  throw new Error('Format nicht erkannt. Erwartet wird eine einheitliche MC-, Freitext- oder Methodentrainer-Bank.')
 }
 
 const handleFileChange = async (event) => {
@@ -135,7 +178,7 @@ const handleFileChange = async (event) => {
     <div>
       <h2>Eigene JSON-Fragen importieren</h2>
       <p>
-        MC- und Freitext-Fragebanken werden automatisch erkannt. Die Datei wird
+        MC-, Freitext- und Methodentrainer-Banken werden automatisch erkannt. Die Datei wird
         nur im Browser gelesen, nicht hochgeladen und nicht gespeichert.
       </p>
     </div>

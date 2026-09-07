@@ -4,8 +4,10 @@ import QuizCard from './components/QuizCard.vue'
 import ScoreBox from './components/ScoreBox.vue'
 import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
 import FreeTextCard from './components/FreeTextCard.vue'
+import MethodTrainer from './components/MethodTrainer.vue'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
+import sampleMethodTrainerTasks from './data/public/sampleMethodTrainerTasks.json'
 import {
   calculateProgressTotals,
   createBankFingerprint,
@@ -22,6 +24,8 @@ const questions = ref(sampleQuestions)
 const mcQuestionBankName = ref('Öffentliche MC-Beispiel-Fragen')
 const freeTextQuestions = ref(sampleFreeTextQuestions)
 const freeTextQuestionBankName = ref('Öffentliche Freitext-Demo')
+const methodTrainerBank = ref(sampleMethodTrainerTasks)
+const methodTrainerBankName = ref(sampleMethodTrainerTasks.title)
 const isQuizStarted = ref(false)
 const isQuizComplete = ref(false)
 const isReviewMode = ref(false)
@@ -69,10 +73,13 @@ function toggleTheme() {
 
 applyTheme(theme.value)
 
-const questionBankName = computed(() => (
-  activeMode.value === 'mc' ? mcQuestionBankName.value : freeTextQuestionBankName.value
-))
+const questionBankName = computed(() => {
+  if (activeMode.value === 'mc') return mcQuestionBankName.value
+  if (activeMode.value === 'freeText') return freeTextQuestionBankName.value
+  return methodTrainerBankName.value
+})
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
+const isMethodMode = computed(() => activeMode.value === 'method')
 const filteredFreeTextQuestions = computed(() => {
   if (!freeTextSessionQuestionIds.value) return freeTextQuestions.value
 
@@ -481,7 +488,13 @@ function resetCurrentFreeTextProgress() {
   isQuizStarted.value = false
 }
 
-function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) {
+function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileName }) {
+  if (type === 'methodTrainer') {
+    methodTrainerBank.value = bank
+    methodTrainerBankName.value = `Eigene Methodenbank: ${fileName}`
+    switchMode('method')
+    return
+  }
   if (type === 'freeText') {
     freeTextQuestions.value = importedQuestions
     freeTextQuestionBankName.value = `Eigene Freitext-Fragebank: ${fileName}`
@@ -548,9 +561,22 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
       >
         Freitext Training
       </button>
+      <button
+        type="button"
+        :class="{ active: activeMode === 'method' }"
+        :aria-pressed="activeMode === 'method'"
+        @click="switchMode('method')"
+      >
+        Methoden-Training
+      </button>
     </nav>
 
-    <section v-if="!isQuizStarted" class="start-layout" aria-label="Quiz vorbereiten">
+    <section v-if="isMethodMode" class="method-mode-layout">
+      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
+      <MethodTrainer :bank="methodTrainerBank" />
+    </section>
+
+    <section v-else-if="!isQuizStarted" class="start-layout" aria-label="Quiz vorbereiten">
       <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
 
       <section class="start-card">
@@ -774,9 +800,9 @@ function loadPrivateQuestions({ type, questions: importedQuestions, fileName }) 
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.4.3</span>
+      <span>Version 0.5.0</span>
       <span>Produktionswirtschaft & Logistik edition</span>
-      <span>MC-Quiz und lokales Freitext-Training</span>
+      <span>MC, Freitext und Methoden-Training</span>
     </footer>
   </main>
 </template>

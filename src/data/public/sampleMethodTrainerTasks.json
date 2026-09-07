@@ -1,0 +1,222 @@
+{
+  "type": "methodTrainer",
+  "version": "1.0",
+  "title": "Öffentliche Methoden-Demo",
+  "description": "Neutrale, synthetische Beispielaufgaben zum lokalen Üben von Rechen- und Anwendungsmethoden.",
+  "methods": [
+    {
+      "methodId": "abc-analyse",
+      "methodTitle": "ABC-Analyse",
+      "category": "Materialklassifizierung",
+      "engine": "abcAnalysis",
+      "duration": "ca. 4 Min.",
+      "explanation": "Die ABC-Analyse ordnet Artikel nach ihrem wertmäßigen Anteil am gesamten Verbrauchswert. Entscheidend sind Verbrauchswert, absteigende Sortierung und kumulierter Wertanteil.",
+      "formula": [
+        "Verbrauchswert = Stückwert × Verbrauchsmenge",
+        "Anteil (%) = Verbrauchswert ÷ Gesamtverbrauchswert × 100",
+        "Kumulierter Anteil = fortlaufende Summe der sortierten Anteile"
+      ],
+      "steps": [
+        "Verbrauchswerte und Gesamtwert berechnen",
+        "Absteigend sortieren, Anteile und kumulierte Anteile bilden",
+        "Artikel anhand der Grenzen A, B oder C zuordnen"
+      ],
+      "commonMistakes": [
+        "Nach Menge oder Stückwert statt nach Verbrauchswert sortieren",
+        "Den Prozentanteil auf die Menge statt auf den Wert beziehen",
+        "Zu früh runden oder die kumulierten Anteile nicht fortlaufend addieren"
+      ],
+      "examples": [
+        {
+          "title": "Verbrauchswerte: Wert vor Menge",
+          "givenData": "Drei fiktive Lagerartikel: Halter 20 Stück à 30 €, Kappen 100 Stück à 2 €, Ringe 50 Stück à 6 €.",
+          "steps": [
+            "Berechne für jeden Artikel Menge × Stückwert: Halter 20 × 30 = 600 €, Kappen 100 × 2 = 200 €, Ringe 50 × 6 = 300 €.",
+            "Addiere alle Verbrauchswerte: 600 + 200 + 300 = 1.100 € Gesamtverbrauchswert.",
+            "Sortiere absteigend nach Verbrauchswert: Halter vor Ringen vor Kappen. Die Halter binden mit 600 € den höchsten Wert, obwohl ihre Menge am kleinsten ist."
+          ],
+          "result": "Reihenfolge: Halter (600 €), Ringe (300 €), Kappen (200 €). Gesamt: 1.100 €.",
+          "takeaway": "Erst Wert berechnen, dann sortieren.",
+          "pitfall": "Nach Menge sortieren: Dann kämen die Kappen zuerst, obwohl die ABC-Analyse wertorientiert ist."
+        },
+        {
+          "title": "Wertanteile und A/B/C-Zuordnung",
+          "givenData": "Bereits absteigend sortierte Verbrauchswerte: Artikel K 700 €, L 200 €, M 100 €. Demo-Grenzen: A bis einschließlich 80 %, B über 80 % bis einschließlich 95 %, C über 95 % kumuliert.",
+          "steps": [
+            "Bilde den Gesamtwert: 700 + 200 + 100 = 1.000 €. Er ist der Nenner für jeden Einzelanteil.",
+            "Berechne Verbrauchswert ÷ Gesamtwert × 100: K = 700 ÷ 1.000 × 100 = 70 %, L = 20 %, M = 10 %.",
+            "Addiere fortlaufend und ordne zu: K kumuliert 70 % → A; L kumuliert 70 + 20 = 90 % → B; M kumuliert 90 + 10 = 100 % → C."
+          ],
+          "result": "K gehört zu A, L zu B und M zu C. Kontrolle: 70 + 20 + 10 = 100 %. In dieser Demo zählt der kumulierte Anteil einschließlich des aktuellen Artikels.",
+          "takeaway": "Für die Klasse zählt der kumulierte Anteil, nicht nur der Einzelanteil.",
+          "pitfall": "L hat einzeln 20 %, kumuliert aber 90 %: Wer nur 20 % betrachtet, ordnet L fälschlich A zu."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "abc-demo-1",
+          "taskText": "Klassifiziere die fünf Lagerartikel. Grenzen: A bis 80 % kumuliert, B bis 95 %, C = Rest.",
+          "difficulty": "leicht",
+          "givenData": {
+            "positions": [
+              { "id": "P1", "label": "Artikel P1", "unitValue": 60, "quantity": 400 },
+              { "id": "P2", "label": "Artikel P2", "unitValue": 5, "quantity": 3000 },
+              { "id": "P3", "label": "Artikel P3", "unitValue": 25, "quantity": 200 },
+              { "id": "P4", "label": "Artikel P4", "unitValue": 1, "quantity": 4000 },
+              { "id": "P5", "label": "Artikel P5", "unitValue": 2, "quantity": 800 }
+            ]
+          },
+          "params": { "classLimits": { "A": 80, "B": 95 } },
+          "tolerance": { "currencyAbsolute": 0.01, "percentagePoints": 0.2, "relative": 0.000001 },
+          "solutionWalkthrough": [
+            "Verbrauchswerte: P1 24.000 €, P2 15.000 €, P3 5.000 €, P4 4.000 €, P5 1.600 €; Gesamt 49.600 €.",
+            "Reihenfolge: P1, P2, P3, P4, P5; kumuliert ca. 48,4 %, 78,6 %, 88,7 %, 96,8 %, 100 %.",
+            "Klassen: P1 A, P2 A, P3 B, P4 C, P5 C."
+          ]
+        }
+      ]
+    },
+    {
+      "methodId": "stuecklistenaufloesung",
+      "methodTitle": "Stücklistenauflösung",
+      "category": "Mengenstückliste",
+      "engine": "billOfMaterials",
+      "duration": "ca. 5 Min.",
+      "explanation": "Bei der Mengenstückliste wird der Bedarf vom Endprodukt aus über alle Stufen verfolgt. Mengen entlang eines Pfads werden multipliziert; gleiche Teile aus mehreren Pfaden werden addiert.",
+      "formula": [
+        "Bedarf je Endprodukt = Summe der Mengenprodukte aller Pfade",
+        "Gesamtbedarf = Bedarf je Endprodukt × Endproduktmenge"
+      ],
+      "steps": [
+        "Baugruppenmenge je Endprodukt bestimmen",
+        "Beiträge aller Pfade je Einzelteil summieren",
+        "Bedarf mit der Endproduktmenge multiplizieren"
+      ],
+      "commonMistakes": [
+        "Mehrfach verwendete Teile nur auf einem Pfad zählen",
+        "Die Baugruppenmenge bei der Kettenmultiplikation vergessen",
+        "Direkte Bestandteile des Endprodukts übersehen"
+      ],
+      "examples": [
+        {
+          "title": "Montage-Set: zwei Ebenen auflösen",
+          "givenData": "Geplant sind 10 fiktive Montage-Sets. Jedes Set enthält 1 Grundplatte und 2 Baugruppen. Jede Baugruppe enthält 3 Stifte und 1 Hülse.",
+          "steps": [
+            "Löse die erste Ebene auf: 10 Sets × 1 Grundplatte = 10 Grundplatten; 10 Sets × 2 Baugruppen = 20 Baugruppen.",
+            "Nutze für die zweite Ebene die 20 Baugruppen: 20 × 3 Stifte = 60 Stifte; 20 × 1 Hülse = 20 Hülsen.",
+            "Kontrolliere je Set: 2 × 3 = 6 Stifte und 2 × 1 = 2 Hülsen. Für 10 Sets ergibt das wieder 60 Stifte und 20 Hülsen."
+          ],
+          "result": "Einzelteilbedarf: 10 Grundplatten, 60 Stifte, 20 Hülsen. Dafür werden 20 Baugruppen montiert; diese sind die Zwischenstufe, keine zusätzlichen Einzelteile.",
+          "takeaway": "Jede Ebene wird mit der Menge aus der vorherigen Ebene multipliziert.",
+          "pitfall": "Nur die erste Ebene rechnen: Dann fehlen die Stifte und Hülsen innerhalb der Baugruppen."
+        },
+        {
+          "title": "Basisgerät: Schrauben auf zwei Pfaden",
+          "givenData": "Geplant sind 5 fiktive Basisgeräte. Jedes Gerät enthält direkt 2 Schrauben und 3 Module. Jedes Modul enthält 4 Schrauben und 1 Abdeckung.",
+          "steps": [
+            "Berechne den direkten Schraubenbedarf: 5 Geräte × 2 Schrauben = 10 Schrauben.",
+            "Löse den Modulpfad auf: 5 × 3 = 15 Module; darin 15 × 4 = 60 Schrauben und 15 × 1 = 15 Abdeckungen.",
+            "Führe erst jetzt gleiche Teile zusammen: 10 direkte + 60 indirekte Schrauben = 70 Schrauben. Je Gerät sind es 2 + 3 × 4 = 14 Schrauben; 5 × 14 = 70."
+          ],
+          "result": "Einzelteilbedarf: 70 Schrauben und 15 Abdeckungen. Die Zwischenstufe umfasst 15 Module.",
+          "takeaway": "Gleiche Teile aus verschiedenen Pfaden werden am Ende zusammengezählt.",
+          "pitfall": "Nur die 60 Schrauben in den Modulen zählen: Dann fehlen die 10 direkt verbauten Schrauben."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "bom-demo-1",
+          "taskText": "Produkt M besteht aus den unten gezeigten Baugruppen und Teilen. Bestimme die Mengenstückliste je M und den Gesamtbedarf für 150 Stück M.",
+          "difficulty": "leicht",
+          "givenData": {
+            "endProduct": "M",
+            "endProductQuantity": 150,
+            "edges": [
+              { "parent": "M", "child": "BG1", "qtyPerParent": 2 },
+              { "parent": "M", "child": "BG2", "qtyPerParent": 1 },
+              { "parent": "M", "child": "X3", "qtyPerParent": 1 },
+              { "parent": "BG1", "child": "X1", "qtyPerParent": 1 },
+              { "parent": "BG1", "child": "X2", "qtyPerParent": 2 },
+              { "parent": "BG2", "child": "X2", "qtyPerParent": 3 },
+              { "parent": "BG2", "child": "X3", "qtyPerParent": 1 }
+            ],
+            "leafParts": ["X1", "X2", "X3"],
+            "assemblies": ["BG1", "BG2"]
+          },
+          "solutionWalkthrough": [
+            "M → 2× BG1, 1× BG2 und 1× X3; BG1 → 1× X1 und 2× X2; BG2 → 3× X2 und 1× X3.",
+            "Je M: X1 = 2, X2 = 2×2 + 1×3 = 7, X3 = 1 + 1×1 = 2.",
+            "Für 150 M: X1 = 300, X2 = 1.050, X3 = 300."
+          ]
+        }
+      ]
+    },
+    {
+      "methodId": "monatliche-bedarfsverteilung",
+      "methodTitle": "Monatliche Bedarfsverteilung",
+      "category": "Bedarfsplanung",
+      "engine": "monthlyDemandSplit",
+      "duration": "ca. 3 Min.",
+      "explanation": "Ein Monat mit doppeltem Bedarf zählt wie zwei normale Monate. Bei einem Sondermonat verteilen sich daher 13 Bedarfseinheiten auf das Jahr. Eine Kontrollsumme stellt sicher, dass Rundungen den Jahresbedarf nicht verändern.",
+      "formula": [
+        "11x + 2x = Jahresbedarf",
+        "x = Jahresbedarf ÷ 13",
+        "Sondermonat = Jahresbedarf − 11 × gerundetes x"
+      ],
+      "steps": [
+        "Gleichung für elf normale und einen doppelten Monat wählen",
+        "Normalen Monatsbedarf berechnen und kaufmännisch runden",
+        "Sondermonat und Kontrollsumme bestimmen"
+      ],
+      "commonMistakes": [
+        "Den Sondermonat wie einen normalen Monat behandeln",
+        "Die Rundungsdifferenz nicht ausgleichen",
+        "Keine Kontrollsumme über den Jahresbedarf bilden"
+      ],
+      "examples": [
+        {
+          "title": "Jahresbedarf ohne Rundungsrest",
+          "givenData": "Der fiktive Jahresbedarf J beträgt 1.560 Stück. Im Oktober wird das Doppelte benötigt; alle elf anderen Monate haben denselben Bedarf x.",
+          "steps": [
+            "Zähle die Bedarfsgewichte: elf normale Monate und ein Doppelmonat ergeben 11x + 2x = J, also 13x = 1.560.",
+            "Löse nach x auf: x = 1.560 ÷ 13 = 120 Stück je normalem Monat.",
+            "Berechne Oktober: 2x = 2 × 120 = 240 Stück. Kontrolliere alle zwölf Monate: 11 × 120 + 240 = 1.320 + 240 = 1.560 Stück."
+          ],
+          "result": "Elf Monate erhalten je 120 Stück, Oktober erhält 240 Stück. Die Jahressumme stimmt exakt.",
+          "takeaway": "Der doppelte Monat zählt wie zwei normale Monate.",
+          "pitfall": "Durch 12 teilen: 130 Stück je Normalmonat und 260 im Oktober ergäben 1.690 statt 1.560 Stück."
+        },
+        {
+          "title": "Rundung ausgleichen und Jahressumme sichern",
+          "givenData": "Der fiktive Jahresbedarf J beträgt 1.000 Stück. Dezember zählt doppelt. Geplant werden ganze Stück; die Rundungsdifferenz wird im Dezember ausgeglichen.",
+          "steps": [
+            "Stelle 11x + 2x = 1.000 auf: x = 1.000 ÷ 13 ≈ 76,923. Kaufmännisch gerundet sind das 77 Stück je Normalmonat.",
+            "Prüfe blindes Verdoppeln: 2 × 77 = 154; aber 11 × 77 + 154 = 1.001 Stück. Das wäre 1 Stück zu viel.",
+            "Gleiche den Sondermonat als Rest aus: Dezember = 1.000 − 11 × 77 = 153 Stück. Kontrolle: 847 + 153 = 1.000 Stück."
+          ],
+          "result": "Elf Monate erhalten je 77 Stück, Dezember erhält 153 Stück. Der Rundungsausgleich senkt den Sondermonat um 1 Stück gegenüber 2 × 77; das Verhältnis ist dadurch nur näherungsweise 2:1.",
+          "takeaway": "Am Ende muss die Summe aller Monate wieder genau den Jahresbedarf ergeben.",
+          "pitfall": "Alle Monatswerte unabhängig runden und die Kontrollsumme weglassen: Dadurch kann ein falscher Jahresgesamtbedarf entstehen."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "monthly-demo-1",
+          "taskText": "Der Jahresbedarf beträgt 2.600 Stück. Im November ist der Bedarf doppelt so hoch wie in einem normalen Monat. Verteile den Bedarf und prüfe die Jahressumme.",
+          "difficulty": "leicht",
+          "givenData": {
+            "yearlyDemand": 2600,
+            "specialMonths": ["November"],
+            "specialFactor": 2
+          },
+          "params": { "roundingRule": "half-up", "askFullSeries": false },
+          "solutionWalkthrough": [
+            "11x + 2x = 2.600, also 13x = 2.600.",
+            "x = 2.600 ÷ 13 = 200 Stück je Normalmonat.",
+            "November = 400; Kontrollsumme: 11×200 + 400 = 2.600."
+          ]
+        }
+      ]
+    }
+  ]
+}
