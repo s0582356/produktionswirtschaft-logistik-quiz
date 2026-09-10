@@ -7,15 +7,15 @@ import { renderToString } from 'vue/server-renderer'
 
 const bank = JSON.parse(readFileSync(new URL('../src/data/public/sampleMethodTrainerTasks.json', import.meta.url)))
 
-test('Method selection renders all six methods with explanation and practice actions', async () => {
+test('Method selection renders all nine methods with explanation and practice actions', async () => {
   const server = await createServer({ optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true }, appType: 'custom' })
   try {
     const { default: MethodTrainer } = await server.ssrLoadModule('/src/components/MethodTrainer.vue')
     const html = await renderToString(createSSRApp(MethodTrainer, { bank }))
     for (const method of bank.methods) assert(html.includes(method.methodTitle))
-    assert.equal((html.match(/class="method-card"/g) || []).length, 6)
-    assert.equal((html.match(/>Erklärung<\/button>/g) || []).length, 6)
-    assert.equal((html.match(/>Üben<\/button>/g) || []).length, 6)
+    assert.equal((html.match(/class="method-card"/g) || []).length, 9)
+    assert.equal((html.match(/>Erklärung<\/button>/g) || []).length, 9)
+    assert.equal((html.match(/>Üben<\/button>/g) || []).length, 9)
     assert(!html.includes('[object Object]'))
   } finally {
     await server.close()
@@ -203,5 +203,37 @@ test('All three tasks keep separate drafts and revealing task three never skips 
       assert.equal(state.answers.draft, 'Entwurf 0')
     }
     assert.deepEqual({ ...state.sessionProgress }, {})
+  } finally { unmount() }
+})
+
+test('All nine transport tasks require each step, preserve answers and complete with revealed help marked yellow', async () => {
+  const { state, unmount } = await mountTrainerState()
+  try {
+    for (const method of bank.methods.slice(6)) {
+      state.selectMethod(method)
+      for (let index = 0; index < 3; index++) {
+        state.switchTask(index)
+        const task = method.tasks[index]
+        for (let step = 1; step <= method.steps.length; step++) {
+          state.revealCurrentStep()
+          state.revealCurrentStep()
+          assert.equal(state.currentStep, step)
+          assert.equal(state.allStepsDone, false)
+          const fields = task.inputSteps[step - 1]
+          for (const field of fields.slice(1)) {
+            const expected = task.expectedResults[field.key]
+            state.answers[field.key] = Array.isArray(expected) ? expected[0] : expected
+          }
+          state.checkStep()
+          assert.equal(state.currentStep, step)
+          const expected = task.expectedResults[fields[0].key]
+          state.answers[fields[0].key] = Array.isArray(expected) ? expected[0] : expected
+          state.checkStep()
+          assert.equal(state.currentStep, step + 1)
+        }
+        assert.equal(state.allStepsDone, true)
+        assert.equal(state.sessionProgress[method.methodId].yellow, index + 1)
+      }
+    }
   } finally { unmount() }
 })

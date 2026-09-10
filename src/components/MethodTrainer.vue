@@ -178,6 +178,12 @@ function exampleStepParts(text) {
   }
 }
 
+// Split only the presentation; field keys and original labels stay intact.
+function situationLabelParts(label) {
+  const match = label.match(/^(Situation \d+):\s*([\s\S]*)$/u)
+  return match ? { title: match[1], description: match[2] } : null
+}
+
 function displaySolutionValues(step) {
   return formatMethodSolution(feedback[step]?.correctValues, method.value.engine, step)
 }
@@ -355,9 +361,29 @@ function displaySolutionValues(step) {
           <div class="method-fields"><label>Sondermonat {{ task.givenData.specialMonths[0] }}<input v-model="answers.special" type="text" inputmode="decimal" /></label><label>Kontrollsumme Jahr<input v-model="answers.sum" type="text" inputmode="decimal" /></label></div>
         </template>
 
-        <div v-if="task.inputSteps" class="method-fields">
+        <div v-if="method.engine === 'transportModeComparison' && stepNumber === 1" class="method-table-scroll">
+          <table class="method-table input-table">
+            <caption>Relative Einordnung im Modulvergleich</caption>
+            <thead><tr><th scope="col">Verkehrsträger</th><th v-for="criterion in task.givenData.criteria" :key="criterion" scope="col">{{ criterion }}</th></tr></thead>
+            <tbody><tr v-for="(carrier, row) in task.givenData.carriers" :key="carrier">
+              <th scope="row">{{ carrier }}</th>
+              <td v-for="(criterion, column) in task.givenData.criteria" :key="criterion">
+                <select v-model="answers[`matrix.${row}.${column}`]" :aria-label="`${carrier}: ${criterion}`">
+                  <option value="">Bitte wählen</option>
+                  <option v-for="value in task.givenData.scales[criterion]" :key="value" :value="value">{{ value }}</option>
+                </select>
+              </td>
+            </tr></tbody>
+          </table>
+        </div>
+        <div v-else-if="task.inputSteps" class="method-fields"
+          :class="{ 'method-fields-stacked': task.inputSteps[stepNumber - 1].some(field => field.label.length > 100) }">
           <label v-for="field in task.inputSteps[stepNumber - 1]" :key="field.key">
-            {{ field.label }}
+            <span v-if="situationLabelParts(field.label)" class="method-situation-label">
+              <strong>{{ situationLabelParts(field.label).title }}</strong>
+              <span class="method-situation-description">{{ situationLabelParts(field.label).description }}</span>
+            </span>
+            <template v-else>{{ field.label }}</template>
             <select v-if="field.options" v-model="answers[field.key]">
               <option value="">Bitte wählen</option>
               <option v-for="option in field.options" :key="option.value" :value="option.value">{{ option.label }}</option>
@@ -376,8 +402,14 @@ function displaySolutionValues(step) {
             <section v-if="revealedSteps.has(stepNumber) || (!feedback[stepNumber].missingFields?.length && feedback[stepNumber].status !== 'green')" class="method-solution-values" aria-label="Musterwerte">
               <h4>Musterwerte</h4>
               <dl>
-                <div v-for="(row, rowIndex) in displaySolutionValues(stepNumber)" :key="rowIndex" class="method-solution-row">
-                  <dt>{{ row.label }}</dt>
+                <div v-for="(row, rowIndex) in displaySolutionValues(stepNumber)" :key="rowIndex" class="method-solution-row" :class="{ 'method-solution-row-situation': situationLabelParts(row.label) }">
+                  <dt>
+                    <span v-if="situationLabelParts(row.label)" class="method-situation-label">
+                      <strong>{{ situationLabelParts(row.label).title }}</strong>
+                      <span class="method-situation-description">{{ situationLabelParts(row.label).description }}</span>
+                    </span>
+                    <template v-else>{{ row.label }}</template>
+                  </dt>
                   <dd>{{ row.value }}</dd>
                 </div>
               </dl>

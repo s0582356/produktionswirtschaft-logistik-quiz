@@ -1,7 +1,7 @@
 <script setup>
 const emit = defineEmits(['questions-loaded'])
 
-const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit', 'xyzAbcMatrix', 'sourcingCostComparison', 'verticalIntegration'])
+const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit', 'xyzAbcMatrix', 'sourcingCostComparison', 'verticalIntegration', 'transportModeComparison', 'transportConceptAssignment', 'routePlanningAssignment'])
 
 const validateMcQuestions = (data) => {
   if (!Array.isArray(data)) {

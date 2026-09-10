@@ -5,7 +5,7 @@ import { solutionDerivation } from '../src/utils/methodSolutionDerivation.js'
 import { evaluateMethodStep, getMethodReference } from '../src/utils/methodTrainerEvaluator.js'
 const bank = JSON.parse(readFileSync(new URL('../src/data/public/sampleMethodTrainerTasks.json', import.meta.url)))
 
-test('All eighteen tasks have readable derivations, block empty fields and accept complete correct inputs', () => {
+test('All twenty-seven tasks have readable derivations, block empty fields and accept complete correct inputs', () => {
   for (const m of bank.methods) for (const t of m.tasks) {
     const r = getMethodReference(m.engine, t), answers = {}
     const add = (prefix, values) => Object.entries(values).forEach(([key, value]) => { answers[`${prefix}.${key}`] = value })
@@ -18,7 +18,8 @@ test('All eighteen tasks have readable derivations, block empty fields and accep
     else if (m.engine === 'sourcingCostComparison') {
       for (const s of r.strategies) for (const key of ['material', 'risk', 'cost']) answers[`${key}.${s.id}`] = s[key]
       answers.cheapest = r.cheapest[0]; answers.reason = 'resilience'
-    } else { add('formula', { exact: 'exact', approximate: 'approximate' }); add('depth', r); answers.interpretation = 'ownShare' }
+    } else if (t.solutionDerivation) { for (const [key, value] of Object.entries(r)) answers[key] = Array.isArray(value) ? value[0] : value }
+    else { add('formula', { exact: 'exact', approximate: 'approximate' }); add('depth', r); answers.interpretation = 'ownShare' }
     for (let step = 1; step <= m.steps.length; step++) {
       const rows = solutionDerivation(m, t, step)
       assert(rows.length > 4)
@@ -49,9 +50,9 @@ test('Learning UI retains responsive and dark theme styles and no persistence', 
   assert(component.includes(':value="option.value"'))
 })
 
-test('Exactly eighteen distinct tasks train three different situations per method', () => {
-  assert.equal(bank.methods.length, 6)
-  assert.equal(bank.methods.flatMap(m => m.tasks).length, 18)
+test('Exactly twenty-seven distinct tasks train three different situations per method', () => {
+  assert.equal(bank.methods.length, 9)
+  assert.equal(bank.methods.flatMap(m => m.tasks).length, 27)
   const ids = new Set()
   for (const method of bank.methods) {
     assert.equal(method.tasks.length, 3)

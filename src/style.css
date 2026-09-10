@@ -1255,7 +1255,14 @@ button:focus-visible,
 .method-step.step-green { border-left-color: #2f8f5b; }
 .method-step.step-yellow { border-left-color: #d49a25; }
 .method-step.step-red { border-left-color: #c93f36; }
-.method-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.method-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 12px; }
+/* Long scenario labels need the full row, including on desktop. */
+.method-fields.method-fields-stacked { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.method-fields label { min-width: 0; overflow-wrap: anywhere; line-height: 1.5; }
+.method-fields input, .method-fields select { min-width: 0; max-width: 100%; }
+@media (max-width: 560px) {
+  .method-fields { grid-template-columns: minmax(0, 1fr); }
+}
 .method-fields label, .method-field-wide { display: grid; gap: 7px; color: #4f5d57; font-size: 0.9rem; font-weight: 800; }
 .method-field-wide { max-width: 420px; }
 .method-fields input, .method-fields select, .method-field-wide input, .method-field-wide select, .input-table input, .input-table select {
@@ -1270,6 +1277,9 @@ button:focus-visible,
 .method-solution-values h4 { margin: 0 0 8px; }
 .method-solution-values dl { margin: 0; }
 .method-solution-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 16px; padding: 7px 0; }
+.method-situation-label { display: grid; gap: 5px; min-width: 0; overflow-wrap: anywhere; line-height: 1.5; }
+.method-situation-description { font-weight: 400; }
+.method-solution-row.method-solution-row-situation { grid-template-columns: minmax(0, 1fr); }
 .method-solution-row + .method-solution-row { border-top: 1px solid currentColor; }
 .method-solution-row dt { font-weight: 600; }
 .method-solution-row dd { margin: 0; font-variant-numeric: tabular-nums; }

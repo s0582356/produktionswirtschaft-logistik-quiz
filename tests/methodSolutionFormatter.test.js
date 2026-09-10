@@ -34,7 +34,7 @@ test('ABC step 3 displays each class', () => {
 })
 
 test('all demo methods and steps produce readable reveal values without mutations', () => {
-  assert.equal(bank.methods.length, 6)
+  assert.equal(bank.methods.length, 9)
   for (const method of bank.methods) {
     assert.equal(method.examples.length, 2)
     for (const task of method.tasks) for (let step = 1; step <= method.steps.length; step++) {

@@ -2384,6 +2384,2784 @@
           "memoryHint": "Eigenanteil ist keine Rendite."
         }
       ]
+    },
+    {
+      "methodId": "verkehrstraeger-vergleich",
+      "methodTitle": "Verkehrsträger-Vergleich",
+      "category": "Verkehr & Transport",
+      "engine": "transportModeComparison",
+      "duration": "ca. 5 Min.",
+      "explanation": "Land, Luft und Wasser werden anhand fester Kriterien verglichen. Innerhalb von Land unterscheiden wir Straße, Schiene und Pipeline. Die drei Stufen sind eine didaktische Interpretation verbaler Modulmerkmale, keine allgemeingültigen Messwerte. Land wird in der Übersicht straßengeprägt betrachtet; seine Kostenstufe fasst unterschiedliche Landverkehre grob zusammen.",
+      "formula": [
+        "Distanz: kurz | mittel | weit",
+        "Erreichbarkeit/Flexibilität: gering | mittel | hoch",
+        "Abfertigungsgeschwindigkeit: schnell | mittel | aufwendig",
+        "Transportgeschwindigkeit: niedrig | mittel | hoch",
+        "Kosten: gering | mittel | hoch",
+        "Vergleiche zuerst innerhalb derselben Ebene. Wähle danach anhand des ausdrücklich betonten Kriteriums.",
+        "Besonderheiten erläutern den Träger und werden nicht bewertet."
+      ],
+      "formulaExamples": [
+        {
+          "title": "Logik der Zuordnung",
+          "formula": "Vergleichsmatrix ausfüllen → Situation zuordnen und Kriterium erkennen",
+          "example": "Eine fiktive Sendung soll zwischen zwei Flughäfen vor allem schnell transportiert werden; hohe Kosten sind akzeptiert. Transportgeschwindigkeit → Luft.",
+          "meaning": "Land, Luft und Wasser werden anhand fester Kriterien verglichen. Innerhalb von Land unterscheiden wir Straße, Schiene und Pipeline. Die drei Stufen sind eine didaktische Interpretation verbaler Modulmerkmale, keine allgemeingültigen Messwerte. Land wird in der Übersicht straßengeprägt betrachtet; seine Kostenstufe fasst unterschiedliche Landverkehre grob zusammen.",
+          "memoryHint": "Straße flexibel; Luft schnell und teuer; Wasser auf langer Strecke bei großer Menge eher günstig."
+        }
+      ],
+      "steps": [
+        "Vergleichsmatrix ausfüllen",
+        "Situation zuordnen und Kriterium erkennen"
+      ],
+      "microSteps": [
+        {
+          "action": "Vergleichsmatrix ausfüllen",
+          "why": "Gleiche Skalen machen den Vergleich nachvollziehbar.",
+          "logic": "Lies Kriterien und Aufgabenrahmen. Ordne je Zelle die relative Modulstufe zu.",
+          "pitfall": "Abfertigung und Transportgeschwindigkeit verwechseln."
+        },
+        {
+          "action": "Situation zuordnen und Kriterium erkennen",
+          "why": "Die Situation legt fest, welches Merkmal entscheidet.",
+          "logic": "Prüfe die verfügbaren Träger und wähle das im Text betonte Kriterium.",
+          "pitfall": "Aus der groben Land-Stufe eine feste Aussage für jeden Landverkehr ableiten."
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Tempo ist nicht Abfertigung",
+          "wrong": "Luft wird schnell abgefertigt, weil sie schnell fliegt.",
+          "whyWrong": "Flugtempo und Abfertigungsaufwand sind verschiedene Kriterien.",
+          "correct": "Luft: Transportgeschwindigkeit hoch, Abfertigung eher aufwendig.",
+          "memoryHint": "Flugtempo ≠ Abfertigung."
+        },
+        {
+          "title": "Netzbindung beachten",
+          "wrong": "Schiene ist so flexibel erreichbar wie Straße.",
+          "whyWrong": "Schiene hängt von Bahnhöfen und Schienennetz ab.",
+          "correct": "Im Modulvergleich: Schiene gering, Straße hoch.",
+          "memoryHint": "Netzbindung begrenzt Flexibilität."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "vt-vergleich-1",
+          "taskTitle": "Land, Luft und Wasser im Überblick",
+          "taskText": "Land, Luft und Wasser im Überblick Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Grundschema",
+          "learningFocus": "Grundschema",
+          "taskPitfall": "Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "givenData": {
+            "carriers": [
+              "Land",
+              "Luft",
+              "Wasser"
+            ],
+            "criteria": [
+              "Distanz",
+              "Erreichbarkeit/Flexibilität",
+              "Abfertigungsgeschwindigkeit",
+              "Transportgeschwindigkeit",
+              "Kosten"
+            ],
+            "scales": {
+              "Distanz": [
+                "kurz",
+                "mittel",
+                "weit"
+              ],
+              "Erreichbarkeit/Flexibilität": [
+                "gering",
+                "mittel",
+                "hoch"
+              ],
+              "Abfertigungsgeschwindigkeit": [
+                "schnell",
+                "mittel",
+                "aufwendig"
+              ],
+              "Transportgeschwindigkeit": [
+                "niedrig",
+                "mittel",
+                "hoch"
+              ],
+              "Kosten": [
+                "gering",
+                "mittel",
+                "hoch"
+              ]
+            }
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "matrix.0.0",
+                "label": "Land · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.1",
+                "label": "Land · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.2",
+                "label": "Land · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.3",
+                "label": "Land · Transportgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "niedrig",
+                    "label": "niedrig"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.4",
+                "label": "Land · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.0",
+                "label": "Luft · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.1",
+                "label": "Luft · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.2",
+                "label": "Luft · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.3",
+                "label": "Luft · Transportgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "niedrig",
+                    "label": "niedrig"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.4",
+                "label": "Luft · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.0",
+                "label": "Wasser · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.1",
+                "label": "Wasser · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.2",
+                "label": "Wasser · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.3",
+                "label": "Wasser · Transportgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "niedrig",
+                    "label": "niedrig"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.4",
+                "label": "Wasser · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "carrier",
+                "label": "Zwischen zwei Flughafenstandorten soll eine fiktive Sendung vor allem mit hohem Transporttempo bewegt werden. Hohe Kosten werden akzeptiert. Passender Träger?",
+                "options": [
+                  {
+                    "value": "Land",
+                    "label": "Land"
+                  },
+                  {
+                    "value": "Luft",
+                    "label": "Luft"
+                  },
+                  {
+                    "value": "Wasser",
+                    "label": "Wasser"
+                  }
+                ]
+              },
+              {
+                "key": "criterion",
+                "label": "Welches Vergleichskriterium wird ausdrücklich priorisiert?",
+                "options": [
+                  {
+                    "value": "Distanz",
+                    "label": "Distanz"
+                  },
+                  {
+                    "value": "Erreichbarkeit/Flexibilität",
+                    "label": "Erreichbarkeit/Flexibilität"
+                  },
+                  {
+                    "value": "Abfertigungsgeschwindigkeit",
+                    "label": "Abfertigungsgeschwindigkeit"
+                  },
+                  {
+                    "value": "Transportgeschwindigkeit",
+                    "label": "Transportgeschwindigkeit"
+                  },
+                  {
+                    "value": "Kosten",
+                    "label": "Kosten"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "matrix.0.0": "mittel",
+            "matrix.0.1": "hoch",
+            "matrix.0.2": "schnell",
+            "matrix.0.3": "mittel",
+            "matrix.0.4": "mittel",
+            "matrix.1.0": "weit",
+            "matrix.1.1": "gering",
+            "matrix.1.2": "aufwendig",
+            "matrix.1.3": "hoch",
+            "matrix.1.4": "hoch",
+            "matrix.2.0": "weit",
+            "matrix.2.1": "gering",
+            "matrix.2.2": "aufwendig",
+            "matrix.2.3": "niedrig",
+            "matrix.2.4": "gering",
+            "carrier": "Luft",
+            "criterion": "Transportgeschwindigkeit"
+          },
+          "solutionDerivation": [
+            [
+              "Land · Distanz → mittel: Die Übersicht bündelt kurze bis kontinentale Landtransporte in der mittleren Stufe.",
+              "Land · Erreichbarkeit/Flexibilität → hoch: Die straßengeprägte Übersicht betont flexible Erreichbarkeit.",
+              "Land · Abfertigungsgeschwindigkeit → schnell: Die Übersicht orientiert sich hier an der schnellen Straßenabfertigung.",
+              "Land · Transportgeschwindigkeit → mittel: Land liegt in dieser groben Einordnung zwischen Luft und Wasser.",
+              "Land · Kosten → mittel: Mischstufe: Straße ist auf langen Strecken teuer, Schiene bei großen Mengen eher günstig.",
+              "Luft · Distanz → weit: Luft verbindet auch weit entfernte Regionen.",
+              "Luft · Erreichbarkeit/Flexibilität → gering: Flughäfen sind erforderlich.",
+              "Luft · Abfertigungsgeschwindigkeit → aufwendig: Die Abwicklung am Flughafen ist vergleichsweise aufwendig.",
+              "Luft · Transportgeschwindigkeit → hoch: Luft bietet im Modulvergleich das höchste Transporttempo.",
+              "Luft · Kosten → hoch: Luft ist im Modulvergleich teuer.",
+              "Wasser · Distanz → weit: Wasser dient auch großen, interkontinentalen Distanzen.",
+              "Wasser · Erreichbarkeit/Flexibilität → gering: Häfen und Wasserwege begrenzen die Erreichbarkeit.",
+              "Wasser · Abfertigungsgeschwindigkeit → aufwendig: Der Hafenumschlag ist vergleichsweise aufwendig.",
+              "Wasser · Transportgeschwindigkeit → niedrig: Wasser wird relativ langsam eingeordnet.",
+              "Wasser · Kosten → gering: Lange Strecken und große Mengen begünstigen geringe Kosten."
+            ],
+            [
+              "Zwischen zwei Flughafenstandorten soll eine fiktive Sendung vor allem mit hohem Transporttempo bewegt werden. Hohe Kosten werden akzeptiert. Passender Träger? → Luft: Für diese Aufgabe entscheidet das hohe Transporttempo der Luft.",
+              "Welches Vergleichskriterium wird ausdrücklich priorisiert? → Transportgeschwindigkeit: Für diese Aufgabe entscheidet das hohe Transporttempo der Luft."
+            ]
+          ],
+          "displayData": [
+            "Die Skalen sind relative Lernstufen für diesen Modulvergleich. Kosten beziehen sich auf die beschriebenen Strecken.",
+            "Land: straßengeprägte Übersicht; Kosten mittel als grobe Mischung von Straße und Schiene."
+          ]
+        },
+        {
+          "taskId": "vt-vergleich-2",
+          "taskTitle": "Straße, Schiene und Pipeline unterscheiden",
+          "taskText": "Straße, Schiene und Pipeline unterscheiden Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Veränderte Situation",
+          "learningFocus": "Veränderte Situation",
+          "taskPitfall": "Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "givenData": {
+            "carriers": [
+              "Straße",
+              "Schiene",
+              "Pipeline"
+            ],
+            "criteria": [
+              "Distanz",
+              "Erreichbarkeit/Flexibilität",
+              "Abfertigungsgeschwindigkeit",
+              "Kosten"
+            ],
+            "scales": {
+              "Distanz": [
+                "kurz",
+                "mittel",
+                "weit"
+              ],
+              "Erreichbarkeit/Flexibilität": [
+                "gering",
+                "mittel",
+                "hoch"
+              ],
+              "Abfertigungsgeschwindigkeit": [
+                "schnell",
+                "mittel",
+                "aufwendig"
+              ],
+              "Kosten": [
+                "gering",
+                "mittel",
+                "hoch"
+              ]
+            }
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "matrix.0.0",
+                "label": "Straße · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.1",
+                "label": "Straße · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.2",
+                "label": "Straße · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.3",
+                "label": "Straße · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.0",
+                "label": "Schiene · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.1",
+                "label": "Schiene · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.2",
+                "label": "Schiene · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.3",
+                "label": "Schiene · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.0",
+                "label": "Pipeline · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.1",
+                "label": "Pipeline · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.2",
+                "label": "Pipeline · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.2.3",
+                "label": "Pipeline · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "carrier",
+                "label": "Fiktive Zustellorte wechseln häufig und sind über Straßen erreichbar. Entscheidend ist flexible Erreichbarkeit. Passender Träger?",
+                "options": [
+                  {
+                    "value": "Straße",
+                    "label": "Straße"
+                  },
+                  {
+                    "value": "Schiene",
+                    "label": "Schiene"
+                  },
+                  {
+                    "value": "Pipeline",
+                    "label": "Pipeline"
+                  }
+                ]
+              },
+              {
+                "key": "criterion",
+                "label": "Welches Vergleichskriterium wird ausdrücklich priorisiert?",
+                "options": [
+                  {
+                    "value": "Distanz",
+                    "label": "Distanz"
+                  },
+                  {
+                    "value": "Erreichbarkeit/Flexibilität",
+                    "label": "Erreichbarkeit/Flexibilität"
+                  },
+                  {
+                    "value": "Abfertigungsgeschwindigkeit",
+                    "label": "Abfertigungsgeschwindigkeit"
+                  },
+                  {
+                    "value": "Kosten",
+                    "label": "Kosten"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "matrix.0.0": "mittel",
+            "matrix.0.1": "hoch",
+            "matrix.0.2": "schnell",
+            "matrix.0.3": "hoch",
+            "matrix.1.0": "weit",
+            "matrix.1.1": "gering",
+            "matrix.1.2": "aufwendig",
+            "matrix.1.3": "gering",
+            "matrix.2.0": [
+              "mittel",
+              "weit"
+            ],
+            "matrix.2.1": "gering",
+            "matrix.2.2": "schnell",
+            "matrix.2.3": "gering",
+            "carrier": "Straße",
+            "criterion": "Erreichbarkeit/Flexibilität"
+          },
+          "solutionDerivation": [
+            [
+              "Straße · Distanz → mittel: Kurze bis kontinentale Strecken werden hier grob als mittel eingeordnet.",
+              "Straße · Erreichbarkeit/Flexibilität → hoch: Straße ist flexibel und gut erreichbar.",
+              "Straße · Abfertigungsgeschwindigkeit → schnell: Die Straßenabfertigung ist relativ schnell.",
+              "Straße · Kosten → hoch: Auf langen Strecken sind die Kosten eher hoch.",
+              "Schiene · Distanz → weit: Große bis kontinentale Distanzen passen zur Stufe weit.",
+              "Schiene · Erreichbarkeit/Flexibilität → gering: Bahnhöfe, Schienennetz und Zeitfenster binden den Transport.",
+              "Schiene · Abfertigungsgeschwindigkeit → aufwendig: Die Abfertigung ist relativ aufwendig.",
+              "Schiene · Kosten → gering: Lange Strecken und große Mengen begünstigen geringe Kosten.",
+              "Pipeline · Distanz → mittel oder weit: Das Modul umfasst lokale bis interkontinentale Distanzen; mittel und weit werden akzeptiert.",
+              "Pipeline · Erreichbarkeit/Flexibilität → gering: Feste Leitungswege begrenzen die Flexibilität.",
+              "Pipeline · Abfertigungsgeschwindigkeit → schnell: Kontinuierlicher Fluss wird didaktisch als schnell eingeordnet.",
+              "Pipeline · Kosten → gering: Die Kostenstufe gilt für lange Strecken; die hohe Investition ist davon zu unterscheiden."
+            ],
+            [
+              "Fiktive Zustellorte wechseln häufig und sind über Straßen erreichbar. Entscheidend ist flexible Erreichbarkeit. Passender Träger? → Straße: Straße erreicht wechselnde Orte flexibel; Schiene und Pipeline sind an feste Netze gebunden.",
+              "Welches Vergleichskriterium wird ausdrücklich priorisiert? → Erreichbarkeit/Flexibilität: Straße erreicht wechselnde Orte flexibel; Schiene und Pipeline sind an feste Netze gebunden."
+            ]
+          ],
+          "displayData": [
+            "Die Skalen sind relative Lernstufen für diesen Modulvergleich. Kosten beziehen sich auf die beschriebenen Strecken.",
+            "Besonderheiten (nur Erklärung): Straße universell verfügbar; Schiene mit Rangierbetrieb und nationalen Besonderheiten; Pipeline für Gase und Flüssigkeiten, mit hohen Investitionen und festen Wegen.",
+            "Pipeline-Distanz: mittel oder weit ist zulässig. Transportgeschwindigkeit wird in diesem Teilvergleich nicht separat bewertet."
+          ]
+        },
+        {
+          "taskId": "vt-vergleich-3",
+          "taskTitle": "Prüfungsfalle: Schiene und Binnenschifffahrt ähneln sich",
+          "taskText": "Prüfungsfalle: Schiene und Binnenschifffahrt ähneln sich Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Typische Prüfungsfalle",
+          "learningFocus": "Typische Prüfungsfalle",
+          "taskPitfall": "Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Gleiche Stufen bedeuten keine freie Austauschbarkeit: Die vorhandenen Verkehrswege müssen passen.",
+          "givenData": {
+            "carriers": [
+              "Schiene",
+              "Binnenschifffahrt"
+            ],
+            "criteria": [
+              "Distanz",
+              "Erreichbarkeit/Flexibilität",
+              "Abfertigungsgeschwindigkeit",
+              "Kosten"
+            ],
+            "scales": {
+              "Distanz": [
+                "kurz",
+                "mittel",
+                "weit"
+              ],
+              "Erreichbarkeit/Flexibilität": [
+                "gering",
+                "mittel",
+                "hoch"
+              ],
+              "Abfertigungsgeschwindigkeit": [
+                "schnell",
+                "mittel",
+                "aufwendig"
+              ],
+              "Kosten": [
+                "gering",
+                "mittel",
+                "hoch"
+              ]
+            }
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "matrix.0.0",
+                "label": "Schiene · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.1",
+                "label": "Schiene · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.2",
+                "label": "Schiene · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.0.3",
+                "label": "Schiene · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.0",
+                "label": "Binnenschifffahrt · Distanz",
+                "options": [
+                  {
+                    "value": "kurz",
+                    "label": "kurz"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "weit",
+                    "label": "weit"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.1",
+                "label": "Binnenschifffahrt · Erreichbarkeit/Flexibilität",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.2",
+                "label": "Binnenschifffahrt · Abfertigungsgeschwindigkeit",
+                "options": [
+                  {
+                    "value": "schnell",
+                    "label": "schnell"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "aufwendig",
+                    "label": "aufwendig"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.1.3",
+                "label": "Binnenschifffahrt · Kosten",
+                "options": [
+                  {
+                    "value": "gering",
+                    "label": "gering"
+                  },
+                  {
+                    "value": "mittel",
+                    "label": "mittel"
+                  },
+                  {
+                    "value": "hoch",
+                    "label": "hoch"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "carrier",
+                "label": "Ein fiktiver Betrieb versendet eine große Menge über eine lange Strecke. Beide Standorte haben einen Binnenhafen, aber keinen Bahnanschluss. Niedrige Kosten entscheiden; langsame Beförderung ist akzeptiert. Passender Träger?",
+                "options": [
+                  {
+                    "value": "Schiene",
+                    "label": "Schiene"
+                  },
+                  {
+                    "value": "Binnenschifffahrt",
+                    "label": "Binnenschifffahrt"
+                  }
+                ]
+              },
+              {
+                "key": "criterion",
+                "label": "Welches Vergleichskriterium wird ausdrücklich priorisiert?",
+                "options": [
+                  {
+                    "value": "Distanz",
+                    "label": "Distanz"
+                  },
+                  {
+                    "value": "Erreichbarkeit/Flexibilität",
+                    "label": "Erreichbarkeit/Flexibilität"
+                  },
+                  {
+                    "value": "Abfertigungsgeschwindigkeit",
+                    "label": "Abfertigungsgeschwindigkeit"
+                  },
+                  {
+                    "value": "Kosten",
+                    "label": "Kosten"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "matrix.0.0": "weit",
+            "matrix.0.1": "gering",
+            "matrix.0.2": "aufwendig",
+            "matrix.0.3": "gering",
+            "matrix.1.0": "weit",
+            "matrix.1.1": "gering",
+            "matrix.1.2": "aufwendig",
+            "matrix.1.3": "gering",
+            "carrier": "Binnenschifffahrt",
+            "criterion": "Kosten"
+          },
+          "solutionDerivation": [
+            [
+              "Schiene · Distanz → weit: Große bis kontinentale Distanzen entsprechen hier weit.",
+              "Schiene · Erreichbarkeit/Flexibilität → gering: Bahnhöfe und Schienennetz begrenzen die Erreichbarkeit.",
+              "Schiene · Abfertigungsgeschwindigkeit → aufwendig: Abfertigung ist relativ aufwendig.",
+              "Schiene · Kosten → gering: Bei langen Strecken und großen Mengen sind die Kosten eher gering.",
+              "Binnenschifffahrt · Distanz → weit: Große bis kontinentale Distanzen entsprechen hier weit.",
+              "Binnenschifffahrt · Erreichbarkeit/Flexibilität → gering: Häfen, Flüsse und Kanäle begrenzen die Erreichbarkeit.",
+              "Binnenschifffahrt · Abfertigungsgeschwindigkeit → aufwendig: Abfertigung ist relativ aufwendig.",
+              "Binnenschifffahrt · Kosten → gering: Bei langen Strecken und großen Mengen sind die Kosten eher gering."
+            ],
+            [
+              "Ein fiktiver Betrieb versendet eine große Menge über eine lange Strecke. Beide Standorte haben einen Binnenhafen, aber keinen Bahnanschluss. Niedrige Kosten entscheiden; langsame Beförderung ist akzeptiert. Passender Träger? → Binnenschifffahrt: Beide Träger sind bei langen Strecken und großen Mengen eher günstig. Die Binnenhäfen und der fehlende Bahnanschluss machen hier Binnenschifffahrt passend.",
+              "Welches Vergleichskriterium wird ausdrücklich priorisiert? → Kosten: Beide Träger sind bei langen Strecken und großen Mengen eher günstig. Die Binnenhäfen und der fehlende Bahnanschluss machen hier Binnenschifffahrt passend."
+            ]
+          ],
+          "displayData": [
+            "Die Skalen sind relative Lernstufen für diesen Modulvergleich. Kosten beziehen sich auf die beschriebenen Strecken."
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "title": "Tempo bei Luft",
+          "givenData": "Fiktiver Transport zwischen zwei Flughafenstandorten; das Transporttempo ist wichtiger als die Kosten.",
+          "steps": [
+            "Kriterium erkennen: Hier zählt die Transportgeschwindigkeit.",
+            "Vergleichen: Luft hoch, Land mittel, Wasser niedrig in der groben Modulskala.",
+            "Gegenprüfen: Hohe Kosten werden im Szenario ausdrücklich akzeptiert."
+          ],
+          "result": "Für diese Aufgabe passt Luft.",
+          "takeaway": "Transporttempo und Kosten getrennt betrachten.",
+          "pitfall": "Schnelles Fliegen mit schneller Abfertigung gleichsetzen."
+        },
+        {
+          "title": "Netzbindung bei Schiene und Wasser",
+          "givenData": "Ein fiktiver Versand verbindet zwei Binnenhäfen ohne Bahnanschluss. Große Mengen sollen auf langer Strecke günstig bewegt werden.",
+          "steps": [
+            "Vergleichen: Schiene und Binnenschifffahrt haben bei langen Strecken und großen Mengen eher geringe Kosten.",
+            "Anschlüsse prüfen: Die Binnenhäfen stehen zur Verfügung; Bahnanschlüsse fehlen.",
+            "Zuordnen: Unter diesen Bedingungen passt Binnenschifffahrt."
+          ],
+          "result": "Binnenschifffahrt; gleiche Kostenstufe allein macht beide Träger nicht austauschbar.",
+          "takeaway": "Kosten und Erreichbarkeit zusammen lesen.",
+          "pitfall": "Bei ähnlichen Kosten die vorhandenen Anschlüsse ignorieren."
+        }
+      ]
+    },
+    {
+      "methodId": "transportkonzepte-zuordnung",
+      "methodTitle": "Transportkonzepte-Zuordnung",
+      "category": "Verkehr & Transport",
+      "engine": "transportConceptAssignment",
+      "duration": "ca. 5 Min.",
+      "explanation": "Suche das kennzeichnende Detail: Wer betreibt ein Lager, wem gehört die Ware, wird eine feste Route oder ein Gebiet bedient und wer kommissioniert? Ordne anhand dieser Modulmerkmale zu.",
+      "formula": [
+        "Direktbelieferung: volle Ladung direkt vom Lieferanten zum Abnehmer.",
+        "Konsignationslager: beim Kunden; Eigentum bleibt bis zur Entnahme beim Lieferanten.",
+        "Speditionslager: Dienstleister betreibt Lager nahe dem Abnehmer und beliefert just-in-time.",
+        "Ansiedlung in Kundennähe: neues Lieferantenwerk nahe dem Kunden, etwa mit Förderanlage.",
+        "Milkrun: feste Route, gleiche Lieferanten, feste Zeitfenster und Leergutrücknahme.",
+        "Gebietsspediteur: abgegrenztes Gebiet, Bündelung am Umschlagpunkt, volle Direktladung zum Kunden.",
+        "Cross-Docking I: Lieferant kommissioniert kundengenau; Umschlagpunkt reicht weiter.",
+        "Cross-Docking II: artikelreine Paletten; Umschlagpunkt kommissioniert kundengenau."
+      ],
+      "formulaExamples": [
+        {
+          "title": "Logik der Zuordnung",
+          "formula": "Konzepte zuordnen → Kennzeichen gegenprüfen",
+          "example": "Ein fiktiver Zulieferer liefert artikelreine Paletten. Erst am Umschlagpunkt entstehen Kundensendungen → Cross-Docking II.",
+          "meaning": "Suche das kennzeichnende Detail: Wer betreibt ein Lager, wem gehört die Ware, wird eine feste Route oder ein Gebiet bedient und wer kommissioniert? Ordne anhand dieser Modulmerkmale zu.",
+          "memoryHint": "CD I: Lieferant kommissioniert. CD II: Umschlagpunkt kommissioniert."
+        }
+      ],
+      "steps": [
+        "Konzepte zuordnen",
+        "Kennzeichen gegenprüfen"
+      ],
+      "microSteps": [
+        {
+          "action": "Konzepte zuordnen",
+          "why": "Jedes Szenario enthält ein unterscheidendes Merkmal.",
+          "logic": "Lies das Szenario und gleiche es mit der Logikbox ab.",
+          "pitfall": "Alle Dienstleister pauschal als Gebietsspediteur einordnen."
+        },
+        {
+          "action": "Kennzeichen gegenprüfen",
+          "why": "Ähnliche Konzepte unterscheiden sich in einem entscheidenden Detail.",
+          "logic": "Wähle je Situation die Begründung, die das Nachbarkonzept ausschließt.",
+          "pitfall": "Beim Cross-Docking nicht auf den Ort der Kommissionierung achten."
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Route oder Gebiet?",
+          "wrong": "Feste Route mit Zeitfenstern und Leergut = Gebietsspediteur.",
+          "whyWrong": "Das Kennzeichen des Gebietsspediteurs ist das Vertragsgebiet mit Bündelung am Umschlagpunkt.",
+          "correct": "Die beschriebene feste Route ist ein Milkrun.",
+          "memoryHint": "Route mit Leergut = Milkrun; Gebiet mit Umschlagpunkt = Gebietsspediteur."
+        },
+        {
+          "title": "Lager unterscheiden",
+          "wrong": "Ein Dienstleisterlager nahe dem Kunden ist automatisch ein Konsignationslager.",
+          "whyWrong": "Für Konsignation zählt das Lager beim Kunden mit Lieferanteneigentum bis zur Entnahme.",
+          "correct": "Dienstleisterlager nahe dem Kunden mit JiT-Belieferung = Speditionslager.",
+          "memoryHint": "Ort, Betreiber und Eigentum getrennt prüfen."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "tk-zuordnung-1",
+          "taskTitle": "Direktbelieferung und Standorte",
+          "taskText": "Direktbelieferung und Standorte Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Grundschema",
+          "learningFocus": "Grundschema",
+          "taskPitfall": "Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "givenData": {
+            "concepts": [
+              "Direktbelieferung",
+              "Konsignationslager",
+              "Speditionslager",
+              "Ansiedlung in Kundennähe",
+              "Milkrun",
+              "Gebietsspediteur",
+              "Cross-Docking I",
+              "Cross-Docking II"
+            ],
+            "scenarios": [
+              "Ein fiktiver Hersteller fährt eine volle Fahrzeugladung unmittelbar zum Abnehmer, ohne Zwischenlager.",
+              "Im Werk eines fiktiven Kunden liegt ein Bestand, der bis zur Entnahme rechtlich dem Zulieferer gehört.",
+              "Ein Dienstleister hält nahe einem fiktiven Montagewerk ein Lager vor und bringt daraus Teile just-in-time ans Band.",
+              "Ein fiktiver Zulieferer errichtet neben dem Kunden ein Produktionswerk und verbindet es per Förderanlage."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "concept.0",
+                "label": "Situation 1: Ein fiktiver Hersteller fährt eine volle Fahrzeugladung unmittelbar zum Abnehmer, ohne Zwischenlager.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.1",
+                "label": "Situation 2: Im Werk eines fiktiven Kunden liegt ein Bestand, der bis zur Entnahme rechtlich dem Zulieferer gehört.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.2",
+                "label": "Situation 3: Ein Dienstleister hält nahe einem fiktiven Montagewerk ein Lager vor und bringt daraus Teile just-in-time ans Band.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.3",
+                "label": "Situation 4: Ein fiktiver Zulieferer errichtet neben dem Kunden ein Produktionswerk und verbindet es per Förderanlage.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Detail entscheidet? Ein fiktiver Hersteller fährt eine volle Fahrzeugladung unmittelbar zum Abnehmer, ohne Zwischenlager.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Detail entscheidet? Im Werk eines fiktiven Kunden liegt ein Bestand, der bis zur Entnahme rechtlich dem Zulieferer gehört.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.2",
+                "label": "Situation 3: Welches Detail entscheidet? Ein Dienstleister hält nahe einem fiktiven Montagewerk ein Lager vor und bringt daraus Teile just-in-time ans Band.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.3",
+                "label": "Situation 4: Welches Detail entscheidet? Ein fiktiver Zulieferer errichtet neben dem Kunden ein Produktionswerk und verbindet es per Förderanlage.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "concept.0": "Direktbelieferung",
+            "reason.0": "Volle Ladung direkt zum Abnehmer",
+            "concept.1": "Konsignationslager",
+            "reason.1": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+            "concept.2": "Speditionslager",
+            "reason.2": "Dienstleisterlager nahe dem Kunden",
+            "concept.3": "Ansiedlung in Kundennähe",
+            "reason.3": "Neues Lieferantenwerk neben dem Kunden"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Ein fiktiver Hersteller fährt eine volle Fahrzeugladung unmittelbar zum Abnehmer, ohne Zwischenlager. → Direktbelieferung: Direktbelieferung: volle Ladung direkt vom Lieferanten zum Abnehmer.",
+              "Situation 2: Im Werk eines fiktiven Kunden liegt ein Bestand, der bis zur Entnahme rechtlich dem Zulieferer gehört. → Konsignationslager: Konsignationslager: beim Kunden; Eigentum bleibt bis zur Entnahme beim Lieferanten.",
+              "Situation 3: Ein Dienstleister hält nahe einem fiktiven Montagewerk ein Lager vor und bringt daraus Teile just-in-time ans Band. → Speditionslager: Speditionslager: Dienstleister betreibt Lager nahe dem Abnehmer und beliefert just-in-time.",
+              "Situation 4: Ein fiktiver Zulieferer errichtet neben dem Kunden ein Produktionswerk und verbindet es per Förderanlage. → Ansiedlung in Kundennähe: Ansiedlung in Kundennähe: neues Lieferantenwerk nahe dem Kunden, etwa mit Förderanlage."
+            ],
+            [
+              "Situation 1: Welches Detail entscheidet? Ein fiktiver Hersteller fährt eine volle Fahrzeugladung unmittelbar zum Abnehmer, ohne Zwischenlager. → Volle Ladung direkt zum Abnehmer: Direktbelieferung: volle Ladung direkt vom Lieferanten zum Abnehmer.",
+              "Situation 2: Welches Detail entscheidet? Im Werk eines fiktiven Kunden liegt ein Bestand, der bis zur Entnahme rechtlich dem Zulieferer gehört. → Beim Kunden; Lieferanteneigentum bis Entnahme: Konsignationslager: beim Kunden; Eigentum bleibt bis zur Entnahme beim Lieferanten.",
+              "Situation 3: Welches Detail entscheidet? Ein Dienstleister hält nahe einem fiktiven Montagewerk ein Lager vor und bringt daraus Teile just-in-time ans Band. → Dienstleisterlager nahe dem Kunden: Speditionslager: Dienstleister betreibt Lager nahe dem Abnehmer und beliefert just-in-time.",
+              "Situation 4: Welches Detail entscheidet? Ein fiktiver Zulieferer errichtet neben dem Kunden ein Produktionswerk und verbindet es per Förderanlage. → Neues Lieferantenwerk neben dem Kunden: Ansiedlung in Kundennähe: neues Lieferantenwerk nahe dem Kunden, etwa mit Förderanlage."
+            ]
+          ]
+        },
+        {
+          "taskId": "tk-zuordnung-2",
+          "taskTitle": "Bündelung und Cross-Docking",
+          "taskText": "Bündelung und Cross-Docking Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Veränderte Situation",
+          "learningFocus": "Veränderte Situation",
+          "taskPitfall": "Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "givenData": {
+            "concepts": [
+              "Direktbelieferung",
+              "Konsignationslager",
+              "Speditionslager",
+              "Ansiedlung in Kundennähe",
+              "Milkrun",
+              "Gebietsspediteur",
+              "Cross-Docking I",
+              "Cross-Docking II"
+            ],
+            "scenarios": [
+              "Ein Vertrag überträgt einem Spediteur eine ganze Lieferregion. Er bündelt Sendungen am Umschlagpunkt zu vollen Ladungen für ein fiktives Werk.",
+              "Ein Fahrzeug bedient dieselben drei fiktiven Zulieferer auf fester Route zu festen Zeitfenstern und nimmt leere Behälter zurück.",
+              "Ein fiktiver Lieferant stellt Sendungen bereits kundengenau zusammen. Der Umschlagpunkt leitet diese ohne Lagerung weiter.",
+              "Ein fiktiver Lieferant schickt artikelreine Paletten. Am Umschlagpunkt werden daraus die einzelnen Kundensendungen gebildet."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "concept.0",
+                "label": "Situation 1: Ein Vertrag überträgt einem Spediteur eine ganze Lieferregion. Er bündelt Sendungen am Umschlagpunkt zu vollen Ladungen für ein fiktives Werk.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.1",
+                "label": "Situation 2: Ein Fahrzeug bedient dieselben drei fiktiven Zulieferer auf fester Route zu festen Zeitfenstern und nimmt leere Behälter zurück.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.2",
+                "label": "Situation 3: Ein fiktiver Lieferant stellt Sendungen bereits kundengenau zusammen. Der Umschlagpunkt leitet diese ohne Lagerung weiter.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.3",
+                "label": "Situation 4: Ein fiktiver Lieferant schickt artikelreine Paletten. Am Umschlagpunkt werden daraus die einzelnen Kundensendungen gebildet.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Detail entscheidet? Ein Vertrag überträgt einem Spediteur eine ganze Lieferregion. Er bündelt Sendungen am Umschlagpunkt zu vollen Ladungen für ein fiktives Werk.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Detail entscheidet? Ein Fahrzeug bedient dieselben drei fiktiven Zulieferer auf fester Route zu festen Zeitfenstern und nimmt leere Behälter zurück.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.2",
+                "label": "Situation 3: Welches Detail entscheidet? Ein fiktiver Lieferant stellt Sendungen bereits kundengenau zusammen. Der Umschlagpunkt leitet diese ohne Lagerung weiter.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.3",
+                "label": "Situation 4: Welches Detail entscheidet? Ein fiktiver Lieferant schickt artikelreine Paletten. Am Umschlagpunkt werden daraus die einzelnen Kundensendungen gebildet.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "concept.0": "Gebietsspediteur",
+            "reason.0": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+            "concept.1": "Milkrun",
+            "reason.1": "Feste Route, Zeitfenster und Leergutrücknahme",
+            "concept.2": "Cross-Docking I",
+            "reason.2": "Lieferant kommissioniert kundengenau",
+            "concept.3": "Cross-Docking II",
+            "reason.3": "Umschlagpunkt kommissioniert kundengenau"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Ein Vertrag überträgt einem Spediteur eine ganze Lieferregion. Er bündelt Sendungen am Umschlagpunkt zu vollen Ladungen für ein fiktives Werk. → Gebietsspediteur: Gebietsspediteur: abgegrenztes Gebiet, Bündelung am Umschlagpunkt, volle Direktladung zum Kunden.",
+              "Situation 2: Ein Fahrzeug bedient dieselben drei fiktiven Zulieferer auf fester Route zu festen Zeitfenstern und nimmt leere Behälter zurück. → Milkrun: Milkrun: feste Route, gleiche Lieferanten, feste Zeitfenster und Leergutrücknahme.",
+              "Situation 3: Ein fiktiver Lieferant stellt Sendungen bereits kundengenau zusammen. Der Umschlagpunkt leitet diese ohne Lagerung weiter. → Cross-Docking I: Cross-Docking I: Lieferant kommissioniert kundengenau; Umschlagpunkt reicht weiter.",
+              "Situation 4: Ein fiktiver Lieferant schickt artikelreine Paletten. Am Umschlagpunkt werden daraus die einzelnen Kundensendungen gebildet. → Cross-Docking II: Cross-Docking II: artikelreine Paletten; Umschlagpunkt kommissioniert kundengenau."
+            ],
+            [
+              "Situation 1: Welches Detail entscheidet? Ein Vertrag überträgt einem Spediteur eine ganze Lieferregion. Er bündelt Sendungen am Umschlagpunkt zu vollen Ladungen für ein fiktives Werk. → Vertragsgebiet und Bündelung am Umschlagpunkt: Gebietsspediteur: abgegrenztes Gebiet, Bündelung am Umschlagpunkt, volle Direktladung zum Kunden.",
+              "Situation 2: Welches Detail entscheidet? Ein Fahrzeug bedient dieselben drei fiktiven Zulieferer auf fester Route zu festen Zeitfenstern und nimmt leere Behälter zurück. → Feste Route, Zeitfenster und Leergutrücknahme: Milkrun: feste Route, gleiche Lieferanten, feste Zeitfenster und Leergutrücknahme.",
+              "Situation 3: Welches Detail entscheidet? Ein fiktiver Lieferant stellt Sendungen bereits kundengenau zusammen. Der Umschlagpunkt leitet diese ohne Lagerung weiter. → Lieferant kommissioniert kundengenau: Cross-Docking I: Lieferant kommissioniert kundengenau; Umschlagpunkt reicht weiter.",
+              "Situation 4: Welches Detail entscheidet? Ein fiktiver Lieferant schickt artikelreine Paletten. Am Umschlagpunkt werden daraus die einzelnen Kundensendungen gebildet. → Umschlagpunkt kommissioniert kundengenau: Cross-Docking II: artikelreine Paletten; Umschlagpunkt kommissioniert kundengenau."
+            ]
+          ]
+        },
+        {
+          "taskId": "tk-zuordnung-3",
+          "taskTitle": "Prüfungsfalle: ähnliche Konzepte trennen",
+          "taskText": "Prüfungsfalle: ähnliche Konzepte trennen Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Typische Prüfungsfalle",
+          "learningFocus": "Typische Prüfungsfalle",
+          "taskPitfall": "Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Entscheidend sind Eigentum, Route oder Gebiet sowie der Ort der Kommissionierung.",
+          "givenData": {
+            "concepts": [
+              "Direktbelieferung",
+              "Konsignationslager",
+              "Speditionslager",
+              "Ansiedlung in Kundennähe",
+              "Milkrun",
+              "Gebietsspediteur",
+              "Cross-Docking I",
+              "Cross-Docking II"
+            ],
+            "scenarios": [
+              "Ein fiktiver Kunde entnimmt Teile aus seinem Lager. Erst dabei geht das Eigentum vom Lieferanten auf ihn über.",
+              "Eine festgelegte Route verbindet dieselben fiktiven Zulieferer zu festen Zeitfenstern einschließlich Leergutrücknahme. Eine regionale Bündelung am eigenen Umschlagpunkt ist nicht vorgesehen.",
+              "Artikelreine Paletten eines fiktiven Lieferanten werden ohne Einlagerung weiterverarbeitet: Das Team am Umschlagpunkt stellt die Kundensendungen zusammen."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "concept.0",
+                "label": "Situation 1: Ein fiktiver Kunde entnimmt Teile aus seinem Lager. Erst dabei geht das Eigentum vom Lieferanten auf ihn über.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.1",
+                "label": "Situation 2: Eine festgelegte Route verbindet dieselben fiktiven Zulieferer zu festen Zeitfenstern einschließlich Leergutrücknahme. Eine regionale Bündelung am eigenen Umschlagpunkt ist nicht vorgesehen.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              },
+              {
+                "key": "concept.2",
+                "label": "Situation 3: Artikelreine Paletten eines fiktiven Lieferanten werden ohne Einlagerung weiterverarbeitet: Das Team am Umschlagpunkt stellt die Kundensendungen zusammen.",
+                "options": [
+                  {
+                    "value": "Direktbelieferung",
+                    "label": "Direktbelieferung"
+                  },
+                  {
+                    "value": "Konsignationslager",
+                    "label": "Konsignationslager"
+                  },
+                  {
+                    "value": "Speditionslager",
+                    "label": "Speditionslager"
+                  },
+                  {
+                    "value": "Ansiedlung in Kundennähe",
+                    "label": "Ansiedlung in Kundennähe"
+                  },
+                  {
+                    "value": "Milkrun",
+                    "label": "Milkrun"
+                  },
+                  {
+                    "value": "Gebietsspediteur",
+                    "label": "Gebietsspediteur"
+                  },
+                  {
+                    "value": "Cross-Docking I",
+                    "label": "Cross-Docking I"
+                  },
+                  {
+                    "value": "Cross-Docking II",
+                    "label": "Cross-Docking II"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Detail entscheidet? Ein fiktiver Kunde entnimmt Teile aus seinem Lager. Erst dabei geht das Eigentum vom Lieferanten auf ihn über.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Detail entscheidet? Eine festgelegte Route verbindet dieselben fiktiven Zulieferer zu festen Zeitfenstern einschließlich Leergutrücknahme. Eine regionale Bündelung am eigenen Umschlagpunkt ist nicht vorgesehen.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              },
+              {
+                "key": "reason.2",
+                "label": "Situation 3: Welches Detail entscheidet? Artikelreine Paletten eines fiktiven Lieferanten werden ohne Einlagerung weiterverarbeitet: Das Team am Umschlagpunkt stellt die Kundensendungen zusammen.",
+                "options": [
+                  {
+                    "value": "Volle Ladung direkt zum Abnehmer",
+                    "label": "Volle Ladung direkt zum Abnehmer"
+                  },
+                  {
+                    "value": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+                    "label": "Beim Kunden; Lieferanteneigentum bis Entnahme"
+                  },
+                  {
+                    "value": "Dienstleisterlager nahe dem Kunden",
+                    "label": "Dienstleisterlager nahe dem Kunden"
+                  },
+                  {
+                    "value": "Neues Lieferantenwerk neben dem Kunden",
+                    "label": "Neues Lieferantenwerk neben dem Kunden"
+                  },
+                  {
+                    "value": "Feste Route, Zeitfenster und Leergutrücknahme",
+                    "label": "Feste Route, Zeitfenster und Leergutrücknahme"
+                  },
+                  {
+                    "value": "Vertragsgebiet und Bündelung am Umschlagpunkt",
+                    "label": "Vertragsgebiet und Bündelung am Umschlagpunkt"
+                  },
+                  {
+                    "value": "Lieferant kommissioniert kundengenau",
+                    "label": "Lieferant kommissioniert kundengenau"
+                  },
+                  {
+                    "value": "Umschlagpunkt kommissioniert kundengenau",
+                    "label": "Umschlagpunkt kommissioniert kundengenau"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "concept.0": "Konsignationslager",
+            "reason.0": "Beim Kunden; Lieferanteneigentum bis Entnahme",
+            "concept.1": "Milkrun",
+            "reason.1": "Feste Route, Zeitfenster und Leergutrücknahme",
+            "concept.2": "Cross-Docking II",
+            "reason.2": "Umschlagpunkt kommissioniert kundengenau"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Ein fiktiver Kunde entnimmt Teile aus seinem Lager. Erst dabei geht das Eigentum vom Lieferanten auf ihn über. → Konsignationslager: Konsignationslager: beim Kunden; Eigentum bleibt bis zur Entnahme beim Lieferanten.",
+              "Situation 2: Eine festgelegte Route verbindet dieselben fiktiven Zulieferer zu festen Zeitfenstern einschließlich Leergutrücknahme. Eine regionale Bündelung am eigenen Umschlagpunkt ist nicht vorgesehen. → Milkrun: Milkrun: feste Route, gleiche Lieferanten, feste Zeitfenster und Leergutrücknahme.",
+              "Situation 3: Artikelreine Paletten eines fiktiven Lieferanten werden ohne Einlagerung weiterverarbeitet: Das Team am Umschlagpunkt stellt die Kundensendungen zusammen. → Cross-Docking II: Cross-Docking II: artikelreine Paletten; Umschlagpunkt kommissioniert kundengenau."
+            ],
+            [
+              "Situation 1: Welches Detail entscheidet? Ein fiktiver Kunde entnimmt Teile aus seinem Lager. Erst dabei geht das Eigentum vom Lieferanten auf ihn über. → Beim Kunden; Lieferanteneigentum bis Entnahme: Konsignationslager: beim Kunden; Eigentum bleibt bis zur Entnahme beim Lieferanten.",
+              "Situation 2: Welches Detail entscheidet? Eine festgelegte Route verbindet dieselben fiktiven Zulieferer zu festen Zeitfenstern einschließlich Leergutrücknahme. Eine regionale Bündelung am eigenen Umschlagpunkt ist nicht vorgesehen. → Feste Route, Zeitfenster und Leergutrücknahme: Milkrun: feste Route, gleiche Lieferanten, feste Zeitfenster und Leergutrücknahme.",
+              "Situation 3: Welches Detail entscheidet? Artikelreine Paletten eines fiktiven Lieferanten werden ohne Einlagerung weiterverarbeitet: Das Team am Umschlagpunkt stellt die Kundensendungen zusammen. → Umschlagpunkt kommissioniert kundengenau: Cross-Docking II: artikelreine Paletten; Umschlagpunkt kommissioniert kundengenau."
+            ]
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "title": "Konsignation erkennen",
+          "givenData": "Im Lager eines fiktiven Kunden gehört der Bestand bis zur Entnahme dem Lieferanten.",
+          "steps": [
+            "Ort prüfen: Das Lager liegt beim Kunden.",
+            "Eigentum prüfen: Es geht erst mit der Entnahme über.",
+            "Zuordnen: Beide Details kennzeichnen das Konsignationslager."
+          ],
+          "result": "Konsignationslager.",
+          "takeaway": "Konsignation: Kunde lagert, Lieferant bleibt bis Entnahme Eigentümer.",
+          "pitfall": "Jedes kundennahe Lager als Speditionslager einordnen."
+        },
+        {
+          "title": "Kommissionierung unterscheiden",
+          "givenData": "Ein fiktiver Lieferant sendet artikelreine Paletten; das Personal am Umschlagpunkt bildet die Kundensendungen.",
+          "steps": [
+            "Kennzeichen suchen: Wer kommissioniert kundengenau?",
+            "Abgrenzen: Der Lieferant liefert artikelrein, also noch nicht kundengenau.",
+            "Zuordnen: Kommissionierung am Umschlagpunkt entspricht Cross-Docking II."
+          ],
+          "result": "Cross-Docking II.",
+          "takeaway": "I beim Lieferanten, II am Umschlagpunkt.",
+          "pitfall": "Durchreichen ohne Einlagerung allein unterscheidet I und II nicht."
+        }
+      ]
+    },
+    {
+      "methodId": "routenplanung-tourenplanung",
+      "methodTitle": "Routenplanung / Tourenplanung",
+      "category": "Verkehr & Transport",
+      "engine": "routePlanningAssignment",
+      "duration": "ca. 5 Min.",
+      "explanation": "Diese Lernmethode übt die Begriffe und Tourenarten des Moduls. Tourenplanung fasst mittel- und langfristig Transportaufträge zusammen. Routenplanung betrifft kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour. Wir erkennen nur das beschriebene Muster; es wird nichts berechnet.",
+      "formula": [
+        "Tourenplanung: mittel- und langfristig Transportaufträge zusammenfassen, für regelmäßige Fahrzeugauslastung und geringe Stoppzeiten.",
+        "Routenplanung: kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour planen.",
+        "Direktverkehr: direkte Fahrt von einem Start zu einem Ziel.",
+        "Sternverkehr: getrennte Fahrten vom Zentrum zu einzelnen Punkten und zurück.",
+        "Ringverkehr: mehrere Punkte nacheinander in einer zusammenhängenden Tour bedienen."
+      ],
+      "formulaExamples": [
+        {
+          "title": "Logik der Zuordnung",
+          "formula": "Begriff oder Tourenart zuordnen → Zuordnung mit Modulmerkmal begründen",
+          "example": "Ein fiktives Depot fährt erst zur Station K und zurück, dann zur Station M und zurück → Sternverkehr.",
+          "meaning": "Diese Lernmethode übt die Begriffe und Tourenarten des Moduls. Tourenplanung fasst mittel- und langfristig Transportaufträge zusammen. Routenplanung betrifft kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour. Wir erkennen nur das beschriebene Muster; es wird nichts berechnet.",
+          "memoryHint": "Planungsbegriff: Fristigkeit und Zweck prüfen. Tourenart: Fahrmuster prüfen."
+        }
+      ],
+      "steps": [
+        "Begriff oder Tourenart zuordnen",
+        "Zuordnung mit Modulmerkmal begründen"
+      ],
+      "microSteps": [
+        {
+          "action": "Begriff oder Tourenart zuordnen",
+          "why": "Begriffe und Tourenarten beantworten unterschiedliche Fragen.",
+          "logic": "Bei Planung auf Fristigkeit und Zweck achten; bei Fahrten auf Start, Stopps und Rückkehr.",
+          "pitfall": "Mehrere Stopps automatisch als Tourenplanung bezeichnen."
+        },
+        {
+          "action": "Zuordnung mit Modulmerkmal begründen",
+          "why": "Das entscheidende Merkmal macht die Zuordnung nachvollziehbar.",
+          "logic": "Prüfe kurzfristige Reihenfolge gegen längerfristige Auftragssammlung sowie einzelne Fahrten gegen eine zusammenhängende Tour.",
+          "pitfall": "Sternverkehr und Ringverkehr allein wegen mehrerer Zielpunkte gleichsetzen."
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Fristigkeit übersehen",
+          "wrong": "Die morgige Auslieferreihenfolge innerhalb einer konkreten Tour ist Tourenplanung.",
+          "whyWrong": "Das Modul ordnet die kurzfristige Auslieferreihenfolge der Routenplanung zu.",
+          "correct": "Routenplanung.",
+          "memoryHint": "Kurzfristige Reihenfolge innerhalb einer Tour = Routenplanung."
+        },
+        {
+          "title": "Stern oder Ring?",
+          "wrong": "Depot → K → Depot → M → Depot ist Ringverkehr.",
+          "whyWrong": "Hier gibt es getrennte Fahrten mit Rückkehr zum Zentrum.",
+          "correct": "Sternverkehr; beim Ring werden mehrere Punkte nacheinander bedient.",
+          "memoryHint": "Rückkehr nach jedem Ziel = Stern; mehrere Stopps nacheinander = Ring."
+        }
+      ],
+      "tasks": [
+        {
+          "taskId": "rp-zuordnung-1",
+          "taskTitle": "Planungsbegriffe unterscheiden",
+          "taskText": "Planungsbegriffe unterscheiden Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Grundschema",
+          "learningFocus": "Grundschema",
+          "taskPitfall": "Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "givenData": {
+            "terms": [
+              "Tourenplanung",
+              "Routenplanung",
+              "Direktverkehr",
+              "Sternverkehr",
+              "Ringverkehr"
+            ],
+            "scenarios": [
+              "Ein fiktiver Betrieb sammelt für die kommenden Monate regelmäßig anfallende Transportaufträge, um Fahrzeuge gut auszulasten und Stoppzeiten gering zu halten.",
+              "Für morgen plant ein fiktiver Betrieb die Auslieferreihenfolge innerhalb einer bereits konkreten Tour."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "assignment.0",
+                "label": "Situation 1: Ein fiktiver Betrieb sammelt für die kommenden Monate regelmäßig anfallende Transportaufträge, um Fahrzeuge gut auszulasten und Stoppzeiten gering zu halten.",
+                "options": [
+                  {
+                    "value": "Tourenplanung",
+                    "label": "Tourenplanung"
+                  },
+                  {
+                    "value": "Routenplanung",
+                    "label": "Routenplanung"
+                  }
+                ]
+              },
+              {
+                "key": "assignment.1",
+                "label": "Situation 2: Für morgen plant ein fiktiver Betrieb die Auslieferreihenfolge innerhalb einer bereits konkreten Tour.",
+                "options": [
+                  {
+                    "value": "Tourenplanung",
+                    "label": "Tourenplanung"
+                  },
+                  {
+                    "value": "Routenplanung",
+                    "label": "Routenplanung"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Merkmal begründet die Zuordnung? Ein fiktiver Betrieb sammelt für die kommenden Monate regelmäßig anfallende Transportaufträge, um Fahrzeuge gut auszulasten und Stoppzeiten gering zu halten.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Merkmal begründet die Zuordnung? Für morgen plant ein fiktiver Betrieb die Auslieferreihenfolge innerhalb einer bereits konkreten Tour.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "assignment.0": "Tourenplanung",
+            "reason.0": "Mittel- und langfristige Auftragssammlung",
+            "assignment.1": "Routenplanung",
+            "reason.1": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Ein fiktiver Betrieb sammelt für die kommenden Monate regelmäßig anfallende Transportaufträge, um Fahrzeuge gut auszulasten und Stoppzeiten gering zu halten. → Tourenplanung: Tourenplanung: mittel- und langfristig Transportaufträge zusammenfassen, für regelmäßige Fahrzeugauslastung und geringe Stoppzeiten.",
+              "Situation 2: Für morgen plant ein fiktiver Betrieb die Auslieferreihenfolge innerhalb einer bereits konkreten Tour. → Routenplanung: Routenplanung: kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour planen."
+            ],
+            [
+              "Situation 1: Welches Merkmal begründet die Zuordnung? Ein fiktiver Betrieb sammelt für die kommenden Monate regelmäßig anfallende Transportaufträge, um Fahrzeuge gut auszulasten und Stoppzeiten gering zu halten. → Mittel- und langfristige Auftragssammlung: Tourenplanung: mittel- und langfristig Transportaufträge zusammenfassen, für regelmäßige Fahrzeugauslastung und geringe Stoppzeiten.",
+              "Situation 2: Welches Merkmal begründet die Zuordnung? Für morgen plant ein fiktiver Betrieb die Auslieferreihenfolge innerhalb einer bereits konkreten Tour. → Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour: Routenplanung: kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour planen."
+            ]
+          ]
+        },
+        {
+          "taskId": "rp-zuordnung-2",
+          "taskTitle": "Drei Tourenarten erkennen",
+          "taskText": "Drei Tourenarten erkennen Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Veränderte Situation",
+          "learningFocus": "Veränderte Situation",
+          "taskPitfall": "Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "givenData": {
+            "terms": [
+              "Tourenplanung",
+              "Routenplanung",
+              "Direktverkehr",
+              "Sternverkehr",
+              "Ringverkehr"
+            ],
+            "scenarios": [
+              "Eine fiktive Lieferung fährt von Werk K unmittelbar zum Ziel L.",
+              "Ein fiktives Depot bedient K und L mit getrennten Fahrten: Depot → K → Depot und Depot → L → Depot.",
+              "Eine fiktive Tour bedient nacheinander mehrere Punkte: Depot → K → L → M → Depot."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "assignment.0",
+                "label": "Situation 1: Eine fiktive Lieferung fährt von Werk K unmittelbar zum Ziel L.",
+                "options": [
+                  {
+                    "value": "Direktverkehr",
+                    "label": "Direktverkehr"
+                  },
+                  {
+                    "value": "Sternverkehr",
+                    "label": "Sternverkehr"
+                  },
+                  {
+                    "value": "Ringverkehr",
+                    "label": "Ringverkehr"
+                  }
+                ]
+              },
+              {
+                "key": "assignment.1",
+                "label": "Situation 2: Ein fiktives Depot bedient K und L mit getrennten Fahrten: Depot → K → Depot und Depot → L → Depot.",
+                "options": [
+                  {
+                    "value": "Direktverkehr",
+                    "label": "Direktverkehr"
+                  },
+                  {
+                    "value": "Sternverkehr",
+                    "label": "Sternverkehr"
+                  },
+                  {
+                    "value": "Ringverkehr",
+                    "label": "Ringverkehr"
+                  }
+                ]
+              },
+              {
+                "key": "assignment.2",
+                "label": "Situation 3: Eine fiktive Tour bedient nacheinander mehrere Punkte: Depot → K → L → M → Depot.",
+                "options": [
+                  {
+                    "value": "Direktverkehr",
+                    "label": "Direktverkehr"
+                  },
+                  {
+                    "value": "Sternverkehr",
+                    "label": "Sternverkehr"
+                  },
+                  {
+                    "value": "Ringverkehr",
+                    "label": "Ringverkehr"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Merkmal begründet die Zuordnung? Eine fiktive Lieferung fährt von Werk K unmittelbar zum Ziel L.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Merkmal begründet die Zuordnung? Ein fiktives Depot bedient K und L mit getrennten Fahrten: Depot → K → Depot und Depot → L → Depot.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              },
+              {
+                "key": "reason.2",
+                "label": "Situation 3: Welches Merkmal begründet die Zuordnung? Eine fiktive Tour bedient nacheinander mehrere Punkte: Depot → K → L → M → Depot.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "assignment.0": "Direktverkehr",
+            "reason.0": "Direkte Fahrt von einem Start zu einem Ziel",
+            "assignment.1": "Sternverkehr",
+            "reason.1": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+            "assignment.2": "Ringverkehr",
+            "reason.2": "Mehrere Punkte nacheinander in einer Tour"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Eine fiktive Lieferung fährt von Werk K unmittelbar zum Ziel L. → Direktverkehr: Direktverkehr: direkte Fahrt von einem Start zu einem Ziel.",
+              "Situation 2: Ein fiktives Depot bedient K und L mit getrennten Fahrten: Depot → K → Depot und Depot → L → Depot. → Sternverkehr: Sternverkehr: getrennte Fahrten vom Zentrum zu einzelnen Punkten und zurück.",
+              "Situation 3: Eine fiktive Tour bedient nacheinander mehrere Punkte: Depot → K → L → M → Depot. → Ringverkehr: Ringverkehr: mehrere Punkte nacheinander in einer zusammenhängenden Tour bedienen."
+            ],
+            [
+              "Situation 1: Welches Merkmal begründet die Zuordnung? Eine fiktive Lieferung fährt von Werk K unmittelbar zum Ziel L. → Direkte Fahrt von einem Start zu einem Ziel: Direktverkehr: direkte Fahrt von einem Start zu einem Ziel.",
+              "Situation 2: Welches Merkmal begründet die Zuordnung? Ein fiktives Depot bedient K und L mit getrennten Fahrten: Depot → K → Depot und Depot → L → Depot. → Getrennte Fahrten mit Rückkehr zum Zentrum: Sternverkehr: getrennte Fahrten vom Zentrum zu einzelnen Punkten und zurück.",
+              "Situation 3: Welches Merkmal begründet die Zuordnung? Eine fiktive Tour bedient nacheinander mehrere Punkte: Depot → K → L → M → Depot. → Mehrere Punkte nacheinander in einer Tour: Ringverkehr: mehrere Punkte nacheinander in einer zusammenhängenden Tour bedienen."
+            ]
+          ]
+        },
+        {
+          "taskId": "rp-zuordnung-3",
+          "taskTitle": "Prüfungsfalle: mehrere Stopps bestimmen nicht den Planungsbegriff",
+          "taskText": "Prüfungsfalle: mehrere Stopps bestimmen nicht den Planungsbegriff Alle Situationen sind fiktiv. Wähle in jedem Feld eine Antwort.",
+          "synthetic": true,
+          "difficulty": "Typische Prüfungsfalle",
+          "learningFocus": "Typische Prüfungsfalle",
+          "taskPitfall": "Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "solutionContext": "Entscheidend sind die genannten Modulmerkmale. Mehrere Lieferstellen allein unterscheiden die Planungsbegriffe nicht. Beim Fahrmuster zählt auch die Rückkehr zum Zentrum.",
+          "givenData": {
+            "terms": [
+              "Tourenplanung",
+              "Routenplanung",
+              "Direktverkehr",
+              "Sternverkehr",
+              "Ringverkehr"
+            ],
+            "scenarios": [
+              "Drei Lieferstellen stehen für eine konkrete Tour bereits fest. Heute wird kurzfristig die Auslieferreihenfolge für morgen geplant.",
+              "Ein fiktiver Betrieb fasst die wiederkehrenden Aufträge für das nächste Halbjahr zur regelmäßigen Fahrzeugauslastung zusammen.",
+              "Ein fiktives Depot beliefert zwar mehrere Ziele, kehrt aber nach jedem einzelnen Ziel zurück, bevor die nächste Fahrt beginnt."
+            ]
+          },
+          "inputSteps": [
+            [
+              {
+                "key": "assignment.0",
+                "label": "Situation 1: Drei Lieferstellen stehen für eine konkrete Tour bereits fest. Heute wird kurzfristig die Auslieferreihenfolge für morgen geplant.",
+                "options": [
+                  {
+                    "value": "Tourenplanung",
+                    "label": "Tourenplanung"
+                  },
+                  {
+                    "value": "Routenplanung",
+                    "label": "Routenplanung"
+                  }
+                ]
+              },
+              {
+                "key": "assignment.1",
+                "label": "Situation 2: Ein fiktiver Betrieb fasst die wiederkehrenden Aufträge für das nächste Halbjahr zur regelmäßigen Fahrzeugauslastung zusammen.",
+                "options": [
+                  {
+                    "value": "Tourenplanung",
+                    "label": "Tourenplanung"
+                  },
+                  {
+                    "value": "Routenplanung",
+                    "label": "Routenplanung"
+                  }
+                ]
+              },
+              {
+                "key": "assignment.2",
+                "label": "Situation 3: Ein fiktives Depot beliefert zwar mehrere Ziele, kehrt aber nach jedem einzelnen Ziel zurück, bevor die nächste Fahrt beginnt.",
+                "options": [
+                  {
+                    "value": "Direktverkehr",
+                    "label": "Direktverkehr"
+                  },
+                  {
+                    "value": "Sternverkehr",
+                    "label": "Sternverkehr"
+                  },
+                  {
+                    "value": "Ringverkehr",
+                    "label": "Ringverkehr"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason.0",
+                "label": "Situation 1: Welches Merkmal begründet die Zuordnung? Drei Lieferstellen stehen für eine konkrete Tour bereits fest. Heute wird kurzfristig die Auslieferreihenfolge für morgen geplant.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              },
+              {
+                "key": "reason.1",
+                "label": "Situation 2: Welches Merkmal begründet die Zuordnung? Ein fiktiver Betrieb fasst die wiederkehrenden Aufträge für das nächste Halbjahr zur regelmäßigen Fahrzeugauslastung zusammen.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              },
+              {
+                "key": "reason.2",
+                "label": "Situation 3: Welches Merkmal begründet die Zuordnung? Ein fiktives Depot beliefert zwar mehrere Ziele, kehrt aber nach jedem einzelnen Ziel zurück, bevor die nächste Fahrt beginnt.",
+                "options": [
+                  {
+                    "value": "Mittel- und langfristige Auftragssammlung",
+                    "label": "Mittel- und langfristige Auftragssammlung"
+                  },
+                  {
+                    "value": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+                    "label": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour"
+                  },
+                  {
+                    "value": "Direkte Fahrt von einem Start zu einem Ziel",
+                    "label": "Direkte Fahrt von einem Start zu einem Ziel"
+                  },
+                  {
+                    "value": "Getrennte Fahrten mit Rückkehr zum Zentrum",
+                    "label": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+                  },
+                  {
+                    "value": "Mehrere Punkte nacheinander in einer Tour",
+                    "label": "Mehrere Punkte nacheinander in einer Tour"
+                  }
+                ]
+              }
+            ]
+          ],
+          "expectedResults": {
+            "assignment.0": "Routenplanung",
+            "reason.0": "Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour",
+            "assignment.1": "Tourenplanung",
+            "reason.1": "Mittel- und langfristige Auftragssammlung",
+            "assignment.2": "Sternverkehr",
+            "reason.2": "Getrennte Fahrten mit Rückkehr zum Zentrum"
+          },
+          "solutionDerivation": [
+            [
+              "Situation 1: Drei Lieferstellen stehen für eine konkrete Tour bereits fest. Heute wird kurzfristig die Auslieferreihenfolge für morgen geplant. → Routenplanung: Routenplanung: kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour planen.",
+              "Situation 2: Ein fiktiver Betrieb fasst die wiederkehrenden Aufträge für das nächste Halbjahr zur regelmäßigen Fahrzeugauslastung zusammen. → Tourenplanung: Tourenplanung: mittel- und langfristig Transportaufträge zusammenfassen, für regelmäßige Fahrzeugauslastung und geringe Stoppzeiten.",
+              "Situation 3: Ein fiktives Depot beliefert zwar mehrere Ziele, kehrt aber nach jedem einzelnen Ziel zurück, bevor die nächste Fahrt beginnt. → Sternverkehr: Sternverkehr: getrennte Fahrten vom Zentrum zu einzelnen Punkten und zurück."
+            ],
+            [
+              "Situation 1: Welches Merkmal begründet die Zuordnung? Drei Lieferstellen stehen für eine konkrete Tour bereits fest. Heute wird kurzfristig die Auslieferreihenfolge für morgen geplant. → Kurzfristige Auslieferreihenfolge innerhalb einer konkreten Tour: Routenplanung: kurzfristig die Auslieferreihenfolge innerhalb einer konkreten Tour planen.",
+              "Situation 2: Welches Merkmal begründet die Zuordnung? Ein fiktiver Betrieb fasst die wiederkehrenden Aufträge für das nächste Halbjahr zur regelmäßigen Fahrzeugauslastung zusammen. → Mittel- und langfristige Auftragssammlung: Tourenplanung: mittel- und langfristig Transportaufträge zusammenfassen, für regelmäßige Fahrzeugauslastung und geringe Stoppzeiten.",
+              "Situation 3: Welches Merkmal begründet die Zuordnung? Ein fiktives Depot beliefert zwar mehrere Ziele, kehrt aber nach jedem einzelnen Ziel zurück, bevor die nächste Fahrt beginnt. → Getrennte Fahrten mit Rückkehr zum Zentrum: Sternverkehr: getrennte Fahrten vom Zentrum zu einzelnen Punkten und zurück."
+            ]
+          ]
+        }
+      ],
+      "examples": [
+        {
+          "title": "Kurzfristige Reihenfolge",
+          "givenData": "Für eine fiktive Tour am Folgetag steht die Auslieferreihenfolge noch nicht fest.",
+          "steps": [
+            "Fristigkeit prüfen: Die Entscheidung betrifft den nächsten Tag.",
+            "Zweck prüfen: Es geht um die Reihenfolge innerhalb einer konkreten Tour.",
+            "Zuordnen: Im Modul ist dies Routenplanung."
+          ],
+          "result": "Routenplanung; die Reihenfolge selbst wird hier nicht ermittelt.",
+          "takeaway": "Kurzfristige Reihenfolge = Routenplanung.",
+          "pitfall": "Das Wort Tour allein als Hinweis auf Tourenplanung verwenden."
+        },
+        {
+          "title": "Rückkehr zum Zentrum",
+          "givenData": "Ein fiktives Depot fährt zu K und zurück, anschließend zu M und zurück.",
+          "steps": [
+            "Fahrmuster lesen: Nach jedem Ziel wird das Depot erneut angefahren.",
+            "Abgrenzen: K und M werden nicht nacheinander in einer zusammenhängenden Tour bedient.",
+            "Zuordnen: Getrennte Fahrten vom Zentrum entsprechen Sternverkehr."
+          ],
+          "result": "Sternverkehr.",
+          "takeaway": "Rückkehr nach jedem Ziel kennzeichnet hier den Stern.",
+          "pitfall": "Alle Fahrten mit mehreren Zielorten als Ringverkehr bezeichnen."
+        }
+      ]
     }
   ]
 }

@@ -1,4 +1,4 @@
-import { getMethodReference, evaluateMethodStep } from './methodTrainerEvaluator.js'
+import { getMethodReference, evaluateMethodStep, ASSIGNMENT_ENGINES } from './methodTrainerEvaluator.js'
 import { formatMethodSolution } from './methodSolutionFormatter.js'
 
 const n = value => new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2 }).format(value)
@@ -51,6 +51,7 @@ export function solutionDerivation(method, task, step) {
         : step === 2 ? [`Fall A: ${n(d.own)} ÷ (${n(d.own)} + ${n(d.external)}) × 100 = ${n(r.exact)} %.`, `Fall B: (1 − ${n(d.purchases)} ÷ ${n(d.revenue)}) × 100 = ${n(r.approximate)} %.`]
           : [`Fall A: ${n(r.exact)} % Eigenanteil; Fall B: näherungsweise ${n(r.approximate)} % Eigenanteil. Der verbleibende Anteil ist fremdbezogen; Gewinn lässt sich daraus nicht ableiten.`]
   }
+  if (ASSIGNMENT_ENGINES.includes(method.engine)) calculations = task.solutionDerivation[step - 1]
   if (method.engine === 'verticalIntegration' && task.comparison && step >= 2) {
     const after = task.comparison.own / (task.comparison.own + task.comparison.external) * 100
     calculations.push(`Fall A nach Outsourcing: ${n(task.comparison.own)} ÷ (${n(task.comparison.own)} + ${n(task.comparison.external)}) × 100 = ${n(after)} %. Vorher ${n(r.exact)} %, nachher ${n(after)} %: ${n(r.exact - after)} Prozentpunkte weniger Eigenanteil.`)
@@ -59,7 +60,7 @@ export function solutionDerivation(method, task, step) {
   return [
     { label: 'Gesucht', value: method.steps[step - 1] },
     { label: 'Formel / Logik', value: micro?.logic || method.formula.join('; ') },
-    ...calculations.map(value => ({ label: 'Rechenweg / eingesetzte Werte', value })),
+    ...calculations.map(value => ({ label: ASSIGNMENT_ENGINES.includes(method.engine) ? 'Herleitung / Modulmerkmal' : 'Rechenweg / eingesetzte Werte', value })),
     ...formatMethodSolution(evaluateMethodStep(method.engine, task, step, {}).correctValues, method.engine, step),
     { label: 'Bedeutung', value: micro?.why || method.explanation },
     ...(task.solutionContext ? [{ label: 'Diese Aufgabe', value: task.solutionContext }] : []),

@@ -259,7 +259,23 @@ function evaluateVertical(task, step, answers) {
   return result(correct ? 'green' : 'red', correct ? 'Die Fertigungstiefe beschreibt den Eigenanteil.' : 'Hohe Fertigungstiefe bedeutet großen Eigenanteil, nicht automatisch hohen Gewinn.', { interpretation: 'Hoher Wert: großer Eigenanteil. Niedriger Wert: großer Fremdanteil.' })
 }
 
+export const ASSIGNMENT_ENGINES = ['transportModeComparison', 'transportConceptAssignment', 'routePlanningAssignment']
+
+function evaluateAssignment(task, step, answers) {
+  const fields = task.inputSteps?.[step - 1]
+  if (!fields?.length) throw new Error('Die Zuordnungsaufgabe enthält keinen gültigen Schritt.')
+  const checks = fields.map(field => {
+    const expected = task.expectedResults[field.key]
+    const accepted = Array.isArray(expected) ? expected : [expected]
+    return field.options.some(option => option.value === answers[field.key]) && accepted.includes(answers[field.key])
+  })
+  const status = statusFor(checks.filter(Boolean).length, fields.length)
+  const correctValues = Object.fromEntries(fields.map(field => [field.label, task.expectedResults[field.key]]))
+  return result(status, status === 'green' ? 'Alle Zuordnungen stimmen im Rahmen dieser Aufgabe.' : 'Prüfe die entscheidenden Modulmerkmale und die vorgegebenen Auswahlstufen.', correctValues)
+}
+
 function evaluateStepValues(engine, task, step, answers) {
+  if (ASSIGNMENT_ENGINES.includes(engine)) return evaluateAssignment(task, step, answers)
   if (engine === 'xyzAbcMatrix') return evaluateXyz(task, step, answers)
   if (engine === 'sourcingCostComparison') return evaluateSourcing(task, step, answers)
   if (engine === 'verticalIntegration') return evaluateVertical(task, step, answers)
@@ -270,6 +286,7 @@ function evaluateStepValues(engine, task, step, answers) {
 }
 
 export function getMethodReference(engine, task) {
+  if (ASSIGNMENT_ENGINES.includes(engine)) return task.expectedResults
   if (engine === 'xyzAbcMatrix') return calculateXyzReference(task)
   if (engine === 'sourcingCostComparison') return calculateSourcingReference(task)
   if (engine === 'verticalIntegration') return calculateVerticalReference(task)
@@ -280,6 +297,7 @@ export function getMethodReference(engine, task) {
 }
 
 function requiredAnswerKeys(engine, task, step) {
+  if (ASSIGNMENT_ENGINES.includes(engine)) return task.inputSteps[step - 1].map(field => field.key)
   const data = task.givenData
   if (engine === 'xyzAbcMatrix') return data.articles.map(({ id }) => `${step === 1 ? 'xyz' : 'matrix'}.${id}`)
   if (engine === 'sourcingCostComparison') return step <= 3

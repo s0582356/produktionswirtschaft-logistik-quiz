@@ -1,6 +1,6 @@
 # Produktionswirtschaft & Logistik Quiz
 
-Version **0.5.2**
+Version **0.5.3**
 
 A responsive Vue/Vite learning app for practicing production management and logistics concepts. The public version combines neutral multiple-choice examples with a browser-only workflow for personal JSON question banks.
 
@@ -11,14 +11,14 @@ A responsive Vue/Vite learning app for practicing production management and logi
 - Local import of custom JSON question banks through the browser
 - Automatic detection of multiple-choice, free-text, and method-trainer banks
 - Free-text training with local checkpoint-based feedback
-- Methods training with six public demo methods covering calculations and qualitative classification
+- Methods training with nine public demo methods covering calculations and qualitative classification
 - Step-by-step feedback with green, yellow, and red status
 - Optional voice input through the browser's speech-recognition capability
 - Light and dark themes since version 0.4.2
 - Theme selection stored locally in the browser
 - Responsive layout for desktop and mobile use
 
-The **Methoden-Training** mode practices calculation and application methods through compact explanations, formulas, intermediate inputs, and worked solutions. Version 0.5.1 includes six public demo methods:
+The **Methoden-Training** mode practices calculation and application methods through compact explanations, formulas, intermediate inputs, and worked solutions. Version 0.5.3 includes nine public demo methods:
 
 1. ABC-Analyse
 2. Stücklistenauflösung / Mengenstückliste
@@ -26,6 +26,11 @@ The **Methoden-Training** mode practices calculation and application methods thr
 4. XYZ-Analyse + ABC/XYZ-Matrix (qualitative)
 5. Sourcing-Kostenvergleich
 6. Fertigungstiefe
+7. Verkehrsträger-Vergleich
+8. Transportkonzepte-Zuordnung
+9. Routenplanung / Tourenplanung (concept and tour-type assignment)
+
+Each method contains three synthetic tasks: 27 tasks in total. The “Verkehr & Transport” module uses closed comparison and assignment fields; route planning trains terminology without calculations.
 
 The app runs as a static application entirely in the browser, without a backend, database, account, external API, or AI service. Complete free-text answers are not persisted.
 
