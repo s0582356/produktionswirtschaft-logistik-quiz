@@ -69,7 +69,7 @@ test('Vertical integration exact and approximate percentage, optional percent si
 
 test('All new tasks expose complete inputs and readable solutions, empty input never passes', () => {
   for (const method of bank.methods.slice(3)) {
-    assert.equal(method.tasks.length, 1)
+    assert.equal(method.tasks.length, 3)
     assert.equal(method.examples.length, 2)
     const task = method.tasks[0]
     assert.equal(task.inputSteps.length, method.steps.length)

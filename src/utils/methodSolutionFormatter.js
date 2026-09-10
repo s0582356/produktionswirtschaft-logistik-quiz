@@ -61,3 +61,11 @@ export function formatMethodSolution(values, engine, step) {
   if (visibleValues != null) visit(visibleValues, '', defaultUnit)
   return rows
 }
+
+export function formatCommonMistakes(method) {
+  return method.commonMistakeExamples?.length
+    ? method.commonMistakeExamples.map(example => ({ title: example.title, rows: formatMethodSolution({
+      Falsch: example.wrong, 'Warum falsch?': example.whyWrong, Richtig: example.correct, Merksatz: example.memoryHint,
+    }) }))
+    : (method.commonMistakes || []).map(title => ({ title, rows: [] }))
+}

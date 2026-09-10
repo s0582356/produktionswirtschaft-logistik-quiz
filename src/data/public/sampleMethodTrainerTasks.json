@@ -56,23 +56,223 @@
         {
           "taskId": "abc-demo-1",
           "taskText": "Klassifiziere die fünf Lagerartikel. Grenzen: A bis 80 % kumuliert, B bis 95 %, C = Rest.",
-          "difficulty": "leicht",
+          "difficulty": "Einstieg",
           "givenData": {
             "positions": [
-              { "id": "P1", "label": "Artikel P1", "unitValue": 60, "quantity": 400 },
-              { "id": "P2", "label": "Artikel P2", "unitValue": 5, "quantity": 3000 },
-              { "id": "P3", "label": "Artikel P3", "unitValue": 25, "quantity": 200 },
-              { "id": "P4", "label": "Artikel P4", "unitValue": 1, "quantity": 4000 },
-              { "id": "P5", "label": "Artikel P5", "unitValue": 2, "quantity": 800 }
+              {
+                "id": "P1",
+                "label": "Artikel P1",
+                "unitValue": 60,
+                "quantity": 400
+              },
+              {
+                "id": "P2",
+                "label": "Artikel P2",
+                "unitValue": 5,
+                "quantity": 3000
+              },
+              {
+                "id": "P3",
+                "label": "Artikel P3",
+                "unitValue": 25,
+                "quantity": 200
+              },
+              {
+                "id": "P4",
+                "label": "Artikel P4",
+                "unitValue": 1,
+                "quantity": 4000
+              },
+              {
+                "id": "P5",
+                "label": "Artikel P5",
+                "unitValue": 2,
+                "quantity": 800
+              }
             ]
           },
-          "params": { "classLimits": { "A": 80, "B": 95 } },
-          "tolerance": { "currencyAbsolute": 0.01, "percentagePoints": 0.2, "relative": 0.000001 },
+          "params": {
+            "classLimits": {
+              "A": 80,
+              "B": 95
+            }
+          },
+          "tolerance": {
+            "currencyAbsolute": 0.01,
+            "percentagePoints": 0.2,
+            "relative": 1e-06
+          },
           "solutionWalkthrough": [
             "Verbrauchswerte: P1 24.000 €, P2 15.000 €, P3 5.000 €, P4 4.000 €, P5 1.600 €; Gesamt 49.600 €.",
             "Reihenfolge: P1, P2, P3, P4, P5; kumuliert ca. 48,4 %, 78,6 %, 88,7 %, 96,8 %, 100 %.",
             "Klassen: P1 A, P2 A, P3 B, P4 C, P5 C."
-          ]
+          ],
+          "learningFocus": "Grundschema: Wert, Rangfolge und Klasse"
+        },
+        {
+          "taskId": "abc-demo-2",
+          "taskText": "Klassifiziere die fünf fiktiven Artikel. Hier gilt: A bis einschließlich 70 % kumuliert, B über 70 % bis einschließlich 90 %, C darüber. Lies die Grenzen vor der Zuordnung genau.",
+          "difficulty": "Variation",
+          "givenData": {
+            "positions": [
+              {
+                "id": "P1",
+                "label": "Artikel P1",
+                "unitValue": 20,
+                "quantity": 100
+              },
+              {
+                "id": "P2",
+                "label": "Artikel P2",
+                "unitValue": 10,
+                "quantity": 500
+              },
+              {
+                "id": "P3",
+                "label": "Artikel P3",
+                "unitValue": 15,
+                "quantity": 200
+              },
+              {
+                "id": "P4",
+                "label": "Artikel P4",
+                "unitValue": 1,
+                "quantity": 800
+              },
+              {
+                "id": "P5",
+                "label": "Artikel P5",
+                "unitValue": 4,
+                "quantity": 100
+              }
+            ]
+          },
+          "params": {
+            "classLimits": {
+              "A": 70,
+              "B": 90
+            }
+          },
+          "tolerance": {
+            "currencyAbsolute": 0.01,
+            "percentagePoints": 0.2,
+            "relative": 1e-06
+          },
+          "learningFocus": "Aufgabengrenzen statt Standardgrenzen",
+          "solutionContext": "Hier gelten nicht die Standardgrenzen, sondern die vorgegebenen Grenzen der Aufgabe: A bis 70 %, B bis 90 %, C darüber. Die Klasse wird mit dem ungerundeten kumulierten Anteil bestimmt.",
+          "taskPitfall": "80/95 auswendig anzuwenden wäre falsch: P3 liegt kumuliert bei 71,43 % und gehört hier zu B; mit 80/95 würde P3 fälschlich A zugeordnet."
+        },
+        {
+          "taskId": "abc-demo-3",
+          "taskText": "Ordne fünf fiktive Artikel nach Verbrauchswert und klassifiziere sie: A bis 80 %, B bis 95 %, C darüber, jeweils kumuliert einschließlich des aktuellen Artikels. Zwei Verbrauchswerte liegen eng beieinander. Rechne intern ungerundet, gib Prozentwerte mit zwei Nachkommastellen an.",
+          "difficulty": "Vertiefung",
+          "givenData": {
+            "positions": [
+              {
+                "id": "P1",
+                "label": "Artikel P1",
+                "unitValue": 20,
+                "quantity": 101
+              },
+              {
+                "id": "P2",
+                "label": "Artikel P2",
+                "unitValue": 20,
+                "quantity": 100
+              },
+              {
+                "id": "P3",
+                "label": "Artikel P3",
+                "unitValue": 0.1,
+                "quantity": 10000
+              },
+              {
+                "id": "P4",
+                "label": "Artikel P4",
+                "unitValue": 20,
+                "quantity": 75
+              },
+              {
+                "id": "P5",
+                "label": "Artikel P5",
+                "unitValue": 20,
+                "quantity": 25
+              }
+            ]
+          },
+          "params": {
+            "classLimits": {
+              "A": 80,
+              "B": 95
+            }
+          },
+          "tolerance": {
+            "currencyAbsolute": 0.01,
+            "percentagePoints": 0.2,
+            "relative": 1e-06
+          },
+          "learningFocus": "Hohe Menge, niedriger Wert und Rundung",
+          "solutionContext": "P1 und P2 unterscheiden sich nur um 20 € Verbrauchswert. Deshalb zuerst die exakten Werte sortieren und die Anteile ohne Zwischenrundung kumulieren.",
+          "taskPitfall": "Hohe Stückzahl bedeutet nicht automatisch A-Artikel. P3 hat 10.000 Stück, aber nur 1.000 € Verbrauchswert; in der Wertreihenfolge steht P3 erst an vierter Stelle und gehört zu B."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Verbrauchswert",
+          "formula": "Verbrauchswert = Stückwert × Verbrauchsmenge",
+          "example": "500 × 4 € = 2.000 €",
+          "meaning": "So viel kostet der Jahresverbrauch dieses Materials.",
+          "memoryHint": "Menge mal Preis ergibt Jahreswert."
+        },
+        {
+          "title": "Wertanteil",
+          "formula": "Anteil (%) = Verbrauchswert ÷ Gesamtverbrauchswert × 100",
+          "example": "2.000 ÷ 10.000 × 100 = 20 %",
+          "meaning": "Ein Fünftel des Gesamtwerts entfällt auf diesen Artikel.",
+          "memoryHint": "Immer durch den Gesamtwert teilen."
+        },
+        {
+          "title": "Kumulieren",
+          "formula": "Kumulierter Anteil = fortlaufende Summe der sortierten Anteile",
+          "example": "60 % + 20 % = 80 %",
+          "meaning": "Die ersten beiden Artikel machen zusammen 80 % aus.",
+          "memoryHint": "Kumuliert heißt fortlaufend addiert."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Verbrauchswerte und Gesamtwert berechnen",
+          "why": "ABC bewertet den Geldwert, nicht die Stückzahl.",
+          "logic": "Menge × Preis je Artikel; anschließend alle Werte addieren.",
+          "pitfall": "Nach Menge oder Stückwert statt nach Verbrauchswert sortieren"
+        },
+        {
+          "action": "Absteigend sortieren, Anteile und kumulierte Anteile bilden",
+          "why": "Erst eine Rangfolge macht die wertvollsten Artikel sichtbar.",
+          "logic": "Absteigend sortieren; jeden Wert durch die Gesamtsumme teilen × 100; Anteile fortlaufend addieren.",
+          "pitfall": "Den Prozentanteil auf die Menge statt auf den Wert beziehen"
+        },
+        {
+          "action": "Artikel anhand der Grenzen A, B oder C zuordnen",
+          "why": "Die Grenzen beziehen sich auf den bereits aufsummierten Wert.",
+          "logic": "Kumuliert ≤ A-Grenze: A; sonst ≤ B-Grenze: B; sonst C.",
+          "pitfall": "Zu früh runden oder die kumulierten Anteile nicht fortlaufend addieren"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Nach Menge sortiert",
+          "wrong": "3.000 Stück P2 stehen vor 400 Stück P1.",
+          "whyWrong": "Die Stückzahl allein zeigt nicht den Geldwert.",
+          "correct": "P1: 400 × 60 = 24.000 €; P2: 3.000 × 5 = 15.000 €. P1 steht zuerst.",
+          "memoryHint": "Wert vor Menge."
+        },
+        {
+          "title": "Einzelanteil als Klassengrenze",
+          "wrong": "70 %, 20 %, 10 %: Alle Artikel werden A.",
+          "whyWrong": "Für die Klasse zählt die fortlaufende Summe.",
+          "correct": "Kumuliert 70 %, 90 %, 100 % ergibt bei 80/95-Grenzen A, B, C.",
+          "memoryHint": "Erst kumulieren, dann klassifizieren."
         }
       ]
     },
@@ -127,27 +327,237 @@
         {
           "taskId": "bom-demo-1",
           "taskText": "Produkt M besteht aus den unten gezeigten Baugruppen und Teilen. Bestimme die Mengenstückliste je M und den Gesamtbedarf für 150 Stück M.",
-          "difficulty": "leicht",
+          "difficulty": "Einstieg",
           "givenData": {
             "endProduct": "M",
             "endProductQuantity": 150,
             "edges": [
-              { "parent": "M", "child": "BG1", "qtyPerParent": 2 },
-              { "parent": "M", "child": "BG2", "qtyPerParent": 1 },
-              { "parent": "M", "child": "X3", "qtyPerParent": 1 },
-              { "parent": "BG1", "child": "X1", "qtyPerParent": 1 },
-              { "parent": "BG1", "child": "X2", "qtyPerParent": 2 },
-              { "parent": "BG2", "child": "X2", "qtyPerParent": 3 },
-              { "parent": "BG2", "child": "X3", "qtyPerParent": 1 }
+              {
+                "parent": "M",
+                "child": "BG1",
+                "qtyPerParent": 2
+              },
+              {
+                "parent": "M",
+                "child": "BG2",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "M",
+                "child": "X3",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG1",
+                "child": "X1",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG1",
+                "child": "X2",
+                "qtyPerParent": 2
+              },
+              {
+                "parent": "BG2",
+                "child": "X2",
+                "qtyPerParent": 3
+              },
+              {
+                "parent": "BG2",
+                "child": "X3",
+                "qtyPerParent": 1
+              }
             ],
-            "leafParts": ["X1", "X2", "X3"],
-            "assemblies": ["BG1", "BG2"]
+            "leafParts": [
+              "X1",
+              "X2",
+              "X3"
+            ],
+            "assemblies": [
+              "BG1",
+              "BG2"
+            ]
           },
           "solutionWalkthrough": [
             "M → 2× BG1, 1× BG2 und 1× X3; BG1 → 1× X1 und 2× X2; BG2 → 3× X2 und 1× X3.",
             "Je M: X1 = 2, X2 = 2×2 + 1×3 = 7, X3 = 1 + 1×1 = 2.",
             "Für 150 M: X1 = 300, X2 = 1.050, X3 = 300."
-          ]
+          ],
+          "learningFocus": "Mehrstufiger Standardbedarf"
+        },
+        {
+          "taskId": "bom-demo-2",
+          "taskText": "Das fiktive Produkt M benötigt das Kaufteil X2 sowohl über BG1 als auch über BG2. Bestimme sämtliche Pfadbeiträge und summiere sie je Teil. Berechne danach den Bedarf für 80 Produkte; beachte auch das direkt verbaute X3.",
+          "difficulty": "Variation",
+          "givenData": {
+            "endProduct": "M",
+            "endProductQuantity": 80,
+            "edges": [
+              {
+                "parent": "M",
+                "child": "BG1",
+                "qtyPerParent": 3
+              },
+              {
+                "parent": "M",
+                "child": "BG2",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "M",
+                "child": "X3",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG1",
+                "child": "X1",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG1",
+                "child": "X2",
+                "qtyPerParent": 4
+              },
+              {
+                "parent": "BG2",
+                "child": "X2",
+                "qtyPerParent": 3
+              },
+              {
+                "parent": "BG2",
+                "child": "X3",
+                "qtyPerParent": 1
+              }
+            ],
+            "leafParts": [
+              "X1",
+              "X2",
+              "X3"
+            ],
+            "assemblies": [
+              "BG1",
+              "BG2"
+            ]
+          },
+          "learningFocus": "Dasselbe Kaufteil auf mehreren Pfaden",
+          "solutionContext": "X2 kommt über zwei Pfade: 3 × 4 + 1 × 3 = 15 Stück je M, also 15 × 80 = 1.200 Stück im Auftrag.",
+          "taskPitfall": "Nur BG1 zu zählen ergäbe 12 statt 15 Stück X2 je M."
+        },
+        {
+          "taskId": "bom-demo-3",
+          "taskText": "Löse die fiktive Stückliste für 60 Produkte M auf. BG3 liegt unter BG1 und bildet eine zusätzliche Ebene. Bestimme alle Baugruppen je M, dann die Kaufteile je M und schließlich den Losbedarf.",
+          "difficulty": "Vertiefung",
+          "givenData": {
+            "endProduct": "M",
+            "endProductQuantity": 60,
+            "edges": [
+              {
+                "parent": "M",
+                "child": "BG1",
+                "qtyPerParent": 2
+              },
+              {
+                "parent": "M",
+                "child": "BG2",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "M",
+                "child": "X3",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG1",
+                "child": "BG3",
+                "qtyPerParent": 3
+              },
+              {
+                "parent": "BG3",
+                "child": "X1",
+                "qtyPerParent": 2
+              },
+              {
+                "parent": "BG3",
+                "child": "X2",
+                "qtyPerParent": 1
+              },
+              {
+                "parent": "BG2",
+                "child": "X2",
+                "qtyPerParent": 4
+              },
+              {
+                "parent": "BG2",
+                "child": "X3",
+                "qtyPerParent": 2
+              }
+            ],
+            "leafParts": [
+              "X1",
+              "X2",
+              "X3"
+            ],
+            "assemblies": [
+              "BG1",
+              "BG2",
+              "BG3"
+            ]
+          },
+          "learningFocus": "Drei Ebenen und neue Losgröße",
+          "solutionContext": "Bis X1 werden drei Kanten multipliziert: 2 × 3 × 2 = 12 Stück je M. Für das Los ergeben sich 12 × 60 = 720 Stück X1.",
+          "taskPitfall": "BG3 kommt 2 × 3 = 6-mal je M vor, nicht nur 3-mal. Keine übergeordnete Ebene auslassen."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Pfade addieren",
+          "formula": "Bedarf je Endprodukt = Summe der Mengenprodukte aller Pfade",
+          "example": "2 × 3 + 1 × 4 = 10 Stück",
+          "meaning": "Zehn Teile werden je Endprodukt über zwei Baugruppen benötigt.",
+          "memoryHint": "Entlang multiplizieren, zwischen Pfaden addieren."
+        },
+        {
+          "title": "Gesamtbedarf",
+          "formula": "Gesamtbedarf = Bedarf je Endprodukt × Endproduktmenge",
+          "example": "10 × 150 = 1.500 Stück",
+          "meaning": "Für 150 Produkte brauchst du insgesamt 1.500 Teile.",
+          "memoryHint": "Je-Produkt-Bedarf mal Auftragsmenge."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Baugruppenmenge je Endprodukt bestimmen",
+          "why": "Jede Baugruppe vervielfacht die darunterliegenden Teile.",
+          "logic": "Vom Produkt aus die Mengen bis zur Baugruppe multiplizieren.",
+          "pitfall": "Mehrfach verwendete Teile nur auf einem Pfad zählen"
+        },
+        {
+          "action": "Beiträge aller Pfade je Einzelteil summieren",
+          "why": "Dasselbe Teil kann über mehrere Wege gebraucht werden.",
+          "logic": "Jeden Weg bis zum Teil verfolgen, entlang des Wegs multiplizieren und alle Beiträge addieren.",
+          "pitfall": "Die Baugruppenmenge bei der Kettenmultiplikation vergessen"
+        },
+        {
+          "action": "Bedarf mit der Endproduktmenge multiplizieren",
+          "why": "Der Bedarf je Produkt muss für den ganzen Auftrag reichen.",
+          "logic": "Jeden Teilebedarf je Produkt × Auftragsmenge rechnen.",
+          "pitfall": "Direkte Bestandteile des Endprodukts übersehen"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Pfad vergessen",
+          "wrong": "2 × 3 = 6 Teile; der zweite Pfad wird ignoriert.",
+          "whyWrong": "Ein Teil kann in mehreren Baugruppen vorkommen.",
+          "correct": "2 × 3 + 1 × 4 = 10 Teile je Produkt.",
+          "memoryHint": "Alle Wege zählen."
+        },
+        {
+          "title": "Entlang des Pfads addiert",
+          "wrong": "2 Baugruppen mit je 3 Teilen: 2 + 3 = 5.",
+          "whyWrong": "Jede der zwei Baugruppen benötigt drei Teile.",
+          "correct": "2 × 3 = 6 Teile; für 50 Produkte: 6 × 50 = 300.",
+          "memoryHint": "Entlang multiplizieren, zwischen Wegen addieren."
         }
       ]
     },
@@ -203,18 +613,121 @@
         {
           "taskId": "monthly-demo-1",
           "taskText": "Der Jahresbedarf beträgt 2.600 Stück. Im November ist der Bedarf doppelt so hoch wie in einem normalen Monat. Verteile den Bedarf und prüfe die Jahressumme.",
-          "difficulty": "leicht",
+          "difficulty": "Einstieg",
           "givenData": {
             "yearlyDemand": 2600,
-            "specialMonths": ["November"],
+            "specialMonths": [
+              "November"
+            ],
             "specialFactor": 2
           },
-          "params": { "roundingRule": "half-up", "askFullSeries": false },
+          "params": {
+            "roundingRule": "half-up",
+            "askFullSeries": false
+          },
           "solutionWalkthrough": [
             "11x + 2x = 2.600, also 13x = 2.600.",
             "x = 2.600 ÷ 13 = 200 Stück je Normalmonat.",
             "November = 400; Kontrollsumme: 11×200 + 400 = 2.600."
-          ]
+          ],
+          "learningFocus": "Glatt teilbarer Jahresbedarf"
+        },
+        {
+          "taskId": "monthly-demo-2",
+          "taskText": "Verteile 3.905 Stück Jahresbedarf auf elf Normalmonate und den doppelten Juni. Runde den Normalbedarf kaufmännisch und gleiche den Rest im Juni aus.",
+          "difficulty": "Variation",
+          "givenData": {
+            "yearlyDemand": 3905,
+            "specialMonths": [
+              "Juni"
+            ],
+            "specialFactor": 2
+          },
+          "params": {
+            "roundingRule": "half-up",
+            "askFullSeries": false
+          },
+          "learningFocus": "Abrunden und Rest im Sondermonat",
+          "solutionContext": "3.905 ÷ 13 ≈ 300,38 wird auf 300 abgerundet. Der Sondermonat nimmt den Rest auf: 3.905 − 11 × 300 = 605 Stück.",
+          "taskPitfall": "Nur 2 × 300 = 600 im Sondermonat lässt fünf Stück Jahresbedarf unverteilt."
+        },
+        {
+          "taskId": "monthly-demo-3",
+          "taskText": "Ein fiktiver Jahresbedarf von 2.610 Stück wird auf elf Normalmonate und den doppelten Dezember verteilt. Runde den Normalbedarf kaufmännisch auf ganze Stück. Korrigiere den Dezember so, dass die Jahressumme exakt stimmt.",
+          "difficulty": "Vertiefung",
+          "givenData": {
+            "yearlyDemand": 2610,
+            "specialMonths": [
+              "Dezember"
+            ],
+            "specialFactor": 2
+          },
+          "params": {
+            "roundingRule": "half-up",
+            "askFullSeries": false
+          },
+          "learningFocus": "Aufrunden und Überdeckung ausgleichen",
+          "solutionContext": "2.610 ÷ 13 ≈ 200,77 wird auf 201 aufgerundet. Dezember mit Ausgleich: 2.610 − 11 × 201 = 399 Stück; 11 × 201 + 399 = 2.610.",
+          "taskPitfall": "Zweimal der gerundete Normalbedarf wäre 402; damit entstünden 2.613 statt 2.610 Stück. Beim Aufrunden muss der Sondermonat kleiner werden."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Bedarfseinheiten",
+          "formula": "11x + 2x = Jahresbedarf",
+          "example": "11x + 2x = 2.600 → 13x = 2.600",
+          "meaning": "Zwölf Monate benötigen zusammen 13 normale Bedarfseinheiten.",
+          "memoryHint": "Zwölf Monate, dreizehn Bedarfseinheiten."
+        },
+        {
+          "title": "Normalmonat",
+          "formula": "x = Jahresbedarf ÷ 13",
+          "example": "2.600 ÷ 13 = 200 Stück",
+          "meaning": "Ein normaler Monat benötigt 200 Stück.",
+          "memoryHint": "Erst teilen, dann runden."
+        },
+        {
+          "title": "Rundungsausgleich",
+          "formula": "Sondermonat = Jahresbedarf − 11 × gerundetes x",
+          "example": "2.605 − 11 × 200 = 405 Stück",
+          "meaning": "Der Sondermonat gleicht die Rundung aus; die Jahressumme bleibt richtig.",
+          "memoryHint": "Der Jahresbedarf muss erhalten bleiben."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Gleichung für elf normale und einen doppelten Monat wählen",
+          "why": "Der Doppelmonat ersetzt einen normalen Monat.",
+          "logic": "Elf normale Monate plus ein Doppelmonat: 11x + 2x = J.",
+          "pitfall": "Den Sondermonat wie einen normalen Monat behandeln"
+        },
+        {
+          "action": "Normalen Monatsbedarf berechnen und kaufmännisch runden",
+          "why": "Eine Bedarfseinheit entspricht einem normalen Monat.",
+          "logic": "J ÷ 13 rechnen, dann kaufmännisch auf ganze Stück runden.",
+          "pitfall": "Die Rundungsdifferenz nicht ausgleichen"
+        },
+        {
+          "action": "Sondermonat und Kontrollsumme bestimmen",
+          "why": "Runden darf den Jahresbedarf nicht verändern.",
+          "logic": "Sondermonat = J − 11 × gerundetes x; danach 11x + Sondermonat kontrollieren.",
+          "pitfall": "Keine Kontrollsumme über den Jahresbedarf bilden"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Durch zwölf geteilt",
+          "wrong": "2.600 ÷ 12 = 216,67 Stück als Normalmonat.",
+          "whyWrong": "Der Sondermonat braucht zwei normale Einheiten.",
+          "correct": "2.600 ÷ 13 = 200; 11 × 200 + 400 = 2.600.",
+          "memoryHint": "Monate und Bedarfseinheiten unterscheiden."
+        },
+        {
+          "title": "Rundungsrest ignoriert",
+          "wrong": "2.605 ÷ 13 gerundet 200; Sondermonat 400; Summe angeblich 2.605.",
+          "whyWrong": "11 × 200 + 400 ergibt nur 2.600.",
+          "correct": "Sondermonat = 2.605 − 2.200 = 405; Summe = 2.605.",
+          "memoryHint": "Die Summe wirklich nachrechnen."
         }
       ]
     },
@@ -495,7 +1008,497 @@
             "R1: gleichmäßig → X; A + X = AX, hoher Wert und gut planbar.",
             "R2: wiederkehrende Saison → Y; B + Y = BY, mittlerer Wert und bedingt planbar.",
             "R3: unregelmäßig → Z; C + Z = CZ, niedriger Wert und schlecht planbar. Wertmäßig meist weniger kritisch, aber Funktionsrisiken separat prüfen."
-          ]
+          ],
+          "learningFocus": "Klare Verbrauchsmuster",
+          "difficulty": "Einstieg"
+        },
+        {
+          "taskId": "xyz-demo-2",
+          "taskText": "Ordne die drei fiktiven Materialien qualitativ ein und kombiniere die vorgegebene ABC-Klasse mit XYZ.",
+          "givenData": {
+            "articles": [
+              {
+                "id": "R1",
+                "abc": "C",
+                "pattern": "Wiederkehrendes Winterhoch, sonst niedriger Verbrauch.",
+                "xyz": "Y"
+              },
+              {
+                "id": "R2",
+                "abc": "A",
+                "pattern": "Seltene Einzelabrufe ohne erkennbares Muster.",
+                "xyz": "Z"
+              },
+              {
+                "id": "R3",
+                "abc": "B",
+                "pattern": "Über viele Perioden nahezu konstant etwa 40 Stück.",
+                "xyz": "X"
+              }
+            ]
+          },
+          "displayData": [
+            "R1 · ABC C: Wiederkehrendes Winterhoch, sonst niedriger Verbrauch.",
+            "R2 · ABC A: Seltene Einzelabrufe ohne erkennbares Muster.",
+            "R3 · ABC B: Über viele Perioden nahezu konstant etwa 40 Stück."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "xyz.R1",
+                "label": "R1 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              },
+              {
+                "key": "xyz.R2",
+                "label": "R2 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              },
+              {
+                "key": "xyz.R3",
+                "label": "R3 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "matrix.R1",
+                "label": "R1 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.R2",
+                "label": "R2 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.R3",
+                "label": "R3 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Wiederkehrende Saison oder zufälliger Abruf?",
+          "difficulty": "Variation",
+          "solutionContext": "Ein jedes Jahr wiederkehrendes Winterhoch ist Y, selbst wenn es stark schwankt. Einzelabrufe ohne erkennbares Muster sind Z. Die Stärke einer Schwankung allein entscheidet hier nicht.",
+          "taskPitfall": "Saisonal ist nicht zufällig: R1 wird Y, R2 wird Z."
+        },
+        {
+          "taskId": "xyz-demo-3",
+          "taskText": "Ordne die fiktiven Materialien nach XYZ ein und bilde die Matrixklassen. Überlege danach anhand der Herleitung, weshalb R1 mehr Aufmerksamkeit als R2 verlangt und weshalb ein niedriger Wert nicht automatisch betriebliche Unwichtigkeit bedeutet.",
+          "givenData": {
+            "articles": [
+              {
+                "id": "R1",
+                "abc": "A",
+                "pattern": "Sporadische Abrufe ohne erkennbares Muster, kaum planbar.",
+                "xyz": "Z"
+              },
+              {
+                "id": "R2",
+                "abc": "C",
+                "pattern": "Über viele Perioden fast konstant 20 Stück.",
+                "xyz": "X"
+              },
+              {
+                "id": "R3",
+                "abc": "A",
+                "pattern": "In jedem Winter wiederkehrender, deutlich höherer Bedarf.",
+                "xyz": "Y"
+              }
+            ]
+          },
+          "displayData": [
+            "R1 · ABC A: Sporadische Abrufe ohne erkennbares Muster, kaum planbar.",
+            "R2 · ABC C: Über viele Perioden fast konstant 20 Stück.",
+            "R3 · ABC A: In jedem Winter wiederkehrender, deutlich höherer Bedarf."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "xyz.R1",
+                "label": "R1 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              },
+              {
+                "key": "xyz.R2",
+                "label": "R2 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              },
+              {
+                "key": "xyz.R3",
+                "label": "R3 · XYZ-Klasse",
+                "options": [
+                  {
+                    "value": "X",
+                    "label": "X"
+                  },
+                  {
+                    "value": "Y",
+                    "label": "Y"
+                  },
+                  {
+                    "value": "Z",
+                    "label": "Z"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "matrix.R1",
+                "label": "R1 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.R2",
+                "label": "R2 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              },
+              {
+                "key": "matrix.R3",
+                "label": "R3 · Matrixklasse",
+                "options": [
+                  {
+                    "value": "AX",
+                    "label": "AX"
+                  },
+                  {
+                    "value": "AY",
+                    "label": "AY"
+                  },
+                  {
+                    "value": "AZ",
+                    "label": "AZ"
+                  },
+                  {
+                    "value": "BX",
+                    "label": "BX"
+                  },
+                  {
+                    "value": "BY",
+                    "label": "BY"
+                  },
+                  {
+                    "value": "BZ",
+                    "label": "BZ"
+                  },
+                  {
+                    "value": "CX",
+                    "label": "CX"
+                  },
+                  {
+                    "value": "CY",
+                    "label": "CY"
+                  },
+                  {
+                    "value": "CZ",
+                    "label": "CZ"
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Wert und Planbarkeit gemeinsam interpretieren",
+          "difficulty": "Vertiefung",
+          "solutionContext": "R1 = AZ: hoher Wert und schlechte Planbarkeit verlangen besondere Aufmerksamkeit. R2 = CX: niedriger Wert und gute Planbarkeit, deshalb wertmäßig weniger kritisch. R3 = AY: hoher Wert mit erkennbarer Saison.",
+          "taskPitfall": "CX bedeutet nicht funktionslos oder entbehrlich: Auch ein günstiges Teil kann bei Fehlen die Produktion stoppen. ABC-Wert und betriebliche Kritikalität unterscheiden."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Verbrauchsmuster",
+          "formula": "X = gleichmäßig; Y = erkennbare Schwankungen; Z = unregelmäßig.",
+          "example": "100, 101, 99 Stück je Monat → X",
+          "meaning": "Nahezu gleicher Verbrauch ist gut planbar.",
+          "memoryHint": "Regelmäßigkeit entscheidet über XYZ."
+        },
+        {
+          "title": "Matrixklasse",
+          "formula": "Matrixklasse = ABC-Klasse gefolgt von XYZ-Klasse.",
+          "example": "ABC A + XYZ Z = AZ",
+          "meaning": "Hoher Wert trifft auf schlecht planbaren Verbrauch.",
+          "memoryHint": "Erst Wertklasse, dann Verbrauchsklasse."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Verbrauchsmuster X, Y oder Z zuordnen",
+          "why": "Die zeitliche Regelmäßigkeit bestimmt die Planbarkeit.",
+          "logic": "Gleichmäßig → X; wiederkehrende Saison → Y; ohne erkennbares Muster → Z.",
+          "pitfall": "Wertanteil und Verbrauchsregelmäßigkeit verwechseln"
+        },
+        {
+          "action": "ABC und XYZ zur Matrixklasse kombinieren",
+          "why": "Wert und Planbarkeit sind zwei verschiedene Eigenschaften.",
+          "logic": "Zuerst den gegebenen ABC-Buchstaben, dann den ermittelten XYZ-Buchstaben schreiben.",
+          "pitfall": "Wiederkehrende Saisonspitzen als zufällige Z-Schwankung bewerten"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Saison mit Zufall verwechselt",
+          "wrong": "Jeden Sommer 200, sonst 50 Stück → Z.",
+          "whyWrong": "Ein wiederkehrendes Hoch ist erkennbar und teilweise planbar.",
+          "correct": "Wiederkehrende Saison → Y; sporadisch ohne Muster → Z.",
+          "memoryHint": "Schwankung allein bedeutet nicht Z."
+        },
+        {
+          "title": "Matrix vertauscht",
+          "wrong": "ABC A, Verbrauch unregelmäßig → ZA.",
+          "whyWrong": "Der erste Buchstabe beschreibt den Wert.",
+          "correct": "A + Z = AZ: hoher Wert, schlecht planbar.",
+          "memoryHint": "Erst ABC, dann XYZ."
         }
       ]
     },
@@ -682,7 +1685,341 @@
             "Multiple: 8,60 × 800 = 6.880 € Material; 0,03 × 9.000 = 270 € Risiko; 6.880 + 520 + 270 = 7.670 €.",
             "Dual ist mit 7.550 € am günstigsten.",
             "Abhängigkeit, Qualität und Lieferfähigkeit zusätzlich prüfen; der Erwartungswert der Ausfallkosten beschreibt nicht alle Versorgungsfolgen."
-          ]
+          ],
+          "learningFocus": "Vollständiger Kostenvergleich",
+          "difficulty": "Einstieg"
+        },
+        {
+          "taskId": "sourcing-demo-2",
+          "taskText": "Vergleiche die drei fiktiven Strategien bei hohen Stillstandskosten. Prüfe ausdrücklich, ob der niedrigste Stückpreis auch zu den niedrigsten Gesamtkosten führt. Beurteile zusätzlich qualitative Kriterien.",
+          "givenData": {
+            "strategies": [
+              {
+                "id": "single",
+                "label": "Single Sourcing",
+                "unitPrice": 6,
+                "quantity": 1000,
+                "coordination": 100,
+                "riskPercent": 10
+              },
+              {
+                "id": "dual",
+                "label": "Dual Sourcing",
+                "unitPrice": 6.4,
+                "quantity": 1000,
+                "coordination": 300,
+                "riskPercent": 4
+              },
+              {
+                "id": "multiple",
+                "label": "Multiple Sourcing",
+                "unitPrice": 6.8,
+                "quantity": 1000,
+                "coordination": 550,
+                "riskPercent": 2
+              }
+            ],
+            "downtimeCost": 20000
+          },
+          "displayData": [
+            "Stillstandskosten je Ausfall: 20.000 €. Alle Angaben gelten für denselben Jahreszeitraum.",
+            "Single Sourcing: 1.000 Stück, Preis 6 €, Koordination 100 €, Risiko 10 %.",
+            "Dual Sourcing: 1.000 Stück, Preis 6,4 €, Koordination 300 €, Risiko 4 %.",
+            "Multiple Sourcing: 1.000 Stück, Preis 6,8 €, Koordination 550 €, Risiko 2 %."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "material.single",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.single",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.single",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "material.dual",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.dual",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.dual",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "material.multiple",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.multiple",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.multiple",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "cheapest",
+                "label": "Günstigste Strategie",
+                "options": [
+                  {
+                    "value": "single",
+                    "label": "Single Sourcing"
+                  },
+                  {
+                    "value": "dual",
+                    "label": "Dual Sourcing"
+                  },
+                  {
+                    "value": "multiple",
+                    "label": "Multiple Sourcing"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason",
+                "label": "Warum zählen zusätzlich qualitative Kriterien?",
+                "options": [
+                  {
+                    "value": "resilience",
+                    "label": "Abhängigkeit, Qualität und Lieferfähigkeit müssen zusätzlich beurteilt werden."
+                  },
+                  {
+                    "value": "priceOnly",
+                    "label": "Der niedrigste Preis garantiert die beste Lieferfähigkeit."
+                  },
+                  {
+                    "value": "noRisk",
+                    "label": "Mehrere Lieferanten schließen jedes Ausfallrisiko aus."
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Billiger Einkauf mit teurem Risiko",
+          "difficulty": "Variation",
+          "solutionContext": "Single spart beim Einkauf, kostet aber 2.000 € erwartetes Risiko. Gesamtkosten: Single 8.100 €, Dual 7.500 €, Multiple 7.750 €. Dual ist trotz höherem Stückpreis günstiger.",
+          "taskPitfall": "6 € Stückpreis allein machen Single nicht zur günstigsten Strategie; das Risiko muss mitgerechnet werden."
+        },
+        {
+          "taskId": "sourcing-demo-3",
+          "taskText": "Vergleiche die fiktiven Strategien bei geringeren Stillstandskosten. Wähle die günstigste Strategie aus den neu berechneten Gesamtkosten und beurteile anschließend Abhängigkeit, Qualität und Lieferfähigkeit.",
+          "givenData": {
+            "strategies": [
+              {
+                "id": "single",
+                "label": "Single Sourcing",
+                "unitPrice": 6,
+                "quantity": 1000,
+                "coordination": 100,
+                "riskPercent": 10
+              },
+              {
+                "id": "dual",
+                "label": "Dual Sourcing",
+                "unitPrice": 6.4,
+                "quantity": 1000,
+                "coordination": 300,
+                "riskPercent": 4
+              },
+              {
+                "id": "multiple",
+                "label": "Multiple Sourcing",
+                "unitPrice": 6.8,
+                "quantity": 1000,
+                "coordination": 550,
+                "riskPercent": 2
+              }
+            ],
+            "downtimeCost": 4000
+          },
+          "displayData": [
+            "Stillstandskosten je Ausfall: 4.000 €. Alle Angaben gelten für denselben Jahreszeitraum.",
+            "Single Sourcing: 1.000 Stück, Preis 6 €, Koordination 100 €, Risiko 10 %.",
+            "Dual Sourcing: 1.000 Stück, Preis 6,4 €, Koordination 300 €, Risiko 4 %.",
+            "Multiple Sourcing: 1.000 Stück, Preis 6,8 €, Koordination 550 €, Risiko 2 %."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "material.single",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.single",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.single",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "material.dual",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.dual",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.dual",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "material.multiple",
+                "label": "Materialkosten (€)"
+              },
+              {
+                "key": "risk.multiple",
+                "label": "Risikokosten (€)"
+              },
+              {
+                "key": "cost.multiple",
+                "label": "Gesamtkosten (€)"
+              }
+            ],
+            [
+              {
+                "key": "cheapest",
+                "label": "Günstigste Strategie",
+                "options": [
+                  {
+                    "value": "single",
+                    "label": "Single Sourcing"
+                  },
+                  {
+                    "value": "dual",
+                    "label": "Dual Sourcing"
+                  },
+                  {
+                    "value": "multiple",
+                    "label": "Multiple Sourcing"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "reason",
+                "label": "Warum zählen zusätzlich qualitative Kriterien?",
+                "options": [
+                  {
+                    "value": "resilience",
+                    "label": "Abhängigkeit, Qualität und Lieferfähigkeit müssen zusätzlich beurteilt werden."
+                  },
+                  {
+                    "value": "priceOnly",
+                    "label": "Der niedrigste Preis garantiert die beste Lieferfähigkeit."
+                  },
+                  {
+                    "value": "noRisk",
+                    "label": "Mehrere Lieferanten schließen jedes Ausfallrisiko aus."
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Andere Kostenlage und qualitative Kriterien",
+          "difficulty": "Vertiefung",
+          "solutionContext": "Bei 4.000 € Stillstandskosten ergibt sich Single 6.500 €, Dual 6.860 €, Multiple 7.430 €. Hier gewinnt Single; die Rangfolge aus einer anderen Aufgabe lässt sich nicht übernehmen.",
+          "taskPitfall": "Single ist hier rechnerisch günstig, garantiert aber weder Lieferfähigkeit noch Qualität. Die qualitative Zusatzentscheidung bleibt notwendig."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Materialkosten",
+          "formula": "Materialkosten = Stückpreis × Menge",
+          "example": "800 × 8 € = 6.400 €",
+          "meaning": "Das ist der reine Einkauf ohne weitere Kosten.",
+          "memoryHint": "Einkauf ist nur ein Kostenbestandteil."
+        },
+        {
+          "title": "Erwartete Risikokosten",
+          "formula": "Risikokosten = (Ausfallrisiko in % ÷ 100) × Stillstandskosten",
+          "example": "18 ÷ 100 × 9.000 € = 1.620 €",
+          "meaning": "Über viele vergleichbare Fälle ist dies der erwartete Ausfallkostenanteil.",
+          "memoryHint": "Prozent durch 100 teilen."
+        },
+        {
+          "title": "Gesamtkosten",
+          "formula": "Gesamtkosten = Materialkosten + Koordinationskosten + Risikokosten",
+          "example": "6.400 + 120 + 1.620 = 8.140 €",
+          "meaning": "Alle drei Kostenarten zählen im Vergleich.",
+          "memoryHint": "Material, Koordination und Risiko addieren."
+        },
+        {
+          "title": "Kostenminimum",
+          "formula": "Günstigste Strategie = Strategie mit den niedrigsten Gesamtkosten.",
+          "example": "8.140 € > 7.550 € → zweite Strategie",
+          "meaning": "Die zweite Strategie ist im Modell günstiger.",
+          "memoryHint": "Gesamtkosten statt Stückpreise vergleichen."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Single: Material-, Risiko- und Gesamtkosten",
+          "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
+          "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
+          "pitfall": "Ausfallrisiko mit Materialkosten statt Stillstandskosten multiplizieren"
+        },
+        {
+          "action": "Dual: Material-, Risiko- und Gesamtkosten",
+          "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
+          "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
+          "pitfall": "Prozentwert nicht durch 100 teilen"
+        },
+        {
+          "action": "Multiple: Material-, Risiko- und Gesamtkosten",
+          "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
+          "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
+          "pitfall": "Koordinationskosten vergessen oder Bedarf je Lieferant mehrfach zählen"
+        },
+        {
+          "action": "Günstigste Strategie auswählen",
+          "why": "Nur gleiche Kostenumfänge sind vergleichbar.",
+          "logic": "Die drei Gesamtkosten nebeneinanderstellen und den kleinsten Wert auswählen.",
+          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen"
+        },
+        {
+          "action": "Qualitative Begründung auswählen",
+          "why": "Kosten allein sagen nicht alles über Lieferfähigkeit aus.",
+          "logic": "Abhängigkeit, Qualität und Lieferfähigkeit zusätzlich prüfen.",
+          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Risiko vergessen",
+          "wrong": "800 × 8 = 6.400 € gelten als Gesamtkosten.",
+          "whyWrong": "Einkauf ist nur eine Kostenart.",
+          "correct": "6.400 + 120 + (9.000 × 18 ÷ 100) = 8.140 €.",
+          "memoryHint": "Alle Kostenarten addieren."
+        },
+        {
+          "title": "Prozent als Faktor verwendet",
+          "wrong": "9.000 × 18 = 162.000 € Risiko.",
+          "whyWrong": "18 % bedeutet 18 von 100, nicht das Achtzehnfache.",
+          "correct": "9.000 × 0,18 = 1.620 €.",
+          "memoryHint": "Prozent zuerst durch 100 teilen."
         }
       ]
     },
@@ -740,7 +2077,7 @@
       "tasks": [
         {
           "taskId": "depth-demo-1",
-          "taskText": "Bearbeite zwei Teilfälle einer fiktiven Lernaufgabe. Wähle die passende Formel und gib Prozentwerte an (z. B. 60 oder 60 %). Toleranz: ±0,1 Prozentpunkte.",
+          "taskText": "Bearbeite zwei Teilfälle einer fiktiven Lernaufgabe. Wähle die passende Formel und gib Prozentwerte an (z. B. 60 oder 60 %). Toleranz: ±0,1 Prozentpunkte. Schwerpunkt: Leite in Fall A die exakte Formel aus Eigen- und Fremdleistung her; Fall B dient der Abgrenzung zur Näherung.",
           "givenData": {
             "own": 390000,
             "external": 210000,
@@ -818,7 +2155,233 @@
             "Fall A: 390.000 ÷ (390.000 + 210.000) × 100 = 65 %.",
             "Fall B: (1 − 910.000 ÷ 1.400.000) × 100 = 35 %.",
             "Hohe Fertigungstiefe bedeutet großen Eigenanteil; niedrige großen Fremdanteil. Daraus folgt keine automatische Aussage über den Gewinn."
-          ]
+          ],
+          "learningFocus": "Schwerpunkt: exakter Eigenanteil",
+          "difficulty": "Einstieg"
+        },
+        {
+          "taskId": "depth-demo-2",
+          "taskText": "Bearbeite zwei Teilfälle einer fiktiven Lernaufgabe. Wähle die passende Formel und gib Prozentwerte an (z. B. 60 oder 60 %). Toleranz: ±0,1 Prozentpunkte. Schwerpunkt: In Fall B sind nur Einkauf und Umsatz bekannt. Begründe, weshalb hier nur eine Näherung möglich ist; Fall A dient zum Vergleich.",
+          "givenData": {
+            "own": 180000,
+            "external": 420000,
+            "purchases": 300000,
+            "revenue": 1200000
+          },
+          "displayData": [
+            "Fall A: Eigenfertigungswert 180.000 €, Fremdfertigungswert 420.000 €.",
+            "Fall B: Umsatz 1.200.000 €, Materialeinkauf 300.000 €; Eigenfertigungswert nicht direkt bestimmbar."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "formula.exact",
+                "label": "Fall A · Formel",
+                "options": [
+                  {
+                    "value": "exact",
+                    "label": "Exakt: Eigen ÷ (Eigen + Fremd)"
+                  },
+                  {
+                    "value": "approximate",
+                    "label": "Näherung: 1 − Materialeinkauf ÷ Umsatz"
+                  }
+                ]
+              },
+              {
+                "key": "formula.approximate",
+                "label": "Fall B · Formel",
+                "options": [
+                  {
+                    "value": "exact",
+                    "label": "Exakt: Eigen ÷ (Eigen + Fremd)"
+                  },
+                  {
+                    "value": "approximate",
+                    "label": "Näherung: 1 − Materialeinkauf ÷ Umsatz"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "depth.exact",
+                "label": "Fall A · Fertigungstiefe (%)"
+              },
+              {
+                "key": "depth.approximate",
+                "label": "Fall B · Fertigungstiefe (%)"
+              }
+            ],
+            [
+              {
+                "key": "interpretation",
+                "label": "Welche Interpretation stimmt?",
+                "options": [
+                  {
+                    "value": "ownShare",
+                    "label": "Hohe Fertigungstiefe: großer Eigenanteil; niedrige: großer Fremdanteil."
+                  },
+                  {
+                    "value": "reversed",
+                    "label": "Hohe Fertigungstiefe: großer Fremdanteil; niedrige: großer Eigenanteil."
+                  },
+                  {
+                    "value": "profit",
+                    "label": "Eine hohe Fertigungstiefe garantiert hohen Gewinn."
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Schwerpunkt: Näherung aus Einkauf und Umsatz",
+          "difficulty": "Variation",
+          "solutionContext": "Fall B: (1 − 300.000 ÷ 1.200.000) × 100 = 75 % ist eine Näherung. Fall A: 180.000 ÷ 600.000 × 100 = 30 % ist exakt. Die beiden unabhängigen Fälle bilden keinen zeitlichen Verlauf.",
+          "taskPitfall": "75 % aus Einkauf und Umsatz nicht als exakt bestimmten Fertigungsanteil ausgeben."
+        },
+        {
+          "taskId": "depth-demo-3",
+          "taskText": "Fall A zeigt einen fiktiven Betrieb vor dem Outsourcing. Danach werden bei gleicher Gesamtleistung 120.000 € Eigenleistung durch Fremdleistung ersetzt. Berechne zunächst Fall A und den unabhängigen Näherungsfall B; wähle dann die richtige Aussage zur Veränderung durch Outsourcing.",
+          "givenData": {
+            "own": 360000,
+            "external": 240000,
+            "purchases": 300000,
+            "revenue": 1200000
+          },
+          "displayData": [
+            "Fall A vorher: Eigen 360.000 €, Fremd 240.000 €.",
+            "Fall A nach Outsourcing: Eigen 240.000 €, Fremd 360.000 €; Gesamtleistung unverändert 600.000 €.",
+            "Unabhängiger Fall B: Umsatz 1.200.000 €, Materialeinkauf 300.000 € (Näherung)."
+          ],
+          "inputSteps": [
+            [
+              {
+                "key": "formula.exact",
+                "label": "Fall A · Formel",
+                "options": [
+                  {
+                    "value": "exact",
+                    "label": "Exakt: Eigen ÷ (Eigen + Fremd)"
+                  },
+                  {
+                    "value": "approximate",
+                    "label": "Näherung: 1 − Materialeinkauf ÷ Umsatz"
+                  }
+                ]
+              },
+              {
+                "key": "formula.approximate",
+                "label": "Fall B · Formel",
+                "options": [
+                  {
+                    "value": "exact",
+                    "label": "Exakt: Eigen ÷ (Eigen + Fremd)"
+                  },
+                  {
+                    "value": "approximate",
+                    "label": "Näherung: 1 − Materialeinkauf ÷ Umsatz"
+                  }
+                ]
+              }
+            ],
+            [
+              {
+                "key": "depth.exact",
+                "label": "Fall A · Fertigungstiefe (%)"
+              },
+              {
+                "key": "depth.approximate",
+                "label": "Fall B · Fertigungstiefe (%)"
+              }
+            ],
+            [
+              {
+                "key": "interpretation",
+                "label": "Welche Aussage zum Outsourcing stimmt?",
+                "options": [
+                  {
+                    "value": "ownShare",
+                    "label": "Der Eigenanteil sinkt von 60 % auf 40 %, also um 20 Prozentpunkte."
+                  },
+                  {
+                    "value": "reversed",
+                    "label": "Mehr Fremdleistung erhöht den Eigenanteil von 40 % auf 60 %."
+                  },
+                  {
+                    "value": "profit",
+                    "label": "Der sinkende Eigenanteil beweist einen niedrigeren Gewinn."
+                  }
+                ]
+              }
+            ]
+          ],
+          "learningFocus": "Outsourcing bei konstanter Gesamtleistung",
+          "difficulty": "Vertiefung",
+          "comparison": {
+            "own": 240000,
+            "external": 360000
+          },
+          "solutionContext": "Bei konstant 600.000 € Gesamtleistung ersetzt Outsourcing Eigenleistung durch Fremdleistung. Der Eigenanteil sinkt; eine Gewinnänderung ist daraus nicht bestimmbar.",
+          "taskPitfall": "60 % auf 40 % sind 20 Prozentpunkte weniger, nicht 20 % relative Abnahme. Fall B ist unabhängig und darf nicht als Nachher-Wert verwendet werden."
+        }
+      ],
+      "formulaExamples": [
+        {
+          "title": "Exakter Eigenanteil",
+          "formula": "Exakt: Fertigungstiefe = Eigenfertigungswert ÷ (Eigenfertigungswert + Fremdfertigungswert)",
+          "example": "300 ÷ (300 + 200) = 0,6",
+          "meaning": "Sechs Zehntel der Leistung werden selbst erbracht.",
+          "memoryHint": "Nur Eigenleistung in den Zähler."
+        },
+        {
+          "title": "Näherung",
+          "formula": "Näherung: Fertigungstiefe = 1 − Materialeinkaufsvolumen ÷ Umsatzvolumen",
+          "example": "1 − 400 ÷ 1.000 = 0,6",
+          "meaning": "Aus Einkauf und Umsatz wird der Eigenanteil nur näherungsweise bestimmt.",
+          "memoryHint": "Einkauf und Umsatz liefern eine Näherung."
+        },
+        {
+          "title": "Prozentangabe",
+          "formula": "Prozentwert = Verhältnis × 100; monetäre Werte derselben Periode verwenden.",
+          "example": "0,6 × 100 = 60 %",
+          "meaning": "60 von 100 Wertanteilen entfallen auf Eigenleistung.",
+          "memoryHint": "Verhältnis mal 100 ergibt Prozent."
+        }
+      ],
+      "microSteps": [
+        {
+          "action": "Passende Formel je Teilfall erkennen",
+          "why": "Die verfügbaren Daten bestimmen, welche Formel möglich ist.",
+          "logic": "Eigen und Fremd bekannt → exakt; nur Einkauf und Umsatz → Näherung.",
+          "pitfall": "Teilezahlen statt monetärer Werte verwenden"
+        },
+        {
+          "action": "Fertigungstiefe je Teilfall in Prozent berechnen",
+          "why": "Ein Verhältnis wird erst durch Multiplikation mit 100 zum Prozentwert.",
+          "logic": "Eigen ÷ (Eigen + Fremd) × 100 bzw. (1 − Einkauf ÷ Umsatz) × 100.",
+          "pitfall": "Bei der Näherung 1 minus vergessen"
+        },
+        {
+          "action": "Hohe und niedrige Fertigungstiefe interpretieren",
+          "why": "Der Eigenanteil ist keine Gewinnkennzahl.",
+          "logic": "Hoher Wert = viel Eigenleistung; niedriger Wert = viel Fremdleistung.",
+          "pitfall": "Eigenwert durch Fremdwert statt durch die Summe teilen"
+        }
+      ],
+      "commonMistakeExamples": [
+        {
+          "title": "Fremdleistung im Zähler",
+          "wrong": "(300 + 200) ÷ (300 + 200) = 100 %.",
+          "whyWrong": "Gesucht ist nur der selbst erbrachte Anteil.",
+          "correct": "300 ÷ (300 + 200) × 100 = 60 %.",
+          "memoryHint": "Nur Eigenleistung in den Zähler."
+        },
+        {
+          "title": "Eigenanteil als Gewinn gelesen",
+          "wrong": "80 % Fertigungstiefe bedeutet 80 % Gewinn.",
+          "whyWrong": "Die Kennzahl beschreibt Leistungserbringung, keine Gewinnmarge.",
+          "correct": "400 ÷ (400 + 100) × 100 = 80 % Eigenanteil; Gewinn ist daraus nicht bestimmbar.",
+          "memoryHint": "Eigenanteil ist keine Rendite."
         }
       ]
     }

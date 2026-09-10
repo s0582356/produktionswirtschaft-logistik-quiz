@@ -1,6 +1,8 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { evaluateMethodStep } from '../utils/methodTrainerEvaluator.js'
+import MethodLearningNotes from './MethodLearningNotes.vue'
+import { solutionDerivation } from '../utils/methodSolutionDerivation.js'
 import { formatMethodSolution } from '../utils/methodSolutionFormatter.js'
 
 const props = defineProps({ bank: { type: Object, required: true } })
@@ -14,6 +16,33 @@ const feedback = reactive({})
 const revealedSteps = reactive(new Set())
 const sessionProgress = reactive({})
 const evaluatorError = ref('')
+const taskSessions = reactive({})
+const taskRevision = ref(0)
+
+function sessionKey() { return method.value && task.value ? `${method.value.methodId}:${task.value.taskId}` : '' }
+function saveTask() {
+  const key = sessionKey()
+  if (key) taskSessions[key] = { answers: { ...answers }, feedback: { ...feedback }, revealed: [...revealedSteps], step: currentStep.value }
+}
+function restoreTask() {
+  resetTask()
+  const saved = taskSessions[sessionKey()]
+  if (!saved) return
+  Object.assign(answers, saved.answers)
+  Object.assign(feedback, saved.feedback)
+  saved.revealed.forEach(step => revealedSteps.add(step))
+  currentStep.value = saved.step
+}
+function switchTask(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= method.value.tasks.length || index === currentTaskIndex.value) return
+  saveTask()
+  currentTaskIndex.value = index
+  restoreTask()
+}
+function taskStatus(index) {
+  const step = index === currentTaskIndex.value ? currentStep.value : taskSessions[`${method.value.methodId}:${method.value.tasks[index].taskId}`]?.step || 1
+  return `${Math.min(step - 1, totalSteps.value)}/${totalSteps.value} Schritte`
+}
 
 const method = computed(() => selectedMethod.value)
 const task = computed(() => method.value?.tasks?.[currentTaskIndex.value])
@@ -23,9 +52,14 @@ const allStepsDone = computed(() => totalSteps.value > 0
   && method.value.steps.every((_, index) => feedback[index + 1]?.status === 'green'))
 const progressPercent = computed(() => Math.min(100, ((currentStep.value - 1) / totalSteps.value) * 100))
 
-watch(() => props.bank, () => showSelection())
+watch(() => props.bank, () => {
+  showSelection()
+  Object.keys(taskSessions).forEach(key => delete taskSessions[key])
+  Object.keys(sessionProgress).forEach(key => delete sessionProgress[key])
+})
 
 function resetTask() {
+  taskRevision.value++
   Object.keys(answers).forEach((key) => delete answers[key])
   Object.keys(feedback).forEach((key) => delete feedback[key])
   revealedSteps.clear()
@@ -34,13 +68,15 @@ function resetTask() {
 }
 
 function selectMethod(item, targetView = 'practice') {
+  saveTask()
   selectedMethod.value = item
   currentTaskIndex.value = 0
   view.value = targetView
-  resetTask()
+  restoreTask()
 }
 
 function showSelection() {
+  saveTask()
   selectedMethod.value = null
   view.value = 'selection'
   resetTask()
@@ -48,7 +84,6 @@ function showSelection() {
 
 function startPractice() {
   view.value = 'practice'
-  resetTask()
 }
 
 function checkStep() {
@@ -94,8 +129,7 @@ function retryTask() {
 
 function nextTask() {
   const count = method.value.tasks.length
-  currentTaskIndex.value = (currentTaskIndex.value + 1) % count
-  resetTask()
+  switchTask((currentTaskIndex.value + 1) % count)
 }
 
 function methodStats(item) {
@@ -185,14 +219,7 @@ function displaySolutionValues(step) {
       <p class="method-category">{{ method.category }}</p>
       <h2>{{ method.methodTitle }}</h2>
       <p class="explanation">{{ method.explanation }}</p>
-      <details class="method-details" open>
-        <summary>Formeln und Lösungslogik</summary>
-        <div class="formula-box"><p v-for="line in method.formula" :key="line">{{ line }}</p></div>
-      </details>
-      <details class="method-details" open>
-        <summary>Schrittfolge</summary>
-        <ol><li v-for="step in method.steps" :key="step">{{ step }}</li></ol>
-      </details>
+      <MethodLearningNotes :method="method" />
       <details v-if="method.examples?.length" class="method-details method-examples">
         <summary>Beispiele ansehen</summary>
         <p class="method-examples-intro">Fiktive Lernbeispiele – folge dem Lösungsweg Schritt für Schritt.</p>
@@ -241,10 +268,6 @@ function displaySolutionValues(step) {
           </article>
         </div>
       </details>
-      <details class="method-details">
-        <summary>Typische Fehler</summary>
-        <ul><li v-for="mistake in method.commonMistakes" :key="mistake">{{ mistake }}</li></ul>
-      </details>
       <button class="primary-button" type="button" @click="startPractice">Diese Methode üben</button>
     </article>
 
@@ -260,11 +283,15 @@ function displaySolutionValues(step) {
       <details class="method-details lookup-details">
         <summary>Methode nachschlagen</summary>
         <p class="explanation">{{ method.explanation }}</p>
-        <div class="formula-box"><p v-for="line in method.formula" :key="line">{{ line }}</p></div>
-        <ol><li v-for="step in method.steps" :key="step">{{ step }}</li></ol>
+        <MethodLearningNotes :method="method" />
       </details>
 
-      <h2>Aufgabe</h2>
+      <nav class="task-selector" aria-label="Übungsaufgabe wählen">
+        <button v-for="(item, index) in method.tasks" :key="item.taskId" type="button" class="secondary-button" :aria-pressed="index === currentTaskIndex" @click="switchTask(index)">Aufgabe {{ index + 1 }} · {{ taskStatus(index) }}</button>
+      </nav>
+      <p>Eingaben und geprüfte Schritte bleiben beim Wechsel in dieser Session erhalten.</p>
+      <h2>Aufgabe {{ currentTaskIndex + 1 }} von {{ method.tasks.length }}</h2>
+      <p v-if="task.learningFocus"><strong>Lernschwerpunkt:</strong> {{ task.learningFocus }}</p>
       <p class="method-task-text">{{ task.taskText }}</p>
 
       <div v-if="method.engine === 'abcAnalysis'" class="method-table-scroll">
@@ -286,9 +313,18 @@ function displaySolutionValues(step) {
         <ul><li v-for="line in task.displayData" :key="line">{{ line }}</li></ul>
       </div>
 
-      <section v-for="stepNumber in totalSteps" v-show="stepNumber <= currentStep" :key="stepNumber" class="method-step" :class="feedback[stepNumber] && `step-${feedback[stepNumber].status}`">
+      <section v-for="stepNumber in totalSteps" v-show="stepNumber <= currentStep" :key="`${task.taskId}-${taskRevision}-${stepNumber}`" class="method-step" :class="feedback[stepNumber] && `step-${feedback[stepNumber].status}`">
         <h3>Schritt {{ stepNumber }}: {{ method.steps[stepNumber - 1] }}</h3>
 
+        <div v-if="method.microSteps?.[stepNumber - 1]" class="micro-step-help">
+          <p><strong>Warum?</strong> {{ method.microSteps[stepNumber - 1].why }}</p>
+          <p><strong>So gehst du vor:</strong> {{ method.microSteps[stepNumber - 1].logic }}</p>
+          <p><strong>Typischer Fehler:</strong> {{ method.microSteps[stepNumber - 1].pitfall }}</p>
+        </div>
+        <details class="method-details" @toggle="event => { if (event.target.open) revealedSteps.add(stepNumber) }">
+          <summary>Musterlösung mit Herleitung anzeigen</summary>
+          <dl class="derivation"><div v-for="(row, index) in solutionDerivation(method, task, stepNumber)" :key="index"><dt>{{ row.label }}</dt><dd>{{ row.value }}</dd></div></dl>
+        </details>
         <fieldset class="method-step-fields" :disabled="stepNumber < currentStep" :aria-label="`Eingaben für Schritt ${stepNumber}`">
         <template v-if="method.engine === 'abcAnalysis' && stepNumber === 1">
           <div class="method-fields"><label v-for="position in task.givenData.positions" :key="position.id">Verbrauchswert {{ position.id }} (€)<input v-model="answers[`value.${position.id}`]" type="text" inputmode="decimal" /></label><label>Gesamtverbrauchswert (€)<input v-model="answers.total" type="text" inputmode="decimal" /></label></div>
@@ -348,7 +384,7 @@ function displaySolutionValues(step) {
             </section>
           </div>
         </div>
-        <div v-if="stepNumber === currentStep" class="method-step-actions"><button class="primary-button" type="button" @click="checkStep">Schritte prüfen</button><button class="secondary-button" type="button" @click="revealCurrentStep">Musterlösung anzeigen</button></div>
+        <div v-if="stepNumber === currentStep" class="method-step-actions"><button class="primary-button" type="button" @click="checkStep">Schritte prüfen</button><button class="secondary-button" type="button" @click="revealCurrentStep">Musterwerte anzeigen</button></div>
       </section>
 
       <p v-if="evaluatorError" class="method-error" role="alert">{{ evaluatorError }}</p>
@@ -356,8 +392,8 @@ function displaySolutionValues(step) {
       <section v-if="allStepsDone" class="method-complete">
         <h3>Aufgabe abgeschlossen</h3>
         <p>Gut gemacht. Vergleiche deinen Weg mit der kompakten Musterlösung.</p>
-        <details class="method-details" open><summary>Musterlösung</summary><ol><li v-for="line in task.solutionWalkthrough" :key="line">{{ line }}</li></ol></details>
-        <details class="method-details"><summary>Typische Fehler</summary><ul><li v-for="mistake in method.commonMistakes" :key="mistake">{{ mistake }}</li></ul></details>
+        <p>Die Herleitungen kannst du bei jedem geprüften Schritt aufklappen.</p>
+        <MethodLearningNotes :method="method" mistakes-only />
         <div class="method-step-actions"><button class="primary-button" type="button" @click="nextTask">Neue Aufgabe</button><button class="secondary-button" type="button" @click="retryTask">Nochmal versuchen</button><button class="secondary-button" type="button" @click="showSelection">Zur Methodenauswahl</button></div>
       </section>
     </article>

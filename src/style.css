@@ -1416,3 +1416,23 @@ button:focus-visible,
 :root[data-theme="dark"] .method-trainer input,
 :root[data-theme="dark"] .method-trainer select,
 :root[data-theme="dark"] .method-trainer option { color-scheme: dark; }
+
+.learning-grid { display: grid; gap: 14px; margin-block: 16px; }
+.learning-card { border: 1px solid #b7cbc5; border-radius: 10px; padding: 16px; margin-block: 12px; min-width: 0; overflow-wrap: anywhere; }
+.learning-card p, .micro-steps p, .micro-step-help p { line-height: 1.65; }
+.learning-card h3 { margin-top: 0; font-size: 1.05rem; }
+.learning-hint { border-left: 3px solid currentColor; padding-left: 12px; }
+.micro-steps li { margin-block: 20px; padding-left: 6px; }
+.mistake-example dl > div, .derivation > div { padding-block: 10px; border-bottom: 1px solid #b7cbc5; }
+.mistake-example dt, .derivation dt { font-weight: 750; }
+.mistake-example dd, .derivation dd { margin: 6px 0 0; line-height: 1.65; white-space: pre-line; overflow-wrap: anywhere; }
+.task-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.task-selector [aria-pressed="true"] { outline: 3px solid currentColor; outline-offset: 2px; }
+:root[data-theme="dark"] .learning-card,
+:root[data-theme="dark"] .mistake-example dl > div,
+:root[data-theme="dark"] .derivation > div { border-color: #4a606c; color: #e5eeeb; }
+@media (max-width: 600px) {
+  .learning-card { padding: 12px; }
+  .task-selector > button { width: 100%; }
+  .derivation { min-width: 0; }
+}

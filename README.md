@@ -1,6 +1,6 @@
 # Produktionswirtschaft & Logistik Quiz
 
-Version **0.5.1**
+Version **0.5.2**
 
 A responsive Vue/Vite learning app for practicing production management and logistics concepts. The public version combines neutral multiple-choice examples with a browser-only workflow for personal JSON question banks.
 

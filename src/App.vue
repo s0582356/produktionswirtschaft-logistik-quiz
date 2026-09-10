@@ -800,7 +800,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
     </section>
 
     <footer class="app-footer" aria-label="Projektinformationen">
-      <span>Version 0.5.1</span>
+      <span>Version 0.5.2</span>
       <span>Produktionswirtschaft & Logistik edition</span>
       <span>MC, Freitext und Methoden-Training</span>
     </footer>
