@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, nextTick, reactive, ref, watch } from 'vue'
 import { evaluateMethodStep } from '../utils/methodTrainerEvaluator.js'
 import MethodLearningNotes from './MethodLearningNotes.vue'
 import { solutionDerivation } from '../utils/methodSolutionDerivation.js'
@@ -18,6 +18,7 @@ const sessionProgress = reactive({})
 const evaluatorError = ref('')
 const taskSessions = reactive({})
 const taskRevision = ref(0)
+const practiceTitle = ref(null)
 
 function sessionKey() { return method.value && task.value ? `${method.value.methodId}:${task.value.taskId}` : '' }
 function saveTask() {
@@ -38,6 +39,7 @@ function switchTask(index) {
   saveTask()
   currentTaskIndex.value = index
   restoreTask()
+  focusPracticeStart()
 }
 function taskStatus(index) {
   const step = index === currentTaskIndex.value ? currentStep.value : taskSessions[`${method.value.methodId}:${method.value.tasks[index].taskId}`]?.step || 1
@@ -73,6 +75,7 @@ function selectMethod(item, targetView = 'practice') {
   currentTaskIndex.value = 0
   view.value = targetView
   restoreTask()
+  if (targetView === 'practice') focusPracticeStart()
 }
 
 function showSelection() {
@@ -84,6 +87,13 @@ function showSelection() {
 
 function startPractice() {
   view.value = 'practice'
+  focusPracticeStart()
+}
+
+// Keep keyboard context without asking the browser to scroll a newly rendered
+// task into view. In particular, do not move focus to feedback or solutions.
+function focusPracticeStart() {
+  nextTick(() => practiceTitle.value?.focus?.({ preventScroll: true }))
 }
 
 function checkStep() {
@@ -186,6 +196,57 @@ function situationLabelParts(label) {
 
 function displaySolutionValues(step) {
   return formatMethodSolution(feedback[step]?.correctValues, method.value.engine, step)
+}
+
+function taskGuidance(stepNumber) {
+  const data = task.value?.givenData
+  if (!data || !method.value) return null
+  const fieldLabels = task.value.inputSteps?.[stepNumber - 1]?.map(field => field.label) || []
+  const scenarioLabels = data.scenarios || fieldLabels.filter(label => label.startsWith('Situation '))
+  switch (method.value.engine) {
+    case 'abcAnalysis': {
+      const positions = data.positions.map(position => position.id + ': ' + formatNumber(position.quantity, 0) + ' Stück × ' + formatNumber(position.unitValue) + ' €')
+      const limits = task.value.params?.classLimits
+      if (stepNumber === 1) return { attention: positions, inputHint: 'Trage für jeden Artikel den Verbrauchswert und anschließend die Summe aller Verbrauchswerte ein.' }
+      if (stepNumber === 2) return { attention: ['Diese Aufgabe enthält die Artikel ' + data.positions.map(position => position.id).join(', ') + '.', 'Nutze die eben berechneten Verbrauchswerte; Stückmengen und Stückpreise sind keine Sortierreihenfolge.'], inputHint: 'Wähle die Artikel in absteigender Wertreihenfolge und trage Anteil sowie kumulierten Anteil ein.' }
+      return { attention: ['In dieser Aufgabe gilt: A bis ' + (limits?.A ?? 80) + ' %, B bis ' + (limits?.B ?? 95) + ' %, darüber C.', 'Entscheidend ist der kumulierte Wertanteil aus dem vorherigen Schritt.'], inputHint: 'Wähle für jeden Artikel die Klasse, die zu seinem kumulierten Anteil passt.' }
+    }
+    case 'billOfMaterials': {
+      const edges = data.edges.map(edge => edge.parent + ' → ' + edge.qtyPerParent + '× ' + edge.child)
+      if (stepNumber === 1) return { attention: ['Endprodukt: ' + data.endProduct + '; geforderte Menge: ' + formatNumber(data.endProductQuantity, 0) + ' Stück.', ...edges.filter(edge => edge.startsWith(data.endProduct + ' →'))], inputHint: 'Trage die Baugruppenmengen je Endprodukt ein.' }
+      if (stepNumber === 2) return { attention: ['Für ' + data.endProduct + ' führen diese Stücklistenwege zu den Kaufteilen:', ...edges], inputHint: 'Trage den Bedarf je Endprodukt für jedes Kaufteil ein; gleiche Teile aus mehreren Pfaden werden addiert.' }
+      return { attention: ['Der Auftrag umfasst ' + formatNumber(data.endProductQuantity, 0) + ' Stück ' + data.endProduct + '.', 'Verwende den Bedarf je Endprodukt aus dem vorherigen Schritt.'], inputHint: 'Trage den Gesamtbedarf jedes Kaufteils für die geforderte Auftragsmenge ein.' }
+    }
+    case 'monthlyDemandSplit':
+      if (stepNumber === 1) return { attention: ['Jahresbedarf: ' + formatNumber(data.yearlyDemand, 0) + ' Stück.', 'Der Sondermonat ist ' + data.specialMonths[0] + ' und zählt mit dem Faktor ' + data.specialFactor + '.'], inputHint: 'Wähle die Gleichung, die elf normale und einen doppelt gewichteten Monat abbildet.' }
+      if (stepNumber === 2) return { attention: ['Verteile ' + formatNumber(data.yearlyDemand, 0) + ' Stück auf dreizehn Bedarfseinheiten.', 'Der Monat ' + data.specialMonths[0] + ' wird erst im nächsten Schritt als Sondermonat bestimmt.'], inputHint: 'Trage den gerundeten Bedarf eines normalen Monats ein.' }
+      return { attention: ['Nutze den gerundeten Normalmonat und den Jahresbedarf von ' + formatNumber(data.yearlyDemand, 0) + ' Stück.', 'Der Sondermonat ' + data.specialMonths[0] + ' gleicht die Rundungsdifferenz aus.'], inputHint: 'Trage den Sondermonat und danach die Kontrollsumme für das Jahr ein.' }
+    case 'xyzAbcMatrix':
+      if (stepNumber === 1) return { attention: data.articles.map(article => article.id + ': ' + article.pattern), inputHint: 'Wähle für jeden Artikel nur die XYZ-Klasse aus dem beschriebenen Verbrauchsmuster.' }
+      return { attention: data.articles.map(article => article.id + ' hat bereits die ABC-Klasse ' + article.abc + '; kombiniere sie mit deiner XYZ-Einordnung.'), inputHint: 'Trage die zweibuchstabige Matrixklasse in der Reihenfolge ABC, dann XYZ ein.' }
+    case 'sourcingCostComparison': {
+      const strategy = data.strategies[stepNumber - 1]
+      if (strategy) return { attention: [strategy.label + ': ' + formatNumber(strategy.quantity, 0) + ' Stück zu ' + formatNumber(strategy.unitPrice) + ' € je Stück.', 'Koordination: ' + formatNumber(strategy.coordination) + ' €; Ausfallrisiko: ' + formatNumber(strategy.riskPercent) + ' %; Stillstandskosten: ' + formatNumber(data.downtimeCost) + ' €.'], inputHint: 'Trage Materialkosten, Risikokosten und erst danach die Gesamtkosten für diese Strategie ein.' }
+      if (stepNumber === 4) return { attention: data.strategies.map(strategy => 'Vergleiche die vollständigen Gesamtkosten von ' + strategy.label + '.'), inputHint: 'Wähle die Strategie mit dem kleinsten bereits berechneten Gesamtwert.' }
+      return { attention: ['Die Aufgabe trennt Kostenrechnung und qualitative Lieferbewertung.', 'Prüfe die angebotene Begründung auf Abhängigkeit, Qualität oder Lieferfähigkeit.'], inputHint: 'Wähle die Begründung, die erklärt, warum Kosten nicht das einzige Kriterium bleiben.' }
+    }
+    case 'verticalIntegration': {
+      const base = ['Fall A: Eigenfertigungswert ' + formatNumber(data.own) + ' € und Fremdfertigungswert ' + formatNumber(data.external) + ' €.', 'Fall B: Umsatz ' + formatNumber(data.revenue) + ' € und Materialeinkauf ' + formatNumber(data.purchases) + ' €.']
+      if (stepNumber === 1) return { attention: base, inputHint: 'Wähle für Fall A die exakte und für Fall B die zur Datenlage passende Näherungsformel.' }
+      if (stepNumber === 2) return { attention: base, inputHint: 'Setze die Werte je Fall in die passende Formel ein und trage beide Prozentwerte ein.' }
+      const after = task.value.comparison ? ['Nach Outsourcing: Eigen ' + formatNumber(task.value.comparison.own) + ' € und Fremd ' + formatNumber(task.value.comparison.external) + ' €.'] : []
+      return { attention: [...base, ...after], inputHint: 'Wähle die Aussage, die den Eigenanteil und eine mögliche Veränderung korrekt beschreibt.' }
+    }
+    case 'transportModeComparison':
+      if (stepNumber === 1) return { attention: ['Vergleichsebene: ' + data.carriers.join(', ') + '.', 'Geprüfte Kriterien in dieser Aufgabe: ' + data.criteria.join(', ') + '.'], inputHint: 'Wähle je Verkehrsträger die relative Stufe für jedes aufgeführte Kriterium.' }
+      return { attention: fieldLabels.slice(0, 1), inputHint: 'Wähle den Träger und anschließend genau das im Szenario hervorgehobene Vergleichskriterium.' }
+    case 'transportConceptAssignment':
+      return { attention: scenarioLabels, inputHint: stepNumber === 1 ? 'Wähle je Situation das Konzept mit dem passenden Schlüsselmerkmal.' : 'Wähle je Situation die Begründung, die das entscheidende Merkmal benennt.' }
+    case 'routePlanningAssignment':
+      return { attention: scenarioLabels, inputHint: stepNumber === 1 ? 'Wähle je Situation den passenden Planungsbegriff oder die passende Tourenart.' : 'Wähle je Situation das Merkmal zu Fristigkeit, Zweck oder Fahrstruktur.' }
+    default:
+      return null
+  }
 }
 
 </script>
@@ -296,7 +357,7 @@ function displaySolutionValues(step) {
         <button v-for="(item, index) in method.tasks" :key="item.taskId" type="button" class="secondary-button" :aria-pressed="index === currentTaskIndex" @click="switchTask(index)">Aufgabe {{ index + 1 }} · {{ taskStatus(index) }}</button>
       </nav>
       <p>Eingaben und geprüfte Schritte bleiben beim Wechsel in dieser Session erhalten.</p>
-      <h2>Aufgabe {{ currentTaskIndex + 1 }} von {{ method.tasks.length }}</h2>
+      <h2 ref="practiceTitle" tabindex="-1">Aufgabe {{ currentTaskIndex + 1 }} von {{ method.tasks.length }}</h2>
       <p v-if="task.learningFocus"><strong>Lernschwerpunkt:</strong> {{ task.learningFocus }}</p>
       <p class="method-task-text">{{ task.taskText }}</p>
 
@@ -322,11 +383,21 @@ function displaySolutionValues(step) {
       <section v-for="stepNumber in totalSteps" v-show="stepNumber <= currentStep" :key="`${task.taskId}-${taskRevision}-${stepNumber}`" class="method-step" :class="feedback[stepNumber] && `step-${feedback[stepNumber].status}`">
         <h3>Schritt {{ stepNumber }}: {{ method.steps[stepNumber - 1] }}</h3>
 
-        <div v-if="method.microSteps?.[stepNumber - 1]" class="micro-step-help">
-          <p><strong>Warum?</strong> {{ method.microSteps[stepNumber - 1].why }}</p>
-          <p><strong>So gehst du vor:</strong> {{ method.microSteps[stepNumber - 1].logic }}</p>
-          <p><strong>Typischer Fehler:</strong> {{ method.microSteps[stepNumber - 1].pitfall }}</p>
-        </div>
+        <details v-if="method.microSteps?.[stepNumber - 1]" class="method-details micro-step-help">
+          <summary>So gehst du vor</summary>
+          <p class="micro-step-goal"><span class="micro-step-label">Ziel dieses Schritts</span>{{ method.microSteps[stepNumber - 1].action }}</p>
+          <section v-if="taskGuidance(stepNumber)" class="micro-step-task-context">
+            <span class="micro-step-label">Auf diese Angaben der Aufgabe achten</span>
+            <ul><li v-for="hint in taskGuidance(stepNumber).attention" :key="hint">{{ hint }}</li></ul>
+            <p><span class="micro-step-label">Was trägst du ein oder wählst du aus?</span>{{ taskGuidance(stepNumber).inputHint }}</p>
+          </section>
+          <ol v-if="method.microSteps[stepNumber - 1].guidanceSteps?.length" class="micro-step-guidance">
+            <li v-for="guidanceStep in method.microSteps[stepNumber - 1].guidanceSteps" :key="guidanceStep">{{ guidanceStep }}</li>
+          </ol>
+          <p v-else><strong>So gehst du vor:</strong> {{ method.microSteps[stepNumber - 1].logic }}</p>
+          <p class="micro-step-check"><span class="micro-step-label">Kontrollfrage</span>{{ method.microSteps[stepNumber - 1].controlQuestion || method.microSteps[stepNumber - 1].why }}</p>
+          <p class="micro-step-pitfall"><span class="micro-step-label">Typische Falle</span>{{ method.microSteps[stepNumber - 1].pitfall }}</p>
+        </details>
         <details class="method-details" @toggle="event => { if (event.target.open) revealedSteps.add(stepNumber) }">
           <summary>Musterlösung mit Herleitung anzeigen</summary>
           <dl class="derivation"><div v-for="(row, index) in solutionDerivation(method, task, stepNumber)" :key="index"><dt>{{ row.label }}</dt><dd>{{ row.value }}</dd></div></dl>

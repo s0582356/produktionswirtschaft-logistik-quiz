@@ -65,6 +65,20 @@ test('Exactly twenty-seven distinct tasks train three different situations per m
   }
 })
 
+test('Every micro step provides solution-independent, guided thinking support', () => {
+  for (const method of bank.methods) {
+    assert.equal(method.microSteps.length, method.steps.length)
+    for (const step of method.microSteps) {
+      assert(Array.isArray(step.guidanceSteps))
+      assert(step.guidanceSteps.length >= 3)
+      assert(step.guidanceSteps.every(item => typeof item === 'string' && item.length > 25 && !item.includes('[object Object]')))
+      assert.equal(typeof step.controlQuestion, 'string')
+      assert(step.controlQuestion.endsWith('?'))
+      assert(![...step.guidanceSteps, step.controlQuestion].join(' ').match(/\d/))
+    }
+  }
+})
+
 test('ABC variation changes actual classes and explicitly explains task limits and quantity trap', () => {
   const m = bank.methods.find(m => m.engine === 'abcAnalysis')
   assert.deepEqual(m.tasks[0].params.classLimits, { A: 80, B: 95 })

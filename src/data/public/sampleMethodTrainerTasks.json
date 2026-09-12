@@ -244,19 +244,37 @@
           "action": "Verbrauchswerte und Gesamtwert berechnen",
           "why": "ABC bewertet den Geldwert, nicht die Stückzahl.",
           "logic": "Menge × Preis je Artikel; anschließend alle Werte addieren.",
-          "pitfall": "Nach Menge oder Stückwert statt nach Verbrauchswert sortieren"
+          "pitfall": "Nach Menge oder Stückwert statt nach Verbrauchswert sortieren",
+          "guidanceSteps": [
+            "Lies für jeden Artikel zuerst Menge und Stückwert ab.",
+            "Bilde für jeden Artikel Menge × Stückwert; noch nicht nach Menge sortieren.",
+            "Addiere anschließend alle Verbrauchswerte zum Gesamtverbrauchswert."
+          ],
+          "controlQuestion": "Habe ich für jeden Artikel einen Geldwert und am Ende genau eine Gesamtsumme?"
         },
         {
           "action": "Absteigend sortieren, Anteile und kumulierte Anteile bilden",
           "why": "Erst eine Rangfolge macht die wertvollsten Artikel sichtbar.",
           "logic": "Absteigend sortieren; jeden Wert durch die Gesamtsumme teilen × 100; Anteile fortlaufend addieren.",
-          "pitfall": "Den Prozentanteil auf die Menge statt auf den Wert beziehen"
+          "pitfall": "Den Prozentanteil auf die Menge statt auf den Wert beziehen",
+          "guidanceSteps": [
+            "Nimm die bereits berechneten Verbrauchswerte zur Hand.",
+            "Ordne sie vom größten zum kleinsten Wert.",
+            "Teile jeden Wert durch die Gesamtsumme und addiere die Anteile in dieser Reihenfolge fortlaufend."
+          ],
+          "controlQuestion": "Ist meine Reihenfolge wirklich nach Verbrauchswert und nicht nach Stückzahl?"
         },
         {
           "action": "Artikel anhand der Grenzen A, B oder C zuordnen",
           "why": "Die Grenzen beziehen sich auf den bereits aufsummierten Wert.",
           "logic": "Kumuliert ≤ A-Grenze: A; sonst ≤ B-Grenze: B; sonst C.",
-          "pitfall": "Zu früh runden oder die kumulierten Anteile nicht fortlaufend addieren"
+          "pitfall": "Zu früh runden oder die kumulierten Anteile nicht fortlaufend addieren",
+          "guidanceSteps": [
+            "Lies die in der Aufgabe genannten A- und B-Grenzen ab.",
+            "Vergleiche jeden kumulierten Anteil mit diesen Grenzen.",
+            "Wähle erst danach A, B oder C für den Artikel."
+          ],
+          "controlQuestion": "Nutze ich die vorgegebenen kumulierten Grenzen statt einer Standardgrenze aus dem Kopf?"
         }
       ],
       "commonMistakeExamples": [
@@ -529,19 +547,37 @@
           "action": "Baugruppenmenge je Endprodukt bestimmen",
           "why": "Jede Baugruppe vervielfacht die darunterliegenden Teile.",
           "logic": "Vom Produkt aus die Mengen bis zur Baugruppe multiplizieren.",
-          "pitfall": "Mehrfach verwendete Teile nur auf einem Pfad zählen"
+          "pitfall": "Mehrfach verwendete Teile nur auf einem Pfad zählen",
+          "guidanceSteps": [
+            "Starte beim Endprodukt und zeichne gedanklich die Wege zu den Baugruppen nach.",
+            "Multipliziere die Mengen entlang jedes einzelnen Wegs.",
+            "Trage den Bedarf je Endprodukt für jede Baugruppe ein."
+          ],
+          "controlQuestion": "Habe ich bei jedem Weg alle Ebenen in der richtigen Reihenfolge berücksichtigt?"
         },
         {
           "action": "Beiträge aller Pfade je Einzelteil summieren",
           "why": "Dasselbe Teil kann über mehrere Wege gebraucht werden.",
           "logic": "Jeden Weg bis zum Teil verfolgen, entlang des Wegs multiplizieren und alle Beiträge addieren.",
-          "pitfall": "Die Baugruppenmenge bei der Kettenmultiplikation vergessen"
+          "pitfall": "Die Baugruppenmenge bei der Kettenmultiplikation vergessen",
+          "guidanceSteps": [
+            "Verfolge jedes Kaufteil von allen Baugruppen aus.",
+            "Multipliziere die Mengen auf jedem Pfad bis zum Kaufteil.",
+            "Addiere Beiträge, wenn dasselbe Kaufteil über mehrere Pfade vorkommt."
+          ],
+          "controlQuestion": "Habe ich gleiche Kaufteile aus mehreren Pfaden addiert statt nur einen Weg zu betrachten?"
         },
         {
           "action": "Bedarf mit der Endproduktmenge multiplizieren",
           "why": "Der Bedarf je Produkt muss für den ganzen Auftrag reichen.",
           "logic": "Jeden Teilebedarf je Produkt × Auftragsmenge rechnen.",
-          "pitfall": "Direkte Bestandteile des Endprodukts übersehen"
+          "pitfall": "Direkte Bestandteile des Endprodukts übersehen",
+          "guidanceSteps": [
+            "Nimm den bereits bestimmten Bedarf je Endprodukt.",
+            "Multipliziere ihn mit der geforderten Endproduktmenge.",
+            "Prüfe, ob die Einheit nun zum ganzen Auftrag passt."
+          ],
+          "controlQuestion": "Bezieht sich mein Ergebnis auf den Gesamtauftrag und nicht nur auf ein Endprodukt?"
         }
       ],
       "commonMistakeExamples": [
@@ -699,19 +735,37 @@
           "action": "Gleichung für elf normale und einen doppelten Monat wählen",
           "why": "Der Doppelmonat ersetzt einen normalen Monat.",
           "logic": "Elf normale Monate plus ein Doppelmonat: 11x + 2x = J.",
-          "pitfall": "Den Sondermonat wie einen normalen Monat behandeln"
+          "pitfall": "Den Sondermonat wie einen normalen Monat behandeln",
+          "guidanceSteps": [
+            "Lies Jahresbedarf und Besonderheit des Sondermonats genau.",
+            "Zähle normale Bedarfseinheiten, nicht nur Kalendermonate.",
+            "Stelle die Gleichung für elf normale und einen doppelten Monat auf."
+          ],
+          "controlQuestion": "Habe ich berücksichtigt, dass der Sondermonat doppelt zählt?"
         },
         {
           "action": "Normalen Monatsbedarf berechnen und kaufmännisch runden",
           "why": "Eine Bedarfseinheit entspricht einem normalen Monat.",
           "logic": "J ÷ 13 rechnen, dann kaufmännisch auf ganze Stück runden.",
-          "pitfall": "Die Rundungsdifferenz nicht ausgleichen"
+          "pitfall": "Die Rundungsdifferenz nicht ausgleichen",
+          "guidanceSteps": [
+            "Fasse zuerst die Bedarfseinheiten in der Gleichung zusammen.",
+            "Teile den Jahresbedarf durch diese Anzahl von Einheiten.",
+            "Runde erst danach nach der verlangten Regel auf ganze Stück."
+          ],
+          "controlQuestion": "Habe ich durch die Bedarfseinheiten geteilt und nicht automatisch durch zwölf?"
         },
         {
           "action": "Sondermonat und Kontrollsumme bestimmen",
           "why": "Runden darf den Jahresbedarf nicht verändern.",
           "logic": "Sondermonat = J − 11 × gerundetes x; danach 11x + Sondermonat kontrollieren.",
-          "pitfall": "Keine Kontrollsumme über den Jahresbedarf bilden"
+          "pitfall": "Keine Kontrollsumme über den Jahresbedarf bilden",
+          "guidanceSteps": [
+            "Nutze den gerundeten Normalmonat als Ausgangspunkt.",
+            "Bestimme den Sondermonat so, dass der Jahresbedarf erhalten bleibt.",
+            "Bilde zum Schluss die Kontrollsumme über alle Monate."
+          ],
+          "controlQuestion": "Ergibt meine Kontrollsumme wieder genau den Jahresbedarf?"
         }
       ],
       "commonMistakeExamples": [
@@ -1476,13 +1530,25 @@
           "action": "Verbrauchsmuster X, Y oder Z zuordnen",
           "why": "Die zeitliche Regelmäßigkeit bestimmt die Planbarkeit.",
           "logic": "Gleichmäßig → X; wiederkehrende Saison → Y; ohne erkennbares Muster → Z.",
-          "pitfall": "Wertanteil und Verbrauchsregelmäßigkeit verwechseln"
+          "pitfall": "Wertanteil und Verbrauchsregelmäßigkeit verwechseln",
+          "guidanceSteps": [
+            "Betrachte nur den zeitlichen Verlauf des Verbrauchs.",
+            "Suche nach Gleichmäßigkeit, wiederkehrenden Schwankungen oder keinem erkennbaren Muster.",
+            "Ordne danach X, Y oder Z zu; der Wertanteil spielt hier noch keine Rolle."
+          ],
+          "controlQuestion": "Beurteile ich das Verbrauchsverhalten statt die ABC-Wertklasse?"
         },
         {
           "action": "ABC und XYZ zur Matrixklasse kombinieren",
           "why": "Wert und Planbarkeit sind zwei verschiedene Eigenschaften.",
           "logic": "Zuerst den gegebenen ABC-Buchstaben, dann den ermittelten XYZ-Buchstaben schreiben.",
-          "pitfall": "Wiederkehrende Saisonspitzen als zufällige Z-Schwankung bewerten"
+          "pitfall": "Wiederkehrende Saisonspitzen als zufällige Z-Schwankung bewerten",
+          "guidanceSteps": [
+            "Nimm den vorgegebenen ABC-Buchstaben und deine XYZ-Einordnung.",
+            "Schreibe beide Buchstaben in dieser Reihenfolge zusammen.",
+            "Prüfe, ob Wertklasse und Planbarkeit getrennt gedacht wurden."
+          ],
+          "controlQuestion": "Steht zuerst die ABC-Klasse und danach die XYZ-Klasse?"
         }
       ],
       "commonMistakeExamples": [
@@ -1979,31 +2045,61 @@
           "action": "Single: Material-, Risiko- und Gesamtkosten",
           "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
           "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
-          "pitfall": "Ausfallrisiko mit Materialkosten statt Stillstandskosten multiplizieren"
+          "pitfall": "Ausfallrisiko mit Materialkosten statt Stillstandskosten multiplizieren",
+          "guidanceSteps": [
+            "Lies Menge, Stückpreis, Risiko, Stillstandskosten und Koordinationskosten für diese Strategie.",
+            "Berechne zuerst die Materialkosten aus Menge × Preis.",
+            "Bestimme danach Risikokosten und fasse alle Kostenbestandteile zusammen."
+          ],
+          "controlQuestion": "Habe ich Material, Koordination und Risiko für diese Strategie getrennt berücksichtigt?"
         },
         {
           "action": "Dual: Material-, Risiko- und Gesamtkosten",
           "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
           "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
-          "pitfall": "Prozentwert nicht durch 100 teilen"
+          "pitfall": "Prozentwert nicht durch 100 teilen",
+          "guidanceSteps": [
+            "Wende denselben Kostenumfang auf die nächste Strategie an.",
+            "Rechne Material- und Risikokosten mit deren eigenen Angaben.",
+            "Addiere erst anschließend die Gesamtkosten."
+          ],
+          "controlQuestion": "Vergleiche ich dieselben Kostenarten wie bei der ersten Strategie?"
         },
         {
           "action": "Multiple: Material-, Risiko- und Gesamtkosten",
           "why": "Auch günstige Stückpreise können hohe Risiken verursachen.",
           "logic": "Menge × Preis; Ausfallkosten × Risiko ÷ 100; beide Werte und Koordination addieren.",
-          "pitfall": "Koordinationskosten vergessen oder Bedarf je Lieferant mehrfach zählen"
+          "pitfall": "Koordinationskosten vergessen oder Bedarf je Lieferant mehrfach zählen",
+          "guidanceSteps": [
+            "Bearbeite auch die dritte Strategie vollständig.",
+            "Achte darauf, den Bedarf nicht je Lieferant doppelt anzusetzen.",
+            "Halte das Ergebnis als Gesamtkosten fest."
+          ],
+          "controlQuestion": "Habe ich den Bedarf genau einmal angesetzt und die Koordination ergänzt?"
         },
         {
           "action": "Günstigste Strategie auswählen",
           "why": "Nur gleiche Kostenumfänge sind vergleichbar.",
           "logic": "Die drei Gesamtkosten nebeneinanderstellen und den kleinsten Wert auswählen.",
-          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen"
+          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen",
+          "guidanceSteps": [
+            "Stelle die vollständig berechneten Gesamtkosten nebeneinander.",
+            "Suche den kleinsten Gesamtwert, nicht den kleinsten Stückpreis.",
+            "Wähle die dazugehörige Strategie aus."
+          ],
+          "controlQuestion": "Beruht meine Auswahl auf Gesamtkosten und nicht nur auf dem Einkaufspreis?"
         },
         {
           "action": "Qualitative Begründung auswählen",
           "why": "Kosten allein sagen nicht alles über Lieferfähigkeit aus.",
           "logic": "Abhängigkeit, Qualität und Lieferfähigkeit zusätzlich prüfen.",
-          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen"
+          "pitfall": "Die billigste Strategie automatisch als insgesamt beste ansehen",
+          "guidanceSteps": [
+            "Lies die Begründungsoptionen mit Blick auf die Situation.",
+            "Prüfe zusätzlich Abhängigkeit, Qualität und Lieferfähigkeit.",
+            "Wähle das Kriterium, das die Kostenentscheidung sinnvoll einordnet."
+          ],
+          "controlQuestion": "Habe ich Kostenentscheidung und qualitative Lieferbewertung getrennt betrachtet?"
         }
       ],
       "commonMistakeExamples": [
@@ -2353,19 +2449,37 @@
           "action": "Passende Formel je Teilfall erkennen",
           "why": "Die verfügbaren Daten bestimmen, welche Formel möglich ist.",
           "logic": "Eigen und Fremd bekannt → exakt; nur Einkauf und Umsatz → Näherung.",
-          "pitfall": "Teilezahlen statt monetärer Werte verwenden"
+          "pitfall": "Teilezahlen statt monetärer Werte verwenden",
+          "guidanceSteps": [
+            "Schaue zuerst auf die Art der verfügbaren Angaben.",
+            "Bei Eigen- und Fremdfertigungswerten ist die exakte Formel passend.",
+            "Bei Umsatz und Materialeinkauf nutzt du die Näherung; verwende Geldwerte derselben Periode."
+          ],
+          "controlQuestion": "Habe ich die Formel aus der Datenlage gewählt statt sie vorab festzulegen?"
         },
         {
           "action": "Fertigungstiefe je Teilfall in Prozent berechnen",
           "why": "Ein Verhältnis wird erst durch Multiplikation mit 100 zum Prozentwert.",
           "logic": "Eigen ÷ (Eigen + Fremd) × 100 bzw. (1 − Einkauf ÷ Umsatz) × 100.",
-          "pitfall": "Bei der Näherung 1 minus vergessen"
+          "pitfall": "Bei der Näherung 1 minus vergessen",
+          "guidanceSteps": [
+            "Setze nur die zur gewählten Formel passenden Geldwerte ein.",
+            "Bilde zuerst den Quotienten und rechne ihn dann in Prozent um.",
+            "Halte exakten Wert und Näherung gedanklich getrennt."
+          ],
+          "controlQuestion": "Verwende ich Wertgrößen und habe ich den Prozentwert korrekt gebildet?"
         },
         {
           "action": "Hohe und niedrige Fertigungstiefe interpretieren",
           "why": "Der Eigenanteil ist keine Gewinnkennzahl.",
           "logic": "Hoher Wert = viel Eigenleistung; niedriger Wert = viel Fremdleistung.",
-          "pitfall": "Eigenwert durch Fremdwert statt durch die Summe teilen"
+          "pitfall": "Eigenwert durch Fremdwert statt durch die Summe teilen",
+          "guidanceSteps": [
+            "Lies den Anteil als Umfang der Eigenleistung, nicht als Gewinnkennzahl.",
+            "Vergleiche bei einer Veränderung die Werte vor und nach der Entscheidung.",
+            "Beschreibe die Richtung der Veränderung in Prozentpunkten."
+          ],
+          "controlQuestion": "Interpretiere ich den Eigenanteil, ohne daraus automatisch auf Gewinn zu schließen?"
         }
       ],
       "commonMistakeExamples": [
@@ -2419,13 +2533,25 @@
           "action": "Vergleichsmatrix ausfüllen",
           "why": "Gleiche Skalen machen den Vergleich nachvollziehbar.",
           "logic": "Lies Kriterien und Aufgabenrahmen. Ordne je Zelle die relative Modulstufe zu.",
-          "pitfall": "Abfertigung und Transportgeschwindigkeit verwechseln."
+          "pitfall": "Abfertigung und Transportgeschwindigkeit verwechseln.",
+          "guidanceSteps": [
+            "Lies zuerst, welche Vergleichsebene gefragt ist: Land, Luft, Wasser oder innerhalb des Landverkehrs.",
+            "Nutze nur die vorgegebenen Kriterien und die relative Modulskala.",
+            "Ordne jede Zelle vergleichend ein, ohne zusätzliche Kriterien hineinzulesen."
+          ],
+          "controlQuestion": "Bleibe ich bei den belegten Kriterien und der richtigen Vergleichsebene?"
         },
         {
           "action": "Situation zuordnen und Kriterium erkennen",
           "why": "Die Situation legt fest, welches Merkmal entscheidet.",
           "logic": "Prüfe die verfügbaren Träger und wähle das im Text betonte Kriterium.",
-          "pitfall": "Aus der groben Land-Stufe eine feste Aussage für jeden Landverkehr ableiten."
+          "pitfall": "Aus der groben Land-Stufe eine feste Aussage für jeden Landverkehr ableiten.",
+          "guidanceSteps": [
+            "Markiere im Szenario das ausdrücklich betonte Kriterium.",
+            "Vergleiche nur die verfügbaren Verkehrsträger anhand dieses Kriteriums.",
+            "Wähle den Träger, der dazu in der Modulskala passt, und begründe mit dem Merkmal."
+          ],
+          "controlQuestion": "Leite ich die Wahl aus dem betonten Kriterium ab statt aus einer allgemeinen Annahme?"
         }
       ],
       "commonMistakeExamples": [
@@ -3537,13 +3663,25 @@
           "action": "Konzepte zuordnen",
           "why": "Jedes Szenario enthält ein unterscheidendes Merkmal.",
           "logic": "Lies das Szenario und gleiche es mit der Logikbox ab.",
-          "pitfall": "Alle Dienstleister pauschal als Gebietsspediteur einordnen."
+          "pitfall": "Alle Dienstleister pauschal als Gebietsspediteur einordnen.",
+          "guidanceSteps": [
+            "Lies jedes Szenario bis zum unterscheidenden Detail.",
+            "Achte etwa auf Eigentum, Lagerort, feste Route, Gebiet oder Ort der Kommissionierung.",
+            "Wähle erst dann das Konzept, dessen Schlüsselmerkmal wirklich passt."
+          ],
+          "controlQuestion": "Welche einzelne Angabe im Szenario grenzt die ähnlichsten Konzepte voneinander ab?"
         },
         {
           "action": "Kennzeichen gegenprüfen",
           "why": "Ähnliche Konzepte unterscheiden sich in einem entscheidenden Detail.",
           "logic": "Wähle je Situation die Begründung, die das Nachbarkonzept ausschließt.",
-          "pitfall": "Beim Cross-Docking nicht auf den Ort der Kommissionierung achten."
+          "pitfall": "Beim Cross-Docking nicht auf den Ort der Kommissionierung achten.",
+          "guidanceSteps": [
+            "Prüfe deine Zuordnung gegen ein nahes Verwechslungspaar.",
+            "Frage bei Cross-Docking, wer kommissioniert; bei Lagern, wer lagert und wem die Ware gehört.",
+            "Wähle die Begründung, die das Nachbarkonzept ausschließt."
+          ],
+          "controlQuestion": "Nennt meine Begründung genau das Merkmal, das eine Verwechslung verhindert?"
         }
       ],
       "commonMistakeExamples": [
@@ -4628,13 +4766,25 @@
           "action": "Begriff oder Tourenart zuordnen",
           "why": "Begriffe und Tourenarten beantworten unterschiedliche Fragen.",
           "logic": "Bei Planung auf Fristigkeit und Zweck achten; bei Fahrten auf Start, Stopps und Rückkehr.",
-          "pitfall": "Mehrere Stopps automatisch als Tourenplanung bezeichnen."
+          "pitfall": "Mehrere Stopps automatisch als Tourenplanung bezeichnen.",
+          "guidanceSteps": [
+            "Entscheide zuerst, ob die Aussage Planung oder ein Fahrmuster beschreibt.",
+            "Bei Planung achte auf Fristigkeit und Zweck; bei einer Fahrt auf Start, Stopps und Rückkehr.",
+            "Ordne erst danach den passenden Begriff oder die passende Tourenart zu."
+          ],
+          "controlQuestion": "Habe ich Planungsbegriff und konkrete Tourenart voneinander getrennt?"
         },
         {
           "action": "Zuordnung mit Modulmerkmal begründen",
           "why": "Das entscheidende Merkmal macht die Zuordnung nachvollziehbar.",
           "logic": "Prüfe kurzfristige Reihenfolge gegen längerfristige Auftragssammlung sowie einzelne Fahrten gegen eine zusammenhängende Tour.",
-          "pitfall": "Sternverkehr und Ringverkehr allein wegen mehrerer Zielpunkte gleichsetzen."
+          "pitfall": "Sternverkehr und Ringverkehr allein wegen mehrerer Zielpunkte gleichsetzen.",
+          "guidanceSteps": [
+            "Suche in der Situation nach dem entscheidenden Merkmal.",
+            "Prüfe bei Fahrten, ob sie direkt, getrennt vom Zentrum oder als zusammenhängende Runde verlaufen.",
+            "Begründe mit dem Fahrmuster oder dem Planungszweck, nicht nur mit der Zahl der Stopps."
+          ],
+          "controlQuestion": "Erklärt meine Begründung die Struktur der Fahrt statt nur mehrere Stationen zu nennen?"
         }
       ],
       "commonMistakeExamples": [

@@ -135,7 +135,7 @@ test('Structured learning notes render labeled examples and legacy mistakes', as
     const { default: Notes } = await server.ssrLoadModule('/src/components/MethodLearningNotes.vue')
     for (const method of bank.methods) {
       const html = await renderToString(createSSRApp(Notes, { method }))
-      for (const label of ['Falsch', 'Warum falsch?', 'Richtig', 'Merksatz', 'Mini-Beispiel (fiktiv):', 'Was mache ich?', 'Warum?']) assert(html.includes(label))
+      for (const label of ['Falsch', 'Warum falsch?', 'Richtig', 'Formel / Logik', 'Mini-Szenario', 'Rechnung / Zuordnung', 'Bedeutung', 'Merksatz', 'Ziel dieses Schritts:', 'Kontrollfrage:', 'Typische Falle:']) assert(html.includes(label))
       assert(!html.includes('[object Object]'))
       assert.equal(method.commonMistakeExamples.length, 2)
       assert.equal(method.microSteps.length, method.steps.length)
@@ -143,6 +143,41 @@ test('Structured learning notes render labeled examples and legacy mistakes', as
     const html = await renderToString(createSSRApp(Notes, { method: { formula: [], steps: [], commonMistakes: ['Alter Hinweis'] } }))
     assert(html.includes('Alter Hinweis'))
   } finally { await server.close() }
+})
+
+test('Practice help starts closed, is a native toggle, and interaction does not invoke scrollIntoView', () => {
+  const component = readFileSync(new URL('../src/components/MethodTrainer.vue', import.meta.url), 'utf8')
+  assert(component.includes('<summary>So gehst du vor</summary>'))
+  assert(component.includes('preventScroll: true'))
+  assert(!component.includes('scrollIntoView'))
+  assert(!component.includes('open class="method-details micro-step-help"'))
+})
+
+test('Task guidance is concrete for every method without reading expected results', async () => {
+  const { state, unmount } = await mountTrainerState()
+  try {
+    for (const method of bank.methods) {
+      state.selectMethod(method)
+      for (let index = 0; index < method.tasks.length; index++) {
+        state.switchTask(index)
+        for (let step = 1; step <= method.steps.length; step++) {
+          const guidance = state.taskGuidance(step)
+          assert(guidance.attention.length > 0)
+          assert.equal(typeof guidance.inputHint, 'string')
+          assert(!JSON.stringify(guidance).includes('[object Object]'))
+        }
+      }
+    }
+    const abc = bank.methods.find(method => method.engine === 'abcAnalysis')
+    state.selectMethod(abc)
+    assert(state.taskGuidance(1).attention.join(' ').includes('400 Stück × 60 €'))
+    const depth = bank.methods.find(method => method.engine === 'verticalIntegration')
+    state.selectMethod(depth)
+    assert(state.taskGuidance(1).attention.join(' ').includes('390.000 €'))
+    const component = readFileSync(new URL('../src/components/MethodTrainer.vue', import.meta.url), 'utf8')
+    const guidanceSource = component.slice(component.indexOf('function taskGuidance'), component.indexOf('</script>'))
+    assert(!guidanceSource.includes('expectedResults'))
+  } finally { unmount() }
 })
 
 test('Checked steps survive task changes and revisiting completion does not count twice', async () => {
