@@ -4,6 +4,7 @@ import QuizCard from './QuizCard.vue'
 import YesNoCard from './YesNoCard.vue'
 import FreeTextCard from './FreeTextCard.vue'
 import { createTopicCheck } from '../utils/topicCheckLogic.js'
+import { recordMistake } from '../utils/mistakeStore.js'
 import { clearTopicCheck, createInitialTopicCheck, loadTopicCheck, saveTopicCheck } from '../utils/topicCheckStore.js'
 const props = defineProps({ packageBanksById: { type: Object, required: true } })
 const session = reactive(createInitialTopicCheck(props.packageBanksById)); const setupOpen = ref(true); const resumeOpen = ref(false); const selected = ref(null); const answered = ref(false)
@@ -15,8 +16,8 @@ function save(){ saveTopicCheck(props.packageBanksById, session) }
 function start(size){ Object.assign(session, createInitialTopicCheck(props.packageBanksById), createTopicCheck(props.packageBanksById,size)); setupOpen.value=false; resumeOpen.value=false; selected.value=null; answered.value=false; save() }
 function offerResume(){ const stored=loadTopicCheck(props.packageBanksById); if(stored.orderedQuestionRefs.length){ Object.assign(session,stored); resumeOpen.value=true } else setupOpen.value=true }
 function resume(){ setupOpen.value=false; resumeOpen.value=false; const a=currentAnswer.value; selected.value=a?.selectedAnswer ?? null; answered.value=Boolean(a && a.questionType!=='freeText') }
-function objective(value){ if(answered.value)return; selected.value=value; answered.value=true; const correct=value===current.value.question.correctAnswer; session.answers[`${current.value.bank.packageId}::${current.value.question.questionId}`]={questionType:current.value.question.questionType,selectedAnswer:value,correct}; session.statistics[correct?'correct':'wrong']++; save() }
-function free(e){ const key=`${current.value.bank.packageId}::${current.value.question.questionId}`; const old=session.answers[key]; if(old?.status) session.statistics[old.status]--; session.statistics[e.rating]++; session.answers[key]={questionType:'freeText',userAnswer:e.userAnswer,status:e.rating}; save() }
+function objective(value){ if(answered.value)return; selected.value=value; answered.value=true; const correct=value===current.value.question.correctAnswer; session.answers[`${current.value.bank.packageId}::${current.value.question.questionId}`]={questionType:current.value.question.questionType,selectedAnswer:value,correct}; session.statistics[correct?'correct':'wrong']++; recordMistake({packageId:current.value.bank.packageId,questionId:current.value.question.questionId,questionType:current.value.question.questionType,result:correct}); save() }
+function free(e){ const key=`${current.value.bank.packageId}::${current.value.question.questionId}`; const old=session.answers[key]; if(old?.status) session.statistics[old.status]--; session.statistics[e.rating]++; session.answers[key]={questionType:'freeText',userAnswer:e.userAnswer,status:e.rating}; recordMistake({packageId:current.value.bank.packageId,questionId:current.value.question.questionId,questionType:'freeText',result:e.rating}); save() }
 function next(){ if(!last.value)session.currentQuestionIndex++; selected.value=null; answered.value=false; save() }
 function finish(){session.sessionStatus='completed';save()}
 function restart(){clearTopicCheck(props.packageBanksById);Object.assign(session,createInitialTopicCheck(props.packageBanksById));setupOpen.value=true;resumeOpen.value=false}

@@ -9,6 +9,7 @@ import PackageSelector from './components/PackageSelector.vue'
 import PackageTrainer from './components/PackageTrainer.vue'
 import TopicCheck from './components/TopicCheck.vue'
 import ExamMode from './components/ExamMode.vue'
+import MistakeTrainer from './components/MistakeTrainer.vue'
 import { addPackageBanks } from './utils/packageLibrary.js'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
@@ -107,6 +108,7 @@ const questionBankName = computed(() => {
   if (activeMode.value === 'packages') return 'Pakettraining'
   if (activeMode.value === 'topics') return 'Themengebiet-Check'
   if (activeMode.value === 'exam') return 'Klausurmodus'
+  if (activeMode.value === 'mistakes') return 'Fehlertraining'
   return methodTrainerBankName.value
 })
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
@@ -114,6 +116,7 @@ const isMethodMode = computed(() => activeMode.value === 'method')
 const isPackageMode = computed(() => activeMode.value === 'packages')
 const isTopicMode = computed(() => activeMode.value === 'topics')
 const isExamMode = computed(() => activeMode.value === 'exam')
+const isMistakeMode = computed(() => activeMode.value === 'mistakes')
 const activePackageBank = computed(() => (
   activePackageId.value ? packageBanksById.value[activePackageId.value] || null : null
 ))
@@ -741,6 +744,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
       >
         Methoden-Training
       </button>
+      <button type="button" :class="{ active: activeMode === 'mistakes' }" :aria-pressed="activeMode === 'mistakes'" @click="switchMode('mistakes')">Fehlertraining</button>
       <button type="button" :class="{ active: activeMode === 'exam' }" :aria-pressed="activeMode === 'exam'" @click="switchMode('exam')">Klausurmodus</button>
       <button
         type="button"
@@ -760,7 +764,8 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
       </button>
     </nav>
 
-    <template v-if="isExamMode"><PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" /><ExamMode :package-banks-by-id="packageBanksById" /></template>
+    <template v-if="isMistakeMode"><PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" /><MistakeTrainer :package-banks-by-id="packageBanksById" /></template>
+    <template v-else-if="isExamMode"><PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" /><ExamMode :package-banks-by-id="packageBanksById" /></template>
     <template v-else-if="isTopicMode">
       <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" />
       <TopicCheck :package-banks-by-id="packageBanksById" />
