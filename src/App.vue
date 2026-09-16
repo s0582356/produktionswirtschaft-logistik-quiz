@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import QuizCard from './components/QuizCard.vue'
 import ScoreBox from './components/ScoreBox.vue'
 import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
@@ -19,9 +19,11 @@ import {
   saveProgress,
 } from './utils/progressStore.js'
 
+const MC_SESSION_STORAGE_KEY = 'pwl-quiz-mc-session:v1'
 const activeMode = ref('mc')
 const questions = ref(sampleQuestions)
 const mcQuestionBankName = ref('Öffentliche MC-Beispiel-Fragen')
+const mcQuestionBankSource = ref({ kind: 'public', fileName: null })
 const freeTextQuestions = ref(sampleFreeTextQuestions)
 const freeTextQuestionBankName = ref('Öffentliche Freitext-Demo')
 const methodTrainerBank = ref(sampleMethodTrainerTasks)
@@ -38,6 +40,7 @@ const currentStreak = ref(0)
 const bestStreak = ref(0)
 const incorrectlyAnsweredQuestions = ref([])
 const answeredQuestions = ref([])
+const savedMcSession = ref(loadMcSession())
 const freeTextQuestionIndex = ref(0)
 const freeTextFilter = ref('all')
 const freeTextSessionQuestionIds = ref(null)
@@ -71,7 +74,23 @@ function toggleTheme() {
   window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme)
 }
 
+
 applyTheme(theme.value)
+
+function persistOnPageExit() {
+  persistMcSession()
+}
+
+onMounted(() => {
+  window.addEventListener("pagehide", persistOnPageExit)
+  window.addEventListener("beforeunload", persistOnPageExit)
+})
+
+onBeforeUnmount(() => {
+  persistMcSession()
+  window.removeEventListener("pagehide", persistOnPageExit)
+  window.removeEventListener("beforeunload", persistOnPageExit)
+})
 
 const questionBankName = computed(() => {
   if (activeMode.value === 'mc') return mcQuestionBankName.value
@@ -252,6 +271,104 @@ function shuffleOptionsForQuestions(questionList) {
   }))
 }
 
+
+function getMcBankId(questionBank = originalQuestions.value) {
+  return createBankFingerprint("mc", questionBank)
+}
+
+function loadMcSession() {
+  if (typeof window === "undefined") return null
+
+  try {
+    const session = JSON.parse(window.localStorage.getItem(MC_SESSION_STORAGE_KEY))
+    if (!session || session.version !== 1 || session.type !== "mc") return null
+    if (!Array.isArray(session.originalQuestions) || !Array.isArray(session.questions)) return null
+    if (session.bank?.questionCount !== session.originalQuestions.length) return null
+    if (getMcBankId(session.originalQuestions) !== session.bank?.id) return null
+    return session
+  } catch {
+    return null
+  }
+}
+
+function persistMcSession() {
+  if (typeof window === "undefined" || !isQuizStarted.value) return
+
+  const session = {
+    version: 1,
+    type: "mc",
+    savedAt: new Date().toISOString(),
+    bank: {
+      id: getMcBankId(),
+      questionCount: originalQuestions.value.length,
+      source: mcQuestionBankSource.value,
+    },
+    originalQuestions: originalQuestions.value,
+    questions: questions.value,
+    currentQuestionIndex: currentQuestionIndex.value,
+    selectedAnswer: selectedAnswer.value,
+    isAnswered: isAnswered.value,
+    isQuizComplete: isQuizComplete.value,
+    isReviewMode: isReviewMode.value,
+    score: score.value,
+    currentStreak: currentStreak.value,
+    bestStreak: bestStreak.value,
+    answeredQuestions: answeredQuestions.value,
+    answeredQuestionIds: answeredQuestions.value.map((answer) => answer.questionId),
+    incorrectlyAnsweredQuestionIds: incorrectlyAnsweredQuestions.value.map((question) => getQuestionId(question)),
+  }
+
+  try {
+    window.localStorage.setItem(MC_SESSION_STORAGE_KEY, JSON.stringify(session))
+    savedMcSession.value = session
+  } catch {
+    // localStorage can be unavailable or full; the current quiz remains usable.
+  }
+}
+
+function clearMcSession() {
+  if (typeof window !== "undefined") window.localStorage.removeItem(MC_SESSION_STORAGE_KEY)
+  savedMcSession.value = null
+}
+
+function resumeMcSession() {
+  const session = savedMcSession.value
+  if (!session) return
+
+  originalQuestions.value = session.originalQuestions
+  questions.value = session.questions
+  mcQuestionBankSource.value = session.bank.source || { kind: "public", fileName: null }
+  mcQuestionBankName.value = mcQuestionBankSource.value.kind === "import"
+    ? `Eigene MC-Fragebank: ${mcQuestionBankSource.value.fileName || "lokaler Import"}`
+    : "Öffentliche MC-Beispiel-Fragen"
+  currentQuestionIndex.value = Math.max(0, Math.min(session.currentQuestionIndex || 0, questions.value.length - 1))
+  selectedAnswer.value = session.selectedAnswer || null
+  isAnswered.value = Boolean(session.isAnswered)
+  isQuizComplete.value = Boolean(session.isQuizComplete)
+  isReviewMode.value = Boolean(session.isReviewMode)
+  score.value = Number(session.score) || 0
+  currentStreak.value = Number(session.currentStreak) || 0
+  bestStreak.value = Number(session.bestStreak) || 0
+  answeredQuestions.value = Array.isArray(session.answeredQuestions) ? session.answeredQuestions : []
+  const wrongIds = new Set(session.incorrectlyAnsweredQuestionIds || [])
+  incorrectlyAnsweredQuestions.value = originalQuestions.value.filter((question, index) => wrongIds.has(getQuestionId(question, index)))
+  activeMode.value = "mc"
+  isQuizStarted.value = true
+}
+
+function startNewMcQuiz() {
+  clearMcSession()
+  startQuiz()
+}
+
+function resetMcProgress() {
+  const confirmed = window.confirm("Fortschritt dieser MC-Fragebank wirklich löschen und neu starten?")
+  if (!confirmed) return
+
+  clearMcSession()
+  startQuiz()
+}
+
 function resetQuizProgress({ clearIncorrectAnswers = true } = {}) {
   currentQuestionIndex.value = 0
   selectedAnswer.value = null
@@ -277,6 +394,7 @@ function startQuiz() {
   isReviewMode.value = false
   resetQuizProgress()
   isQuizStarted.value = true
+  persistMcSession()
 }
 
 function selectAnswer(option) {
@@ -290,8 +408,10 @@ function selectAnswer(option) {
   const isCorrect = option === currentQuestion.value.correctAnswer
 
   answeredQuestions.value.push({
+    questionId: getQuestionId(currentQuestion.value, currentQuestionIndex.value),
     key: getQuestionKey(currentQuestion.value),
-    category: currentQuestion.value.category || 'Allgemein',
+    category: currentQuestion.value.category || "Allgemein",
+    selectedAnswer: option,
     isCorrect,
   })
 
@@ -299,6 +419,7 @@ function selectAnswer(option) {
     score.value++
     currentStreak.value++
     bestStreak.value = Math.max(bestStreak.value, currentStreak.value)
+    persistMcSession()
     return
   }
 
@@ -311,6 +432,8 @@ function selectAnswer(option) {
   if (!alreadyTracked) {
     incorrectlyAnsweredQuestions.value.push(currentQuestion.value)
   }
+
+  persistMcSession()
 }
 
 function nextQuestion() {
@@ -321,10 +444,12 @@ function nextQuestion() {
   currentQuestionIndex.value++
   selectedAnswer.value = null
   isAnswered.value = false
+  persistMcSession()
 }
 
 function finishQuiz() {
   isQuizComplete.value = true
+  persistMcSession()
 }
 
 function restartWithCurrentQuestionBank() {
@@ -332,6 +457,7 @@ function restartWithCurrentQuestionBank() {
   isReviewMode.value = false
   resetQuizProgress()
   isQuizStarted.value = true
+  persistMcSession()
 }
 
 function repeatIncorrectQuestions() {
@@ -343,6 +469,7 @@ function repeatIncorrectQuestions() {
   isReviewMode.value = true
   resetQuizProgress()
   isQuizStarted.value = true
+  persistMcSession()
 }
 
 function showQuestionBankSelection() {
@@ -353,6 +480,7 @@ function showQuestionBankSelection() {
 }
 
 function switchMode(mode) {
+  if (activeMode.value === "mc") persistMcSession()
   activeMode.value = mode
   isQuizStarted.value = false
   freeTextQuestionIndex.value = 0
@@ -511,6 +639,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
   originalQuestions.value = importedQuestions
   questions.value = shuffleOptionsForQuestions(importedQuestions)
   mcQuestionBankName.value = `Eigene MC-Fragebank: ${fileName}`
+  mcQuestionBankSource.value = { kind: "import", fileName }
   activeMode.value = 'mc'
   isReviewMode.value = false
   isQuizStarted.value = false
@@ -620,9 +749,24 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
           </div>
         </div>
 
-        <button v-else class="start-button" type="button" @click="startQuiz">
-          Mit aktueller Fragebank starten
-        </button>
+        <div v-else class="training-start-options">
+          <p v-if="savedMcSession" class="saved-progress-notice">
+            Gespeicherte Sitzung vom {{ new Date(savedMcSession.savedAt).toLocaleString("de-DE") }} verfügbar.
+          </p>
+          <div class="start-actions">
+            <button
+              v-if="savedMcSession"
+              class="start-button"
+              type="button"
+              @click="resumeMcSession"
+            >
+              Letzte Sitzung fortsetzen
+            </button>
+            <button class="secondary-button" type="button" @click="startNewMcQuiz">
+              {{ savedMcSession ? "Neu starten" : "Mit aktueller Fragebank starten" }}
+            </button>
+          </div>
+        </div>
       </section>
     </section>
 
@@ -775,13 +919,18 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
     </section>
 
     <section v-else-if="currentQuestion" class="quiz-layout">
-      <ScoreBox
-        :current-question-index="currentQuestionIndex"
-        :total-questions="totalQuestions"
-        :score="score"
-        :current-streak="currentStreak"
-        :best-streak="bestStreak"
-      />
+      <aside>
+        <ScoreBox
+          :current-question-index="currentQuestionIndex"
+          :total-questions="totalQuestions"
+          :score="score"
+          :current-streak="currentStreak"
+          :best-streak="bestStreak"
+        />
+        <button class="danger-link mc-reset-button" type="button" @click="resetMcProgress">
+          Fortschritt löschen / neu starten
+        </button>
+      </aside>
 
       <QuizCard
         :question="currentQuestion"

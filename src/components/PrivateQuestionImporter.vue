@@ -179,7 +179,8 @@ const handleFileChange = async (event) => {
       <h2>Eigene JSON-Fragen importieren</h2>
       <p>
         MC-, Freitext- und Methodentrainer-Banken werden automatisch erkannt. Die Datei wird
-        nur im Browser gelesen, nicht hochgeladen und nicht gespeichert.
+        nur im Browser gelesen und nicht hochgeladen. Für die Resume-Funktion kann die aktive
+        importierte Bank ausschließlich im lokalen Browser-Speicher abgelegt werden.
       </p>
     </div>
 

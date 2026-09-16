@@ -1031,6 +1031,11 @@ button:focus-visible,
   background: #b83f2b;
 }
 
+.mc-reset-button {
+  width: 100%;
+  margin-top: 12px;
+}
+
 .progress-card {
   display: grid;
   gap: 12px;
