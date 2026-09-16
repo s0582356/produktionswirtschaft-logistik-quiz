@@ -6,6 +6,7 @@ import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
 import FreeTextCard from './components/FreeTextCard.vue'
 import MethodTrainer from './components/MethodTrainer.vue'
 import PackageSelector from './components/PackageSelector.vue'
+import PackageTrainer from './components/PackageTrainer.vue'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
 import sampleMethodTrainerTasks from './data/public/sampleMethodTrainerTasks.json'
@@ -50,6 +51,7 @@ const freeTextProgress = ref(
   loadProgress(freeTextBankId.value, 'freeText', sampleFreeTextQuestions.length),
 )
 const importedPackages = ref({})
+const activePackageId = ref(null)
 
 const THEME_STORAGE_KEY = 'pwl-quiz-theme'
 
@@ -103,6 +105,9 @@ const questionBankName = computed(() => {
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
 const isMethodMode = computed(() => activeMode.value === 'method')
 const isPackageMode = computed(() => activeMode.value === 'packages')
+const activePackageBank = computed(() => (
+  activePackageId.value ? importedPackages.value[activePackageId.value] || null : null
+))
 const filteredFreeTextQuestions = computed(() => {
   if (!freeTextSessionQuestionIds.value) return freeTextQuestions.value
 
@@ -620,6 +625,14 @@ function resetCurrentFreeTextProgress() {
   isQuizStarted.value = false
 }
 
+function startPackageTraining(packageId) {
+  activePackageId.value = packageId
+}
+
+function exitPackageTraining() {
+  activePackageId.value = null
+}
+
 function handlePackageImport(bank, fileName) {
   importedPackages.value = {
     ...importedPackages.value,
@@ -734,8 +747,15 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
     </nav>
 
     <template v-if="isPackageMode">
-      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
-      <PackageSelector :imported-packages="importedPackages" />
+      <PackageTrainer
+        v-if="activePackageBank"
+        :package-bank="activePackageBank"
+        @back-to-selection="exitPackageTraining"
+      />
+      <template v-else>
+        <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
+        <PackageSelector :imported-packages="importedPackages" @start-package="startPackageTraining" />
+      </template>
     </template>
 
     <section v-else-if="isMethodMode" class="method-mode-layout">

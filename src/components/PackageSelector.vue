@@ -3,6 +3,8 @@ const props = defineProps({
   importedPackages: { type: Object, default: () => ({}) },
 })
 
+const emit = defineEmits(['start-package'])
+
 const packages = [
   { id: 1, title: 'Rechenblock: ABC/XYZ, Stücklisten' },
   { id: 2, title: 'PPS, Push, Pull, Kanban' },
@@ -59,6 +61,13 @@ function loadedPackage(pkg) {
             Ja/Nein {{ loadedPackage(pkg).counts.yesNo }} ·
             Freitext {{ loadedPackage(pkg).counts.freeText }}
           </p>
+          <button
+            class="primary-button package-start-button"
+            type="button"
+            @click="emit('start-package', packageIdFor(pkg.id))"
+          >
+            Paket trainieren
+          </button>
         </template>
         <span v-else class="package-status">Noch keine private Paketbank geladen</span>
       </article>

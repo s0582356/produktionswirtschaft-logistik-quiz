@@ -1576,3 +1576,14 @@ button:focus-visible,
 @media (max-width: 560px) {
   .package-grid { grid-template-columns: 1fr; }
 }
+
+/* Pakettraining (Phase 3: Trainingsansicht) */
+.package-start-button { width: 100%; margin-top: 4px; }
+
+.yes-no-answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.package-summary .result-grid { margin-top: 18px; }
+
+@media (max-width: 560px) {
+  .yes-no-answers { grid-template-columns: 1fr; }
+}
