@@ -7,6 +7,7 @@ const props = defineProps({
   isLastQuestion: { type: Boolean, required: true },
   initialAnswer: { type: String, default: '' },
   initialStatus: { type: String, default: null },
+  showModelAnswerToggle: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['evaluated', 'next-question', 'restart-training'])
@@ -15,6 +16,7 @@ const result = ref(null)
 const keywordsOpen = ref(false)
 const isDictating = ref(false)
 const dictationMessage = ref('')
+const modelAnswerOpen = ref(false)
 let recognition = null
 
 const ratingLabels = {
@@ -220,7 +222,17 @@ onBeforeUnmount(stopDictation)
         </ul>
       </section>
 
-      <section class="feedback-section model-answer">
+      <section v-if="showModelAnswerToggle && question.modelAnswer" class="feedback-section model-answer-toggle">
+        <button class="secondary-button" type="button" @click="modelAnswerOpen = !modelAnswerOpen">
+          {{ modelAnswerOpen ? '▼ Musterlösung ausblenden' : '▶ Musterlösung anzeigen' }}
+        </button>
+        <section v-if="modelAnswerOpen" class="model-answer-toggle-content">
+          <h3>Musterlösung</h3>
+          <p>{{ question.modelAnswer }}</p>
+        </section>
+      </section>
+
+      <section v-else class="feedback-section model-answer">
         <h3>Musterlösung</h3>
         <p>{{ question.modelAnswer }}</p>
       </section>

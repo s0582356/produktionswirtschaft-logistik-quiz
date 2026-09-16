@@ -1590,3 +1590,12 @@ button:focus-visible,
 @media (max-width: 560px) {
   .yes-no-answers { grid-template-columns: 1fr; }
 }
+
+.round-picker { display: grid; gap: 8px; margin: 18px 0; border: 0; padding: 0; }
+.round-picker legend { font-weight: 800; margin-bottom: 6px; }
+.round-picker label { display: block; cursor: pointer; }
+
+.model-answer-toggle { margin-top: 16px; }
+.model-answer-toggle-content { margin-top: 12px; padding: 14px; border-radius: 10px; background: var(--surface-muted, #f2f6f4); }
+.model-answer-toggle-content h3 { margin-top: 0; }
+.model-answer-toggle-content p { white-space: pre-wrap; }

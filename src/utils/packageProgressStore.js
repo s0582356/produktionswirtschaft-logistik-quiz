@@ -39,6 +39,9 @@ export function createInitialPackageProgress(packageBank) {
     bankFingerprint: createPackageBankFingerprint(packageBank),
     packageTitle: packageBank.packageTitle,
     currentQuestionIndex: 0,
+    sessionSize: 'all',
+    questionTypeFilter: 'mixed',
+    orderedQuestionIds: [],
     sessionStatus: 'inProgress',
     answers: {},
     statistics: createStatistics(),
@@ -63,6 +66,9 @@ function normalizeProgress(packageBank, progress) {
       Math.min(Number(progress?.currentQuestionIndex) || 0, Math.max(0, packageBank.questions.length - 1)),
     ),
     sessionStatus: progress?.sessionStatus === 'completed' ? 'completed' : 'inProgress',
+    sessionSize: progress?.sessionSize === 'all' ? 'all' : (Number(progress?.sessionSize) || 'all'),
+    questionTypeFilter: ['mixed', 'mc', 'yesNo', 'freeText'].includes(progress?.questionTypeFilter) ? progress.questionTypeFilter : 'mixed',
+    orderedQuestionIds: Array.isArray(progress?.orderedQuestionIds) ? progress.orderedQuestionIds.map(String) : [],
     answers,
     statistics: { ...createStatistics(), ...(progress?.statistics || {}) },
   }
@@ -117,6 +123,7 @@ export function getPackageProgressSummary(progress) {
   return {
     answered,
     completed: progress?.sessionStatus === 'completed',
+    roundQuestions: Array.isArray(progress?.orderedQuestionIds) && progress.orderedQuestionIds.length ? progress.orderedQuestionIds.length : null,
     hasProgress: answered > 0 || progress?.sessionStatus === 'completed',
   }
 }
