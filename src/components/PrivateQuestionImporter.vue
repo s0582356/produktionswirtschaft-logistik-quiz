@@ -1,4 +1,6 @@
 <script setup>
+import { isPackageBank, validatePackageBank } from '../utils/packageBankValidator.js'
+
 const emit = defineEmits(['questions-loaded'])
 
 const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit', 'xyzAbcMatrix', 'sourcingCostComparison', 'verticalIntegration', 'transportModeComparison', 'transportConceptAssignment', 'routePlanningAssignment'])
@@ -114,6 +116,10 @@ const validateMethodTrainer = (data) => {
 }
 
 const validateQuestions = (parsedData) => {
+  if (isPackageBank(parsedData)) {
+    return { type: 'package', bank: validatePackageBank(parsedData) }
+  }
+
   const explicitlyMethodTrainer = !Array.isArray(parsedData)
     && (parsedData?.type === 'methodTrainer' || parsedData?.bankType === 'methodTrainer')
   const structurallyMethodTrainer = !Array.isArray(parsedData)
@@ -178,8 +184,8 @@ const handleFileChange = async (event) => {
     <div>
       <h2>Eigene JSON-Fragen importieren</h2>
       <p>
-        MC-, Freitext- und Methodentrainer-Banken werden automatisch erkannt. Die Datei wird
-        nur im Browser gelesen und nicht hochgeladen. Für die Resume-Funktion kann die aktive
+        MC-, Freitext-, Methodentrainer- und Paket-Banken werden automatisch erkannt. Die Datei
+        wird nur im Browser gelesen und nicht hochgeladen. Für die Resume-Funktion kann die aktive
         importierte Bank ausschließlich im lokalen Browser-Speicher abgelegt werden.
       </p>
     </div>

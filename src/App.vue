@@ -49,6 +49,7 @@ const freeTextBankId = ref(createBankFingerprint('freeText', sampleFreeTextQuest
 const freeTextProgress = ref(
   loadProgress(freeTextBankId.value, 'freeText', sampleFreeTextQuestions.length),
 )
+const importedPackages = ref({})
 
 const THEME_STORAGE_KEY = 'pwl-quiz-theme'
 
@@ -619,7 +620,28 @@ function resetCurrentFreeTextProgress() {
   isQuizStarted.value = false
 }
 
+function handlePackageImport(bank, fileName) {
+  importedPackages.value = {
+    ...importedPackages.value,
+    [bank.packageId]: {
+      packageId: bank.packageId,
+      packageTitle: bank.packageTitle,
+      packageNumber: bank.packageNumber,
+      packagePriority: bank.packagePriority,
+      tags: bank.tags,
+      counts: bank.counts,
+      fileName,
+      questions: bank.questions,
+    },
+  }
+  switchMode('packages')
+}
+
 function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileName }) {
+  if (type === 'package') {
+    handlePackageImport(bank, fileName)
+    return
+  }
   if (type === 'methodTrainer') {
     methodTrainerBank.value = bank
     methodTrainerBankName.value = `Eigene Methodenbank: ${fileName}`
@@ -711,7 +733,10 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
       </button>
     </nav>
 
-    <PackageSelector v-if="isPackageMode" />
+    <template v-if="isPackageMode">
+      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
+      <PackageSelector :imported-packages="importedPackages" />
+    </template>
 
     <section v-else-if="isMethodMode" class="method-mode-layout">
       <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />

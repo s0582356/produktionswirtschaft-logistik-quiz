@@ -1536,6 +1536,21 @@ button:focus-visible,
 
 .package-card-disabled { opacity: 0.85; }
 
+.package-card-loaded { border-top-color: #18605b; opacity: 1; }
+
+.package-status-loaded {
+  border-color: #82b9ae;
+  color: #18605b;
+  background: #e8f5f1;
+}
+
+.package-loaded-meta {
+  margin: 0;
+  color: #4f5d57;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
 :root[data-theme="dark"] .package-intro-card,
 :root[data-theme="dark"] .package-card {
   border-color: #3a4d57;
@@ -1550,6 +1565,13 @@ button:focus-visible,
   color: #aebeba;
   background: #22313b;
 }
+:root[data-theme="dark"] .package-card-loaded { border-top-color: #237b74; }
+:root[data-theme="dark"] .package-status-loaded {
+  border-color: #3c766f;
+  color: #8bd4c8;
+  background: #193631;
+}
+:root[data-theme="dark"] .package-loaded-meta { color: #aebeba; }
 
 @media (max-width: 560px) {
   .package-grid { grid-template-columns: 1fr; }
