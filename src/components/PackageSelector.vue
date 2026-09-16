@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 import { clearPackageProgress, getPackageProgressSummary, loadPackageProgress } from '../utils/packageProgressStore.js'
 
-const props = defineProps({ importedPackages: { type: Object, default: () => ({}) } })
+const props = defineProps({ packageBanksById: { type: Object, default: () => ({}) } })
 const emit = defineEmits(['start-package'])
 const packageAwaitingChoice = ref(null)
 const packageForRound = ref(null)
@@ -18,7 +18,7 @@ const packages = [
 ]
 function formatPackageNumber(id) { return String(id).padStart(2, '0') }
 function packageIdFor(id) { return `p${formatPackageNumber(id)}` }
-function loadedPackage(pkg) { return props.importedPackages[packageIdFor(pkg.id)] || null }
+function loadedPackage(pkg) { return props.packageBanksById[packageIdFor(pkg.id)] || null }
 function progressFor(pkg) { const bank = loadedPackage(pkg); return bank ? getPackageProgressSummary(loadPackageProgress(bank)) : null }
 function openRoundSetup(pkg) { packageAwaitingChoice.value = null; packageForRound.value = pkg.id }
 function requestStart(pkg) {
@@ -32,13 +32,14 @@ function startRound() {
   emit('start-package', packageIdFor(pkg.id), 'new', { sessionSize: sessionSize.value, questionTypeFilter: questionTypeFilter.value })
   packageForRound.value = null
 }
+const loadedPackageCount = computed(() => Object.keys(props.packageBanksById).length)
 const pendingPackage = computed(() => packages.find((pkg) => pkg.id === packageAwaitingChoice.value) || null)
 const pendingRoundPackage = computed(() => packages.find((pkg) => pkg.id === packageForRound.value) || null)
 </script>
 
 <template>
   <section class="package-mode-layout" aria-label="Pakettraining">
-    <section class="package-intro-card"><h2>Pakettraining</h2><p>11 Lernpakete decken die Klausurthemen einzeln ab. Private Paketbanken können oben als JSON-Datei importiert werden. Fortschritt und Antworten werden je Paket lokal und getrennt gespeichert.</p></section>
+    <section class="package-intro-card"><h2>Pakettraining</h2><p class="package-library-count">{{ loadedPackageCount }} von 11 Paketbanken geladen</p><p>11 Lernpakete decken die Klausurthemen einzeln ab. Private Paketbanken können oben als JSON-Datei importiert werden. Fortschritt und Antworten werden je Paket lokal und getrennt gespeichert.</p></section>
     <div class="package-grid">
       <article v-for="pkg in packages" :key="pkg.id" class="package-card" :class="loadedPackage(pkg) ? 'package-card-loaded' : 'package-card-disabled'">
         <span class="package-number">Paket {{ formatPackageNumber(pkg.id) }}</span><h3>{{ pkg.title }}</h3>

@@ -7,6 +7,7 @@ import FreeTextCard from './components/FreeTextCard.vue'
 import MethodTrainer from './components/MethodTrainer.vue'
 import PackageSelector from './components/PackageSelector.vue'
 import PackageTrainer from './components/PackageTrainer.vue'
+import { addPackageBanks } from './utils/packageLibrary.js'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
 import sampleMethodTrainerTasks from './data/public/sampleMethodTrainerTasks.json'
@@ -50,7 +51,7 @@ const freeTextBankId = ref(createBankFingerprint('freeText', sampleFreeTextQuest
 const freeTextProgress = ref(
   loadProgress(freeTextBankId.value, 'freeText', sampleFreeTextQuestions.length),
 )
-const importedPackages = ref({})
+const packageBanksById = ref({})
 const activePackageId = ref(null)
 const activePackageResume = ref(false)
 const activePackageRoundSettings = ref(null)
@@ -108,7 +109,7 @@ const isFreeTextMode = computed(() => activeMode.value === 'freeText')
 const isMethodMode = computed(() => activeMode.value === 'method')
 const isPackageMode = computed(() => activeMode.value === 'packages')
 const activePackageBank = computed(() => (
-  activePackageId.value ? importedPackages.value[activePackageId.value] || null : null
+  activePackageId.value ? packageBanksById.value[activePackageId.value] || null : null
 ))
 const filteredFreeTextQuestions = computed(() => {
   if (!freeTextSessionQuestionIds.value) return freeTextQuestions.value
@@ -640,19 +641,11 @@ function exitPackageTraining() {
 }
 
 function handlePackageImport(bank, fileName) {
-  importedPackages.value = {
-    ...importedPackages.value,
-    [bank.packageId]: {
-      packageId: bank.packageId,
-      packageTitle: bank.packageTitle,
-      packageNumber: bank.packageNumber,
-      packagePriority: bank.packagePriority,
-      tags: bank.tags,
-      counts: bank.counts,
-      fileName,
-      questions: bank.questions,
-    },
-  }
+  handlePackageImports([{ bank, fileName }])
+}
+
+function handlePackageImports(imports) {
+  packageBanksById.value = addPackageBanks(packageBanksById.value, imports)
   switchMode('packages')
 }
 
@@ -761,8 +754,8 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
         @back-to-selection="exitPackageTraining"
       />
       <template v-else>
-        <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
-        <PackageSelector :imported-packages="importedPackages" @start-package="startPackageTraining" />
+        <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" />
+        <PackageSelector :package-banks-by-id="packageBanksById" @start-package="startPackageTraining" />
       </template>
     </template>
 

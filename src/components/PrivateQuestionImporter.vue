@@ -1,7 +1,10 @@
 <script setup>
+import { ref } from 'vue'
 import { isPackageBank, validatePackageBank } from '../utils/packageBankValidator.js'
+import { readPackageBankFiles } from '../utils/packageLibrary.js'
 
-const emit = defineEmits(['questions-loaded'])
+const emit = defineEmits(['questions-loaded', 'package-banks-loaded'])
+const packageImportMessage = ref('')
 
 const SUPPORTED_METHOD_ENGINES = new Set(['abcAnalysis', 'billOfMaterials', 'monthlyDemandSplit', 'xyzAbcMatrix', 'sourcingCostComparison', 'verticalIntegration', 'transportModeComparison', 'transportConceptAssignment', 'routePlanningAssignment'])
 
@@ -154,6 +157,21 @@ const validateQuestions = (parsedData) => {
   throw new Error('Format nicht erkannt. Erwartet wird eine einheitliche MC-, Freitext- oder Methodentrainer-Bank.')
 }
 
+const handlePackageFilesChange = async (event) => {
+  const files = event.target.files
+  if (!files?.length) return
+
+  const { banks, errors, duplicates } = await readPackageBankFiles(files)
+  if (banks.length) emit('package-banks-loaded', banks)
+
+  const messages = []
+  if (banks.length) messages.push(`${banks.length} Paketbank${banks.length === 1 ? '' : 'en'} geladen.`)
+  if (duplicates.length) messages.push(`Doppelte packageId: ${duplicates.join(', ')} – die zuletzt ausgewählte gültige Datei wurde verwendet.`)
+  if (errors.length) messages.push(`Nicht geladen: ${errors.map(({ fileName, reason }) => `${fileName} (${reason})`).join('; ')}`)
+  packageImportMessage.value = messages.join(' ')
+  event.target.value = ''
+}
+
 const handleFileChange = async (event) => {
   const file = event.target.files?.[0]
 
@@ -192,11 +210,12 @@ const handleFileChange = async (event) => {
 
     <label class="import-button">
       JSON-Fragen auswählen
-      <input
-        type="file"
-        accept=".json,application/json"
-        @change="handleFileChange"
-      />
+      <input type="file" accept=".json,application/json" @change="handleFileChange" />
     </label>
+    <label class="import-button">
+      Paketbanken auswählen
+      <input type="file" multiple accept=".json,application/json" @change="handlePackageFilesChange" />
+    </label>
+    <p v-if="packageImportMessage" class="import-message" role="status">{{ packageImportMessage }}</p>
   </section>
 </template>
