@@ -166,3 +166,25 @@ test('optionale Felder packagePriority und tags werden bei falschem Typ abgelehn
   assert.throws(() => validatePackageBank(validPackage({ packagePriority: 5 })), /packagePriority/)
   assert.throws(() => validatePackageBank(validPackage({ tags: 'ABC' })), /tags/)
 })
+
+
+test('sequence- und subject/predicate-Checkpoints werden validiert', () => {
+  const valid = validPackage()
+  valid.questions[2].checkpoints = [
+    { label: 'Reihenfolge', sequence: [['erste Stufe'], ['zweite Stufe']] },
+    { label: 'Zuordnung', anyOf: ['Merkmal'], relationship: { subject: ['Konzept'], predicate: ['Merkmal'], competingSubjects: ['Konzept', 'Gegenkonzept'], sameClause: true } },
+  ]
+  assert.doesNotThrow(() => validatePackageBank(valid))
+
+  const invalidSequence = validPackage()
+  invalidSequence.questions[2].checkpoints = [{ label: 'Ungültige Reihenfolge', sequence: [['nur eine Stufe']] }]
+  assert.throws(() => validatePackageBank(invalidSequence), /Checkpoint 1 ist ungültig/)
+
+  const invalidRelationship = validPackage()
+  invalidRelationship.questions[2].checkpoints = [{ label: 'Unvollständige Zuordnung', anyOf: ['Merkmal'], relationship: { subject: ['Konzept'] } }]
+  assert.throws(() => validatePackageBank(invalidRelationship), /Checkpoint 1 ist ungültig/)
+
+  const invalidCompetingSubjects = validPackage()
+  invalidCompetingSubjects.questions[2].checkpoints = [{ label: 'Ungültige Gegenbegriffe', anyOf: ['Merkmal'], relationship: { subject: ['Konzept'], predicate: ['Merkmal'], competingSubjects: [] } }]
+  assert.throws(() => validatePackageBank(invalidCompetingSubjects), /Checkpoint 1 ist ungültig/)
+})

@@ -44,6 +44,35 @@ function hasSearchTerms(value) {
   return Array.isArray(value) && value.length > 0
 }
 
+function isTermGroup(value) {
+  if (typeof value === 'string') return value.trim().length > 0
+  return Array.isArray(value) && value.length > 0 && value.every((item) => (
+    typeof item === 'string' && item.trim().length > 0
+  ))
+}
+
+function isValidSequence(sequence) {
+  return Array.isArray(sequence)
+    && sequence.length > 1
+    && sequence.every((stage) => isTermGroup(stage))
+}
+
+function isValidSubjectPredicateRelationship(relationship) {
+  if (relationship === undefined) return true
+  if (!relationship || typeof relationship !== 'object' || Array.isArray(relationship)) return false
+
+  // Legacy terms/left/right relationships remain valid unchanged. Only the new
+  // subject/predicate shape is validated strictly here.
+  const usesSubjectPredicate = relationship.subject !== undefined || relationship.predicate !== undefined
+  if (!usesSubjectPredicate) return true
+  if (!isTermGroup(relationship.subject) || !isTermGroup(relationship.predicate)) return false
+  if (relationship.competingSubjects !== undefined && !isTermGroup(relationship.competingSubjects)) return false
+  if (relationship.sameClause !== undefined && typeof relationship.sameClause !== 'boolean') return false
+
+  const distance = relationship.maxDistance ?? relationship.distance
+  return distance === undefined || (Number.isFinite(Number(distance)) && Number(distance) >= 0)
+}
+
 // Mirrors the checkpoint shapes checkpointMatches() in freeTextEvaluator.js
 // actually evaluates: either a plain non-empty string, or an object carrying
 // at least one non-empty term list (anyOf/keywords, allOf, or synonyms). A
@@ -53,10 +82,14 @@ function isValidCheckpoint(checkpoint) {
   if (typeof checkpoint === 'string') return checkpoint.trim().length > 0
   if (!checkpoint || typeof checkpoint !== 'object' || Array.isArray(checkpoint)) return false
 
-  return hasSearchTerms(checkpoint.anyOf)
+  const hasMatchingRule = hasSearchTerms(checkpoint.anyOf)
     || hasSearchTerms(checkpoint.allOf)
     || hasSearchTerms(checkpoint.keywords)
     || hasSearchTerms(checkpoint.synonyms)
+
+  return (hasMatchingRule || isValidSequence(checkpoint.sequence))
+    && isValidSubjectPredicateRelationship(checkpoint.relationship)
+    && (checkpoint.sequence === undefined || isValidSequence(checkpoint.sequence))
 }
 
 function validateFreeTextQuestion(question, label) {

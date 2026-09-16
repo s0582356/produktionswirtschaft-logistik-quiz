@@ -108,13 +108,54 @@ function relationshipMatches(answer, relationship) {
   })
 }
 
+// The existing terms/left/right relationship is intentionally left as-is. A checkpoint
+// using subject/predicate opts into this stricter, clause-local variant.
+function subjectPredicateRelationshipMatches(answer, relationship) {
+  if (!relationship || !relationship.subject || !relationship.predicate) return true
+  const maxDistance = Number(relationship.maxDistance ?? relationship.distance ?? 18)
+  const clauses = relationship.sameClause === false ? [answer] : answer.clauses
+
+  return clauses.some((clause) => {
+    const subjects = findTermPositions(clause, relationship.subject)
+    const predicates = findTermPositions(clause, relationship.predicate)
+
+    // Only the opt-in competingSubjects variant creates a semantic scope. This
+    // preserves the established relationship behavior for every older checkpoint.
+    if (!relationship.competingSubjects) {
+      return subjects.some((subjectPosition) => predicates.some((predicatePosition) => (
+        Math.abs(predicatePosition - subjectPosition) <= maxDistance
+      )))
+    }
+
+    const competingPositions = findTermPositions(clause, relationship.competingSubjects)
+    return subjects.some((subjectPosition) => {
+      const nextCompetingSubject = competingPositions
+        .filter((position) => position > subjectPosition)
+        .reduce((nearest, position) => Math.min(nearest, position), Infinity)
+      const scopeEnd = Math.min(subjectPosition + maxDistance, nextCompetingSubject)
+
+      return predicates.some((predicatePosition) => (
+        predicatePosition >= subjectPosition && predicatePosition < scopeEnd
+      ))
+    })
+  })
+}
+
+function sequenceMatches(answer, sequence) {
+  if (!sequence) return true
+  const positions = sequence.map((stage) => findTermPositions(answer, stage))
+  if (positions.some((stagePositions) => stagePositions.length === 0)) return false
+  const firstPositions = positions.map((stagePositions) => Math.min(...stagePositions))
+  return firstPositions.every((position, index) => index === 0 || firstPositions[index - 1] < position)
+}
+
 function checkpointMatches(answer, checkpoint) {
   if (typeof checkpoint === 'string') return phraseMatches(answer, checkpoint)
 
   const allOf = normalizeGroups(checkpoint.allOf || [])
   const anyOf = checkpoint.anyOf || checkpoint.keywords || []
   const synonyms = checkpoint.synonyms || []
-  const hasSearchTerms = allOf.length || anyOf.length || synonyms.length
+  const hasSearchTerms = allOf.length || anyOf.length || synonyms.length || checkpoint.sequence
   const alternativeTerms = [...anyOf, ...synonyms]
 
   const matchesAll = allOf.every((group) => alternativesMatch(answer, group))
@@ -122,6 +163,8 @@ function checkpointMatches(answer, checkpoint) {
 
   return Boolean(hasSearchTerms && matchesAll && matchesAny)
     && relationshipMatches(answer, checkpoint.near || checkpoint.relationship)
+    && subjectPredicateRelationshipMatches(answer, checkpoint.relationship)
+    && sequenceMatches(answer, checkpoint.sequence)
 }
 
 function checkpointLabel(checkpoint, index) {
@@ -145,7 +188,11 @@ function looksLikeKeywordList(rawAnswer, tokens) {
 export function evaluateFreeText(question, rawAnswer) {
   const normalized = normalizeText(rawAnswer)
   const tokens = normalized.split(' ').filter(Boolean)
-  const answer = { normalized, tokens }
+  const clauses = String(rawAnswer).split(/[.!?;\n]+/).map((clause) => {
+    const normalizedClause = normalizeText(clause)
+    return { normalized: normalizedClause, tokens: normalizedClause.split(' ').filter(Boolean) }
+  }).filter((clause) => clause.tokens.length > 0)
+  const answer = { normalized, tokens, clauses: clauses.length ? clauses : [{ normalized, tokens }] }
   const checkpoints = question.checkpoints || []
   const evaluated = checkpoints.map((checkpoint, index) => ({
     label: checkpointLabel(checkpoint, index),
@@ -158,8 +205,11 @@ export function evaluateFreeText(question, rawAnswer) {
   const coverage = evaluated.length ? detected.length / evaluated.length : 0
   const minWords = Number(question.minWords ?? 12)
   const keywordList = looksLikeKeywordList(rawAnswer, tokens)
+  const hasSequenceCheckpoint = checkpoints.some((checkpoint) => (
+    typeof checkpoint === 'object' && checkpoint.sequence
+  ))
   const hasExplanation = tokens.length >= minWords
-    && !keywordList
+    && (!keywordList || hasSequenceCheckpoint)
     && (/[.!?]/.test(rawAnswer) || tokens.some((token) => EXPLANATION_WORDS.has(token)))
 
   let rating = 'red'
@@ -173,7 +223,7 @@ export function evaluateFreeText(question, rawAnswer) {
     rating = 'yellow'
   }
 
-  if (keywordList && rating === 'green') rating = 'yellow'
+  if (keywordList && rating === 'green' && !hasSequenceCheckpoint) rating = 'yellow'
 
   let improvement = question.improvementHint || 'Ergänze die fehlenden Checkpunkte und erkläre ihren Zusammenhang in vollständigen Sätzen.'
   if (tokens.length < minWords) {
