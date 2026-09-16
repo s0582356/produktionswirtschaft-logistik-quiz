@@ -61,13 +61,13 @@ test('Paketbibliothek: doppelte packageId innerhalb eines Imports verwendet die 
 })
 
 
-test('Paketbibliothek: App wählt die Trainerbank per packageId, Einzelimport bleibt vorhanden', async () => {
+test('Paketbibliothek: App wählt die Trainerbank per packageId und erhält sie über den zentralen Import', async () => {
   const [app, importer] = await Promise.all([
     readFile(new URL('../src/App.vue', import.meta.url), 'utf8'),
     readFile(new URL('../src/components/PrivateQuestionImporter.vue', import.meta.url), 'utf8'),
   ])
   assert.match(app, /activePackageId\.value \? packageBanksById\.value\[activePackageId\.value\]/)
-  assert.match(app, /@package-banks-loaded="handlePackageImports"/)
-  assert.match(importer, /const handleFileChange = async/)
-  assert.match(importer, /const handlePackageFilesChange = async/)
+  assert.match(app, /@library-loaded="handlePrivateLibraryImport"/)
+  assert.match(importer, /async function handleFileChange/)
+  assert.doesNotMatch(importer, /handlePackageFilesChange|JSON-Fragen auswählen|Paketbanken auswählen/)
 })

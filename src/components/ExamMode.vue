@@ -4,8 +4,261 @@ import { evaluateFreeText } from '../utils/freeTextEvaluator.js'
 import { createExam, unansweredRefs } from '../utils/examLogic.js'
 import { recordMistake } from '../utils/mistakeStore.js'
 import { clearExam, initialExam, loadExam, saveExam } from '../utils/examStore.js'
-const props=defineProps({packageBanksById:{type:Object,required:true}});const s=reactive(initialExam(props.packageBanksById));const setup=ref(true),resume=ref(false),confirm=ref(false)
-const banks=computed(()=>Object.values(props.packageBanksById));const lookup=computed(()=>new Map(banks.value.flatMap(b=>b.questions.map(q=>[`${b.packageId}::${q.questionId}`,{b,q}]))));const current=computed(()=>{const r=s.orderedQuestionRefs[s.currentQuestionIndex];return r&&lookup.value.get(`${r.packageId}::${r.questionId}`)});const key=computed(()=>current.value&&`${current.value.b.packageId}::${current.value.q.questionId}`);const unanswered=computed(()=>unansweredRefs(s));
-function save(){saveExam(props.packageBanksById,s)} function start(n){Object.assign(s,initialExam(props.packageBanksById),createExam(props.packageBanksById,n));setup.value=false;resume.value=false;save()} function offer(){const x=loadExam(props.packageBanksById);if(x.orderedQuestionRefs.length){Object.assign(s,x);resume.value=true}else setup.value=true} function answer(v){const q=current.value.q;const result=q.questionType==='freeText'?evaluateFreeText(q,v).rating:v===q.correctAnswer;s.answers[key.value]=q.questionType==='freeText'?{questionType:'freeText',userAnswer:v,status:result}:{questionType:q.questionType,selectedAnswer:v,correct:result};recordMistake({packageId:current.value.b.packageId,questionId:q.questionId,questionType:q.questionType,result});save()} function move(n){s.currentQuestionIndex=Math.max(0,Math.min(s.orderedQuestionRefs.length-1,s.currentQuestionIndex+n));save()} function submit(){if(unanswered.value.length){confirm.value=true;return}s.sessionStatus='completed';save()} function finish(){s.sessionStatus='completed';confirm.value=false;save()} function reset(){clearExam(props.packageBanksById);Object.assign(s,initialExam(props.packageBanksById));setup.value=true;resume.value=false} offer()
-const stats=computed(()=>Object.values(s.answers).reduce((a,x)=>{if(x.questionType==='freeText')a[x.status]++;else a[x.correct?'correct':'wrong']++;return a},{correct:0,wrong:0,green:0,yellow:0,red:0}))
-</script><template><section class="package-mode-layout exam-mode"><section v-if="setup" class="result-card"><p class="eyebrow">Klausurmodus</p><h2>{{banks.length}} von 11 Paketbanken verfügbar</h2><div v-if="resume" class="result-actions"><button class="primary-button" @click="setup=false;resume=false">Letzte Klausur fortsetzen</button><button class="secondary-button" @click="resume=false">Neue Klausur starten</button></div><div v-else class="result-actions"><button class="primary-button" @click="start(20)">Kurz-Klausur · 20 Fragen</button><button class="secondary-button" @click="start(35)">Standard-Klausur · 35 Fragen</button><button class="secondary-button" @click="start(50)">Intensiv-Klausur · 50 Fragen</button></div></section><section v-else-if="s.sessionStatus==='inProgress'&&current" class="quiz-layout"><aside class="score-card progress-card"><h2>Klausurmodus</h2><p>Frage {{s.currentQuestionIndex+1}} von {{s.orderedQuestionRefs.length}}</p><p>Unbeantwortet: {{unanswered.length}}</p><button class="secondary-button" :disabled="!s.currentQuestionIndex" @click="move(-1)">Zurück</button><button class="secondary-button" :disabled="s.currentQuestionIndex===s.orderedQuestionRefs.length-1" @click="move(1)">Weiter</button><button class="primary-button" @click="submit">Klausur abgeben</button></aside><section class="question-card"><p class="eyebrow">{{current.b.packageId}} · {{current.b.packageTitle}}</p><h2>{{current.q.question||current.q.statement}}</h2><template v-if="current.q.questionType==='mc'"><button v-for="o in current.q.options" :key="o" class="answer-button" :class="{selected:s.answers[key]?.selectedAnswer===o}" @click="answer(o)">{{o}}</button></template><template v-else-if="current.q.questionType==='yesNo'"><button class="answer-button" :class="{selected:s.answers[key]?.selectedAnswer===true}" @click="answer(true)">Ja</button><button class="answer-button" :class="{selected:s.answers[key]?.selectedAnswer===false}" @click="answer(false)">Nein</button></template><textarea v-else :value="s.answers[key]?.userAnswer||''" rows="8" placeholder="Deine Antwort" @change="answer($event.target.value)"/></section><section v-if="confirm" class="result-card"><p>Noch {{unanswered.length}} Fragen unbeantwortet. Trotzdem abgeben?</p><button class="primary-button" @click="finish">Trotzdem abgeben</button><button class="secondary-button" @click="confirm=false">Weiter bearbeiten</button></section></section><section v-else class="result-card"><p class="eyebrow">Klausur abgegeben</p><div class="result-grid"><div><span>Bearbeitet</span><strong>{{Object.keys(s.answers).length}}</strong></div><div><span>Korrekt</span><strong>{{stats.correct}}</strong></div><div><span>Falsch</span><strong>{{stats.wrong}}</strong></div><div><span>Grün</span><strong>{{stats.green}}</strong></div><div><span>Gelb</span><strong>{{stats.yellow}}</strong></div><div><span>Rot</span><strong>{{stats.red}}</strong></div></div><details v-for="r in s.orderedQuestionRefs" :key="r.packageId+r.questionId"><summary>{{r.packageId}} · {{lookup.get(`${r.packageId}::${r.questionId}`).q.question||lookup.get(`${r.packageId}::${r.questionId}`).q.statement}}</summary><p>Eigene Antwort: {{s.answers[`${r.packageId}::${r.questionId}`]?.userAnswer??s.answers[`${r.packageId}::${r.questionId}`]?.selectedAnswer}}</p><p>Erklärung: {{lookup.get(`${r.packageId}::${r.questionId}`).q.explanation}}</p><p v-if="lookup.get(`${r.packageId}::${r.questionId}`).q.modelAnswer">Musterlösung: {{lookup.get(`${r.packageId}::${r.questionId}`).q.modelAnswer}}</p></details><button class="primary-button" @click="reset">Neue Klausur starten</button></section></section></template>
+
+const props = defineProps({ packageBanksById: { type: Object, required: true } })
+const session = reactive(initialExam(props.packageBanksById))
+const setup = ref(true)
+const resume = ref(false)
+const confirm = ref(false)
+
+const banks = computed(() => Object.values(props.packageBanksById))
+const hasBanks = computed(() => banks.value.length > 0)
+const lookup = computed(() => new Map(banks.value.flatMap((bank) => (
+  bank.questions.map((question) => [`${bank.packageId}::${question.questionId}`, { bank, question }])
+))))
+const current = computed(() => {
+  const ref = session.orderedQuestionRefs[session.currentQuestionIndex]
+  return ref && lookup.value.get(`${ref.packageId}::${ref.questionId}`)
+})
+const currentKey = computed(() => current.value && `${current.value.bank.packageId}::${current.value.question.questionId}`)
+const currentAnswer = computed(() => session.answers[currentKey.value] || null)
+const unanswered = computed(() => unansweredRefs(session))
+const answeredCount = computed(() => session.orderedQuestionRefs.filter((ref) => {
+  const answer = session.answers[`${ref.packageId}::${ref.questionId}`]
+  return answer && (answer.questionType !== 'freeText' || Boolean(answer.userAnswer?.trim()))
+}).length)
+const openCount = computed(() => session.orderedQuestionRefs.length - answeredCount.value)
+
+function isAnswered(ref) {
+  const answer = session.answers[`${ref.packageId}::${ref.questionId}`]
+  return Boolean(answer && (answer.questionType !== 'freeText' || answer.userAnswer?.trim()))
+}
+
+function persist() {
+  saveExam(props.packageBanksById, session)
+}
+
+function start(examSize) {
+  if (!hasBanks.value) return
+  const nextSession = {
+    ...initialExam(props.packageBanksById),
+    ...createExam(props.packageBanksById, examSize),
+    sessionStatus: 'inProgress',
+    currentQuestionIndex: 0,
+    answers: {},
+  }
+  Object.assign(session, nextSession)
+  setup.value = false
+  resume.value = false
+  confirm.value = false
+  persist()
+}
+
+function offerResume() {
+  if (!hasBanks.value) {
+    setup.value = true
+    resume.value = false
+    return
+  }
+  const saved = loadExam(props.packageBanksById)
+  if (saved.orderedQuestionRefs.length && saved.sessionStatus === 'inProgress') {
+    Object.assign(session, saved)
+    resume.value = true
+  } else {
+    setup.value = true
+  }
+}
+
+// Deliberately stores a neutral draft only. Correctness, free-text ratings and
+// mistake training are calculated exclusively when the exam is submitted.
+function saveAnswer(value) {
+  const question = current.value.question
+  if (question.questionType === 'freeText' && !value.trim()) delete session.answers[currentKey.value]
+  else {
+    session.answers[currentKey.value] = question.questionType === 'freeText'
+      ? { questionType: 'freeText', userAnswer: value }
+      : { questionType: question.questionType, selectedAnswer: value }
+  }
+  persist()
+}
+
+function move(offset) {
+  session.currentQuestionIndex = Math.max(0, Math.min(session.orderedQuestionRefs.length - 1, session.currentQuestionIndex + offset))
+  persist()
+}
+
+function jumpTo(index) {
+  session.currentQuestionIndex = Math.max(0, Math.min(session.orderedQuestionRefs.length - 1, index))
+  persist()
+}
+
+function gradeSubmittedExam() {
+  session.orderedQuestionRefs.forEach((ref) => {
+    const entry = lookup.value.get(`${ref.packageId}::${ref.questionId}`)
+    const answer = session.answers[`${ref.packageId}::${ref.questionId}`]
+    if (!entry || !answer) return
+
+    if (entry.question.questionType === 'freeText') {
+      const status = evaluateFreeText(entry.question, answer.userAnswer || '').rating
+      answer.status = status
+      recordMistake({ packageId: entry.bank.packageId, questionId: entry.question.questionId, questionType: 'freeText', result: status })
+    } else {
+      const correct = answer.selectedAnswer === entry.question.correctAnswer
+      answer.correct = correct
+      recordMistake({ packageId: entry.bank.packageId, questionId: entry.question.questionId, questionType: entry.question.questionType, result: correct })
+    }
+  })
+}
+
+function submit() {
+  if (unanswered.value.length) {
+    confirm.value = true
+    return
+  }
+  finish()
+}
+
+function finish() {
+  gradeSubmittedExam()
+  session.sessionStatus = 'completed'
+  confirm.value = false
+  persist()
+}
+
+function reset() {
+  clearExam(props.packageBanksById)
+  Object.assign(session, initialExam(props.packageBanksById))
+  setup.value = true
+  resume.value = false
+  confirm.value = false
+}
+
+offerResume()
+
+const stats = computed(() => Object.values(session.answers).reduce((total, answer) => {
+  if (answer.questionType === 'freeText') total[answer.status] = (total[answer.status] || 0) + 1
+  else if (answer.correct) total.correct++
+  else total.wrong++
+  return total
+}, { correct: 0, wrong: 0, green: 0, yellow: 0, red: 0 }))
+</script>
+
+<template>
+  <section class="package-mode-layout exam-mode">
+    <section v-if="setup && !hasBanks" class="result-card package-bank-empty-state" role="status">
+      <p class="eyebrow">Paketbanken erforderlich</p>
+      <h2>Keine Paketbanken geladen.</h2>
+      <p>Bitte lade zuerst deine private Lernbibliothek.</p>
+      <p class="package-library-count">0 von 11 Paketbanken geladen</p>
+    </section>
+
+    <section v-else-if="setup" class="result-card">
+      <p class="eyebrow">Klausurmodus</p>
+      <h2>{{ banks.length }} von 11 Paketbanken verfügbar</h2>
+      <div v-if="resume" class="result-actions">
+        <button class="primary-button" type="button" @click="setup = false; resume = false">Letzte Klausur fortsetzen</button>
+        <button class="secondary-button" type="button" @click="resume = false">Neue Klausur starten</button>
+      </div>
+      <div v-else class="result-actions">
+        <button class="primary-button" type="button" @click="start(20)">Kurz-Klausur · 20 Fragen</button>
+        <button class="secondary-button" type="button" @click="start(35)">Standard-Klausur · 35 Fragen</button>
+        <button class="secondary-button" type="button" @click="start(50)">Intensiv-Klausur · 50 Fragen</button>
+      </div>
+    </section>
+
+    <section v-else-if="session.sessionStatus === 'inProgress' && current" class="quiz-layout exam-quiz-layout">
+      <section class="exam-question-column">
+        <section class="exam-mobile-status" aria-label="Klausurfortschritt">
+          <strong>Klausurfortschritt</strong><span>Frage {{ session.currentQuestionIndex + 1 }} von {{ session.orderedQuestionRefs.length }}</span>
+          <span>Bearbeitet {{ answeredCount }} / {{ session.orderedQuestionRefs.length }} · Offen {{ openCount }}</span>
+        </section>
+
+        <section class="question-card">
+          <p class="eyebrow">{{ current.bank.packageId }} · {{ current.bank.packageTitle }}</p>
+          <h2>{{ current.question.question || current.question.statement }}</h2>
+
+          <div v-if="current.question.questionType === 'mc'" class="answers">
+            <button
+              v-for="option in current.question.options"
+              :key="option"
+              class="answer-button"
+              :class="{ 'exam-answer-selected': currentAnswer?.selectedAnswer === option }"
+              :aria-pressed="currentAnswer?.selectedAnswer === option"
+              type="button"
+              @click="saveAnswer(option)"
+            ><span class="exam-choice-indicator" aria-hidden="true"></span>{{ option }}</button>
+          </div>
+
+          <div v-else-if="current.question.questionType === 'yesNo'" class="answers yes-no-answers">
+            <button class="answer-button" :class="{ 'exam-answer-selected': currentAnswer?.selectedAnswer === true }" :aria-pressed="currentAnswer?.selectedAnswer === true" type="button" @click="saveAnswer(true)"><span class="exam-choice-indicator" aria-hidden="true"></span>Ja</button>
+            <button class="answer-button" :class="{ 'exam-answer-selected': currentAnswer?.selectedAnswer === false }" :aria-pressed="currentAnswer?.selectedAnswer === false" type="button" @click="saveAnswer(false)"><span class="exam-choice-indicator" aria-hidden="true"></span>Nein</button>
+          </div>
+
+          <textarea
+            v-else
+            :value="currentAnswer?.userAnswer || ''"
+            rows="8"
+            placeholder="Deine Antwort"
+            @input="saveAnswer($event.target.value)"
+          />
+
+          <nav class="exam-question-navigation" aria-label="Fragenavigation">
+            <button class="secondary-button" type="button" :disabled="!session.currentQuestionIndex" @click="move(-1)">Zurück</button>
+            <button class="primary-button" type="button" :disabled="session.currentQuestionIndex === session.orderedQuestionRefs.length - 1" @click="move(1)">Weiter →</button>
+          </nav>
+        </section>
+
+        <section v-if="confirm" class="result-card exam-submit-confirm">
+          <p>Noch {{ openCount }} Fragen unbeantwortet. Trotzdem abgeben?</p>
+          <button class="primary-button" type="button" @click="finish">Trotzdem abgeben</button>
+          <button class="secondary-button" type="button" @click="confirm = false">Weiter bearbeiten</button>
+        </section>
+      </section>
+
+      <aside class="score-card exam-sidebar" aria-label="Klausurfortschritt">
+        <p class="exam-sidebar-title">Klausurfortschritt</p>
+        <p>Frage {{ session.currentQuestionIndex + 1 }} von {{ session.orderedQuestionRefs.length }}</p>
+        <p><strong>Bearbeitet:</strong> {{ answeredCount }} / {{ session.orderedQuestionRefs.length }}</p>
+        <p><strong>Offen:</strong> {{ openCount }}</p>
+        <nav class="exam-question-overview" aria-label="Direkt zu einer Frage springen">
+          <button
+            v-for="(ref, index) in session.orderedQuestionRefs"
+            :key="ref.packageId + ref.questionId"
+            type="button"
+            :class="{ current: index === session.currentQuestionIndex, answered: isAnswered(ref) }"
+            :aria-label="'Frage ' + (index + 1) + (isAnswered(ref) ? ', beantwortet' : ', offen')"
+            :aria-current="index === session.currentQuestionIndex ? 'step' : undefined"
+            @click="jumpTo(index)"
+          >{{ index + 1 }}</button>
+        </nav>
+        <button class="secondary-button exam-submit-button" type="button" @click="submit">Klausur abgeben</button>
+      </aside>
+    </section>
+
+    <section v-else-if="session.sessionStatus === 'completed'" class="result-card">
+      <p class="eyebrow">Klausur abgegeben</p>
+      <div class="result-grid">
+        <div><span>Bearbeitet</span><strong>{{ Object.keys(session.answers).length }}</strong></div>
+        <div><span>Korrekt</span><strong>{{ stats.correct }}</strong></div>
+        <div><span>Falsch</span><strong>{{ stats.wrong }}</strong></div>
+        <div><span>Grün</span><strong>{{ stats.green }}</strong></div>
+        <div><span>Gelb</span><strong>{{ stats.yellow }}</strong></div>
+        <div><span>Rot</span><strong>{{ stats.red }}</strong></div>
+      </div>
+      <details v-for="ref in session.orderedQuestionRefs" :key="ref.packageId + ref.questionId">
+        <summary>{{ ref.packageId }} · {{ lookup.get(`${ref.packageId}::${ref.questionId}`).question.question || lookup.get(`${ref.packageId}::${ref.questionId}`).question.statement }}</summary>
+        <template v-if="lookup.get(`${ref.packageId}::${ref.questionId}`).question.questionType !== 'freeText'">
+          <p>Eigene Antwort: {{ session.answers[`${ref.packageId}::${ref.questionId}`]?.selectedAnswer }}</p>
+          <p>Richtige Antwort: {{ lookup.get(`${ref.packageId}::${ref.questionId}`).question.correctAnswer }}</p>
+          <p>Erklärung: {{ lookup.get(`${ref.packageId}::${ref.questionId}`).question.explanation }}</p>
+        </template>
+        <template v-else>
+          <p>Eigene Antwort: {{ session.answers[`${ref.packageId}::${ref.questionId}`]?.userAnswer }}</p>
+          <p>Bewertung: {{ session.answers[`${ref.packageId}::${ref.questionId}`]?.status }}</p>
+          <p>Musterlösung: {{ lookup.get(`${ref.packageId}::${ref.questionId}`).question.modelAnswer }}</p>
+        </template>
+      </details>
+      <button class="primary-button" type="button" @click="reset">Neue Klausur starten</button>
+    </section>
+  </section>
+</template>

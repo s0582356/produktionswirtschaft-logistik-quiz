@@ -55,6 +55,8 @@ const freeTextProgress = ref(
   loadProgress(freeTextBankId.value, 'freeText', sampleFreeTextQuestions.length),
 )
 const packageBanksById = ref({})
+const privateMcLoaded = ref(false)
+const privateFreeTextLoaded = ref(false)
 const activePackageId = ref(null)
 const activePackageResume = ref(false)
 const activePackageRoundSettings = ref(null)
@@ -117,6 +119,12 @@ const isPackageMode = computed(() => activeMode.value === 'packages')
 const isTopicMode = computed(() => activeMode.value === 'topics')
 const isExamMode = computed(() => activeMode.value === 'exam')
 const isMistakeMode = computed(() => activeMode.value === 'mistakes')
+const privateLibraryStatus = computed(() => ({
+  mc: privateMcLoaded.value ? questions.value.length : 0,
+  freeText: privateFreeTextLoaded.value ? freeTextQuestions.value.length : 0,
+  packageCount: Object.keys(packageBanksById.value).length,
+  packageQuestions: Object.values(packageBanksById.value).reduce((total, bank) => total + (bank.counts?.total || bank.questions?.length || 0), 0),
+}))
 const activePackageBank = computed(() => (
   activePackageId.value ? packageBanksById.value[activePackageId.value] || null : null
 ))
@@ -649,48 +657,31 @@ function exitPackageTraining() {
   activePackageRoundSettings.value = null
 }
 
-function handlePackageImport(bank, fileName) {
-  handlePackageImports([{ bank, fileName }])
-}
-
-function handlePackageImports(imports) {
-  packageBanksById.value = addPackageBanks(packageBanksById.value, imports)
-  switchMode('packages')
-}
-
-function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileName }) {
-  if (type === 'package') {
-    handlePackageImport(bank, fileName)
-    return
-  }
-  if (type === 'methodTrainer') {
-    methodTrainerBank.value = bank
-    methodTrainerBankName.value = `Eigene Methodenbank: ${fileName}`
-    switchMode('method')
-    return
-  }
-  if (type === 'freeText') {
-    freeTextQuestions.value = importedQuestions
-    freeTextQuestionBankName.value = `Eigene Freitext-Fragebank: ${fileName}`
-    freeTextBankId.value = createBankFingerprint('freeText', importedQuestions)
-    freeTextProgress.value = loadProgress(
-      freeTextBankId.value,
-      'freeText',
-      importedQuestions.length,
-    )
-    switchMode('freeText')
-    return
-  }
-
+function applyMcBank(importedQuestions, fileName) {
   originalQuestions.value = importedQuestions
   questions.value = shuffleOptionsForQuestions(importedQuestions)
   mcQuestionBankName.value = `Eigene MC-Fragebank: ${fileName}`
-  mcQuestionBankSource.value = { kind: "import", fileName }
-  activeMode.value = 'mc'
+  mcQuestionBankSource.value = { kind: 'import', fileName }
+  privateMcLoaded.value = true
   isReviewMode.value = false
   isQuizStarted.value = false
   resetQuizProgress()
 }
+
+function applyFreeTextBank(importedQuestions, fileName) {
+  freeTextQuestions.value = importedQuestions
+  freeTextQuestionBankName.value = `Eigene Freitext-Fragebank: ${fileName}`
+  freeTextBankId.value = createBankFingerprint('freeText', importedQuestions)
+  freeTextProgress.value = loadProgress(freeTextBankId.value, 'freeText', importedQuestions.length)
+  privateFreeTextLoaded.value = true
+}
+
+function handlePrivateLibraryImport(result) {
+  if (result.mc) applyMcBank(result.mc.questions, result.mc.fileName)
+  if (result.freeText) applyFreeTextBank(result.freeText.questions, result.freeText.fileName)
+  if (result.packages.length) packageBanksById.value = addPackageBanks(packageBanksById.value, result.packages)
+}
+
 </script>
 
 <template>
@@ -720,54 +711,38 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
     </section>
 
     <nav class="mode-switcher" aria-label="Lernmodus auswählen">
-      <button
-        type="button"
-        :class="{ active: activeMode === 'mc' }"
-        :aria-pressed="activeMode === 'mc'"
-        @click="switchMode('mc')"
-      >
-        Multiple Choice
-      </button>
-      <button
-        type="button"
-        :class="{ active: activeMode === 'freeText' }"
-        :aria-pressed="activeMode === 'freeText'"
-        @click="switchMode('freeText')"
-      >
-        Freitext Training
-      </button>
-      <button
-        type="button"
-        :class="{ active: activeMode === 'method' }"
-        :aria-pressed="activeMode === 'method'"
-        @click="switchMode('method')"
-      >
-        Methoden-Training
-      </button>
-      <button type="button" :class="{ active: activeMode === 'mistakes' }" :aria-pressed="activeMode === 'mistakes'" @click="switchMode('mistakes')">Fehlertraining</button>
-      <button type="button" :class="{ active: activeMode === 'exam' }" :aria-pressed="activeMode === 'exam'" @click="switchMode('exam')">Klausurmodus</button>
-      <button
-        type="button"
-        :class="{ active: activeMode === 'topics' }"
-        :aria-pressed="activeMode === 'topics'"
-        @click="switchMode('topics')"
-      >
-        Themengebiet-Check
-      </button>
-      <button
-        type="button"
-        :class="{ active: activeMode === 'packages' }"
-        :aria-pressed="activeMode === 'packages'"
-        @click="switchMode('packages')"
-      >
-        Pakettraining
-      </button>
+      <section class="mode-group mode-group-general" aria-labelledby="general-training-title">
+        <header class="mode-group-header">
+          <h2 id="general-training-title">Allgemeines Training</h2>
+        </header>
+        <div class="mode-group-buttons mode-group-buttons-general">
+          <button type="button" :class="{ active: activeMode === 'mc' }" :aria-pressed="activeMode === 'mc'" @click="switchMode('mc')">Multiple Choice</button>
+          <button type="button" :class="{ active: activeMode === 'freeText' }" :aria-pressed="activeMode === 'freeText'" @click="switchMode('freeText')">Freitext Training</button>
+          <button type="button" :class="{ active: activeMode === 'method' }" :aria-pressed="activeMode === 'method'" @click="switchMode('method')">Methoden-Training</button>
+        </div>
+      </section>
+
+      <section class="mode-group mode-group-exam" aria-labelledby="exam-preparation-title">
+        <header class="mode-group-header">
+          <div>
+            <h2 id="exam-preparation-title">Prüfungsvorbereitung</h2>
+            <p>Dein Lernpfad mit den privaten Paketbanken</p>
+          </div>
+        </header>
+        <div class="mode-group-buttons mode-group-buttons-exam">
+          <button type="button" :class="{ active: activeMode === 'packages' }" :aria-pressed="activeMode === 'packages'" @click="switchMode('packages')"><span class="mode-step">1</span><span><strong>Pakettraining</strong><small>Einzelne Themen lernen und festigen</small></span></button>
+          <button type="button" :class="{ active: activeMode === 'topics' }" :aria-pressed="activeMode === 'topics'" @click="switchMode('topics')"><span class="mode-step">2</span><span><strong>Themengebiet-Check</strong><small>Alle Themenbereiche gezielt kontrollieren</small></span></button>
+          <button type="button" :class="{ active: activeMode === 'exam' }" :aria-pressed="activeMode === 'exam'" @click="switchMode('exam')"><span class="mode-step">3</span><span><strong>Klausurmodus</strong><small>Gemischte Prüfungssimulation ohne Sofortfeedback</small></span></button>
+          <button type="button" :class="{ active: activeMode === 'mistakes' }" :aria-pressed="activeMode === 'mistakes'" @click="switchMode('mistakes')"><span class="mode-step">4</span><span><strong>Fehlertraining</strong><small>Fehler aus Pakettraining, Themengebiet-Check und Klausurmodus wiederholen</small></span></button>
+        </div>
+      </section>
     </nav>
 
-    <template v-if="isMistakeMode"><PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" /><MistakeTrainer :package-banks-by-id="packageBanksById" /></template>
-    <template v-else-if="isExamMode"><PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" /><ExamMode :package-banks-by-id="packageBanksById" /></template>
+    <PrivateQuestionImporter :library-status="privateLibraryStatus" @library-loaded="handlePrivateLibraryImport" />
+
+    <template v-if="isMistakeMode"><MistakeTrainer :package-banks-by-id="packageBanksById" /></template>
+    <template v-else-if="isExamMode"><ExamMode :package-banks-by-id="packageBanksById" /></template>
     <template v-else-if="isTopicMode">
-      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" />
       <TopicCheck :package-banks-by-id="packageBanksById" />
     </template>
 
@@ -780,24 +755,20 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
         @back-to-selection="exitPackageTraining"
       />
       <template v-else>
-        <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" @package-banks-loaded="handlePackageImports" />
         <PackageSelector :package-banks-by-id="packageBanksById" @start-package="startPackageTraining" />
       </template>
     </template>
 
     <section v-else-if="isMethodMode" class="method-mode-layout">
-      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
       <MethodTrainer :bank="methodTrainerBank" />
     </section>
 
     <section v-else-if="!isQuizStarted" class="start-layout" aria-label="Quiz vorbereiten">
-      <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
-
       <section class="start-card">
         <h2>{{ isFreeTextMode ? 'Freitext-Training bereit' : 'Quiz bereit' }}</h2>
         <p>
-          Du kannst mit der öffentlichen Demo starten oder vorher eine eigene
-          lokale JSON-Fragebank auswählen.
+          Du kannst mit der öffentlichen Demo starten oder die oben geladene
+          private Lernbibliothek verwenden.
         </p>
 
         <div v-if="isFreeTextMode" class="training-start-options">

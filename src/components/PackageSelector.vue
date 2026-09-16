@@ -39,6 +39,12 @@ const pendingRoundPackage = computed(() => packages.find((pkg) => pkg.id === pac
 
 <template>
   <section class="package-mode-layout" aria-label="Pakettraining">
+    <section v-if="!loadedPackageCount" class="result-card package-bank-empty-state" role="status">
+      <p class="eyebrow">Paketbanken erforderlich</p><h2>Keine Paketbanken geladen.</h2>
+      <p>Bitte lade zuerst deine private Lernbibliothek.</p>
+      <p class="package-library-count">0 von 11 Paketbanken geladen</p>
+    </section>
+    <template v-else>
     <section class="package-intro-card"><h2>Pakettraining</h2><p class="package-library-count">{{ loadedPackageCount }} von 11 Paketbanken geladen</p><p>11 Lernpakete decken die Klausurthemen einzeln ab. Private Paketbanken können oben als JSON-Datei importiert werden. Fortschritt und Antworten werden je Paket lokal und getrennt gespeichert.</p></section>
     <div class="package-grid">
       <article v-for="pkg in packages" :key="pkg.id" class="package-card" :class="loadedPackage(pkg) ? 'package-card-loaded' : 'package-card-disabled'">
@@ -64,5 +70,6 @@ const pendingRoundPackage = computed(() => packages.find((pkg) => pkg.id === pac
       <fieldset class="round-picker"><legend>Fragetyp</legend><label><input v-model="questionTypeFilter" type="radio" value="mixed"> Gemischt</label><label><input v-model="questionTypeFilter" type="radio" value="mc"> Nur Multiple Choice</label><label><input v-model="questionTypeFilter" type="radio" value="yesNo"> Nur Ja/Nein</label><label><input v-model="questionTypeFilter" type="radio" value="freeText"> Nur Freitext</label></fieldset>
       <div class="result-actions"><button class="primary-button" type="button" @click="startRound">Runde starten</button></div>
     </section>
+    </template>
   </section>
 </template>
