@@ -5,6 +5,7 @@ import ScoreBox from './components/ScoreBox.vue'
 import PrivateQuestionImporter from './components/PrivateQuestionImporter.vue'
 import FreeTextCard from './components/FreeTextCard.vue'
 import MethodTrainer from './components/MethodTrainer.vue'
+import PackageSelector from './components/PackageSelector.vue'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
 import sampleMethodTrainerTasks from './data/public/sampleMethodTrainerTasks.json'
@@ -95,10 +96,12 @@ onBeforeUnmount(() => {
 const questionBankName = computed(() => {
   if (activeMode.value === 'mc') return mcQuestionBankName.value
   if (activeMode.value === 'freeText') return freeTextQuestionBankName.value
+  if (activeMode.value === 'packages') return 'Pakettraining (in Vorbereitung)'
   return methodTrainerBankName.value
 })
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
 const isMethodMode = computed(() => activeMode.value === 'method')
+const isPackageMode = computed(() => activeMode.value === 'packages')
 const filteredFreeTextQuestions = computed(() => {
   if (!freeTextSessionQuestionIds.value) return freeTextQuestions.value
 
@@ -698,9 +701,19 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
       >
         Methoden-Training
       </button>
+      <button
+        type="button"
+        :class="{ active: activeMode === 'packages' }"
+        :aria-pressed="activeMode === 'packages'"
+        @click="switchMode('packages')"
+      >
+        Pakettraining
+      </button>
     </nav>
 
-    <section v-if="isMethodMode" class="method-mode-layout">
+    <PackageSelector v-if="isPackageMode" />
+
+    <section v-else-if="isMethodMode" class="method-mode-layout">
       <PrivateQuestionImporter @questions-loaded="loadPrivateQuestions" />
       <MethodTrainer :bank="methodTrainerBank" />
     </section>

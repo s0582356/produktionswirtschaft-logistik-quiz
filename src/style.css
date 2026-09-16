@@ -97,7 +97,7 @@ h1 {
 
 .mode-switcher {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   width: min(100%, 620px);
   margin: -6px auto 26px;
   border: 1px solid #c7bba9;
@@ -1473,4 +1473,84 @@ button:focus-visible,
   .learning-card { padding: 12px; }
   .task-selector > button { width: 100%; }
   .derivation { min-width: 0; }
+}
+
+/* Pakettraining (Phase 1: Platzhalter-Kacheln) */
+.package-mode-layout { width: 100%; }
+
+.package-intro-card {
+  width: min(100%, 760px);
+  margin: 0 auto 22px;
+  padding: 20px;
+  text-align: center;
+  border: 1px solid #d9cdbb;
+  border-top: 5px solid #18605b;
+  border-radius: 8px;
+  background: #fffdf8;
+  box-shadow: 0 18px 36px rgba(63, 45, 29, 0.08);
+}
+
+.package-intro-card h2 { margin: 0 0 8px; }
+.package-intro-card p { margin: 0 auto; max-width: 620px; color: #4f5d57; line-height: 1.55; }
+
+.package-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.package-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid #d9cdbb;
+  border-top: 5px solid #c7bba9;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fffdf8;
+  box-shadow: 0 14px 30px rgba(63, 45, 29, 0.08);
+}
+
+.package-card h3 { margin: 0; font-size: 1.08rem; line-height: 1.4; color: #17221f; }
+
+.package-number {
+  color: #b83f2b;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.package-status {
+  margin-top: auto;
+  align-self: flex-start;
+  border: 1px solid #c7bba9;
+  border-radius: 999px;
+  padding: 4px 10px;
+  color: #6f7a75;
+  background: #f8f3eb;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.package-card-disabled { opacity: 0.85; }
+
+:root[data-theme="dark"] .package-intro-card,
+:root[data-theme="dark"] .package-card {
+  border-color: #3a4d57;
+  color: #dce7e4;
+  background: #22313b;
+}
+:root[data-theme="dark"] .package-intro-card p { color: #aebeba; }
+:root[data-theme="dark"] .package-card h3 { color: #e5eeeb; }
+:root[data-theme="dark"] .package-number { color: #ff9280; }
+:root[data-theme="dark"] .package-status {
+  border-color: #425661;
+  color: #aebeba;
+  background: #22313b;
+}
+
+@media (max-width: 560px) {
+  .package-grid { grid-template-columns: 1fr; }
 }
