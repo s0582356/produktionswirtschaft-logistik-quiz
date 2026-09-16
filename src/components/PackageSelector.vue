@@ -1,9 +1,12 @@
 <script setup>
+import { computed, ref } from 'vue'
+import { clearPackageProgress, getPackageProgressSummary, loadPackageProgress } from '../utils/packageProgressStore.js'
 const props = defineProps({
   importedPackages: { type: Object, default: () => ({}) },
 })
 
 const emit = defineEmits(['start-package'])
+const packageAwaitingChoice = ref(null)
 
 const packages = [
   { id: 1, title: 'Rechenblock: ABC/XYZ, Stücklisten' },
@@ -30,6 +33,32 @@ function packageIdFor(id) {
 function loadedPackage(pkg) {
   return props.importedPackages[packageIdFor(pkg.id)] || null
 }
+
+function progressFor(pkg) {
+  const bank = loadedPackage(pkg)
+  return bank ? getPackageProgressSummary(loadPackageProgress(bank)) : null
+}
+
+function requestStart(pkg) {
+  if (progressFor(pkg)?.hasProgress) {
+    packageAwaitingChoice.value = pkg.id
+    return
+  }
+  emit('start-package', packageIdFor(pkg.id), 'new')
+}
+
+function resumePackage(pkg) {
+  packageAwaitingChoice.value = null
+  emit('start-package', packageIdFor(pkg.id), 'resume')
+}
+
+function restartPackage(pkg) {
+  clearPackageProgress(loadedPackage(pkg))
+  packageAwaitingChoice.value = null
+  emit('start-package', packageIdFor(pkg.id), 'new')
+}
+
+const pendingPackage = computed(() => packages.find((pkg) => pkg.id === packageAwaitingChoice.value) || null)
 </script>
 
 <template>
@@ -38,8 +67,8 @@ function loadedPackage(pkg) {
       <h2>Pakettraining</h2>
       <p>
         11 Lernpakete decken die Klausurthemen einzeln ab. Private Paketbanken können oben
-        als JSON-Datei importiert werden. Fragenbearbeitung und Fortschritt je Paket folgen
-        in einem späteren Schritt.
+        als JSON-Datei importiert werden. Fortschritt und Antworten werden je Paket
+        lokal und getrennt gespeichert.
       </p>
     </section>
 
@@ -61,10 +90,14 @@ function loadedPackage(pkg) {
             Ja/Nein {{ loadedPackage(pkg).counts.yesNo }} ·
             Freitext {{ loadedPackage(pkg).counts.freeText }}
           </p>
+          <p v-if="progressFor(pkg)?.completed" class="package-progress-status">Abgeschlossen</p>
+          <p v-else-if="progressFor(pkg)?.hasProgress" class="package-progress-status">
+            Fortschritt vorhanden · {{ progressFor(pkg).answered }} von {{ loadedPackage(pkg).counts.total }} bearbeitet
+          </p>
           <button
             class="primary-button package-start-button"
             type="button"
-            @click="emit('start-package', packageIdFor(pkg.id))"
+            @click="requestStart(pkg)"
           >
             Paket trainieren
           </button>
@@ -72,5 +105,15 @@ function loadedPackage(pkg) {
         <span v-else class="package-status">Noch keine private Paketbank geladen</span>
       </article>
     </div>
+
+    <section v-if="pendingPackage" class="result-card package-resume-card" role="dialog" aria-modal="true">
+      <p class="eyebrow">Fortschritt vorhanden</p>
+      <h2>{{ loadedPackage(pendingPackage).packageTitle }}</h2>
+      <p>{{ progressFor(pendingPackage).completed ? 'Dieses Paket wurde bereits abgeschlossen.' : `${progressFor(pendingPackage).answered} von ${loadedPackage(pendingPackage).counts.total} Fragen bearbeitet.` }}</p>
+      <div class="result-actions">
+        <button class="primary-button" type="button" @click="resumePackage(pendingPackage)">Letzte Sitzung fortsetzen</button>
+        <button class="secondary-button" type="button" @click="restartPackage(pendingPackage)">Neu starten</button>
+      </div>
+    </section>
   </section>
 </template>

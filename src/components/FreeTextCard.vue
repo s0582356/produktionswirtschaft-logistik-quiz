@@ -1,10 +1,12 @@
 <script setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { evaluateFreeText } from '../utils/freeTextEvaluator.js'
 
 const props = defineProps({
   question: { type: Object, required: true },
   isLastQuestion: { type: Boolean, required: true },
+  initialAnswer: { type: String, default: '' },
+  initialStatus: { type: String, default: null },
 })
 
 const emit = defineEmits(['evaluated', 'next-question', 'restart-training'])
@@ -26,10 +28,16 @@ function checkAnswer() {
   result.value = evaluateFreeText(props.question, answer.value)
   emit('evaluated', {
     rating: result.value.rating,
+    userAnswer: answer.value,
     fulfilledCheckpoints: result.value.detected.length,
     totalCheckpoints: result.value.detected.length + result.value.missing.length,
   })
 }
+
+onMounted(() => {
+  answer.value = props.initialAnswer
+  if (props.initialStatus) result.value = { ...evaluateFreeText(props.question, answer.value), rating: props.initialStatus }
+})
 
 function improveAnswer() {
   result.value = null

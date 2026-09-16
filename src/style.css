@@ -1579,6 +1579,9 @@ button:focus-visible,
 
 /* Pakettraining (Phase 3: Trainingsansicht) */
 .package-start-button { width: 100%; margin-top: 4px; }
+.package-progress-status { margin: 0; color: #18605b; font-weight: 700; }
+.package-resume-card { margin: 24px auto 0; max-width: 620px; }
+:root[data-theme="dark"] .package-progress-status { color: #78c9c1; }
 
 .yes-no-answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 

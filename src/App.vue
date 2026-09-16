@@ -52,6 +52,7 @@ const freeTextProgress = ref(
 )
 const importedPackages = ref({})
 const activePackageId = ref(null)
+const activePackageResume = ref(false)
 
 const THEME_STORAGE_KEY = 'pwl-quiz-theme'
 
@@ -625,12 +626,14 @@ function resetCurrentFreeTextProgress() {
   isQuizStarted.value = false
 }
 
-function startPackageTraining(packageId) {
+function startPackageTraining(packageId, mode = 'new') {
   activePackageId.value = packageId
+  activePackageResume.value = mode === 'resume'
 }
 
 function exitPackageTraining() {
   activePackageId.value = null
+  activePackageResume.value = false
 }
 
 function handlePackageImport(bank, fileName) {
@@ -750,6 +753,7 @@ function loadPrivateQuestions({ type, questions: importedQuestions, bank, fileNa
       <PackageTrainer
         v-if="activePackageBank"
         :package-bank="activePackageBank"
+        :resume="activePackageResume"
         @back-to-selection="exitPackageTraining"
       />
       <template v-else>
