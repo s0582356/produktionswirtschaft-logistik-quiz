@@ -5,16 +5,18 @@ import test from 'node:test';
 const appSource = readFileSync(new URL('../src/App.vue', import.meta.url), 'utf8');
 const styleSource = readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
 
-test('Startseite gruppiert alle sieben bestehenden Modus-Klickziele', () => {
+test('Startseite gruppiert alle acht bestehenden Modus-Klickziele (inkl. Master-Lernmentor, Phase 5B)', () => {
   const navigation = appSource.match(/<nav class=\"mode-switcher\"[\s\S]*?<\/nav>/)?.[0];
   assert.ok(navigation, 'Mode-Navigation ist vorhanden');
 
   assert.match(navigation, /Allgemeines Training/);
   assert.match(navigation, /Prüfungsvorbereitung/);
   assert.match(navigation, /Dein Lernpfad mit den privaten Paketbanken/);
+  assert.match(navigation, /Master-Lernmentor/);
+  assert.match(navigation, /Den kompletten PWL-Master, Kapitel für Kapitel/);
 
   const modes = [...navigation.matchAll(/@click=\"switchMode\('([^']+)'\)\"/g)].map((match) => match[1]);
-  assert.deepEqual(modes.sort(), ['exam', 'freeText', 'mc', 'method', 'mistakes', 'packages', 'topics']);
+  assert.deepEqual(modes.sort(), ['exam', 'freeText', 'masterLernmentor', 'mc', 'method', 'mistakes', 'packages', 'topics']);
 
   for (const label of [
     'Einzelne Themen lernen und festigen',

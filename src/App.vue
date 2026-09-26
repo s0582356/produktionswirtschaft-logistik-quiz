@@ -10,6 +10,7 @@ import PackageTrainer from './components/PackageTrainer.vue'
 import TopicCheck from './components/TopicCheck.vue'
 import ExamMode from './components/ExamMode.vue'
 import MistakeTrainer from './components/MistakeTrainer.vue'
+import MasterLernmentor from './components/MasterLernmentor.vue'
 import { addPackageBanks } from './utils/packageLibrary.js'
 import sampleQuestions from './data/public/sampleQuestions.json'
 import sampleFreeTextQuestions from './data/public/sampleFreeTextQuestions.json'
@@ -24,8 +25,12 @@ import {
   removeProgress,
   saveProgress,
 } from './utils/progressStore.js'
+import {
+  clearMcSession as clearMcSessionStorage,
+  loadMcSessionRaw,
+  saveMcSession,
+} from './utils/mcSessionStore.js'
 
-const MC_SESSION_STORAGE_KEY = 'pwl-quiz-mc-session:v1'
 const activeMode = ref('mc')
 const questions = ref(sampleQuestions)
 const mcQuestionBankName = ref('Öffentliche MC-Beispiel-Fragen')
@@ -46,7 +51,7 @@ const currentStreak = ref(0)
 const bestStreak = ref(0)
 const incorrectlyAnsweredQuestions = ref([])
 const answeredQuestions = ref([])
-const savedMcSession = ref(loadMcSession())
+const savedMcSession = ref(loadMcSessionRaw())
 const freeTextQuestionIndex = ref(0)
 const freeTextFilter = ref('all')
 const freeTextSessionQuestionIds = ref(null)
@@ -60,6 +65,8 @@ const privateFreeTextLoaded = ref(false)
 const activePackageId = ref(null)
 const activePackageResume = ref(false)
 const activePackageRoundSettings = ref(null)
+const masterLernmentorLibrary = ref(null)
+const masterLernmentorFileName = ref(null)
 
 const THEME_STORAGE_KEY = 'pwl-quiz-theme'
 
@@ -111,6 +118,7 @@ const questionBankName = computed(() => {
   if (activeMode.value === 'topics') return 'Themengebiet-Check'
   if (activeMode.value === 'exam') return 'Klausurmodus'
   if (activeMode.value === 'mistakes') return 'Fehlertraining'
+  if (activeMode.value === 'masterLernmentor') return 'Master-Lernmentor'
   return methodTrainerBankName.value
 })
 const isFreeTextMode = computed(() => activeMode.value === 'freeText')
@@ -119,6 +127,10 @@ const isPackageMode = computed(() => activeMode.value === 'packages')
 const isTopicMode = computed(() => activeMode.value === 'topics')
 const isExamMode = computed(() => activeMode.value === 'exam')
 const isMistakeMode = computed(() => activeMode.value === 'mistakes')
+const isMasterLernmentorMode = computed(() => activeMode.value === 'masterLernmentor')
+const canResumeMcSession = computed(() => Boolean(
+  savedMcSession.value && savedMcSession.value.bank?.id === getMcBankId(),
+))
 const privateLibraryStatus = computed(() => ({
   mc: privateMcLoaded.value ? questions.value.length : 0,
   freeText: privateFreeTextLoaded.value ? freeTextQuestions.value.length : 0,
@@ -305,81 +317,62 @@ function getMcBankId(questionBank = originalQuestions.value) {
   return createBankFingerprint("mc", questionBank)
 }
 
-function loadMcSession() {
-  if (typeof window === "undefined") return null
-
-  try {
-    const session = JSON.parse(window.localStorage.getItem(MC_SESSION_STORAGE_KEY))
-    if (!session || session.version !== 1 || session.type !== "mc") return null
-    if (!Array.isArray(session.originalQuestions) || !Array.isArray(session.questions)) return null
-    if (session.bank?.questionCount !== session.originalQuestions.length) return null
-    if (getMcBankId(session.originalQuestions) !== session.bank?.id) return null
-    return session
-  } catch {
-    return null
-  }
-}
-
 function persistMcSession() {
   if (typeof window === "undefined" || !isQuizStarted.value) return
 
-  const session = {
-    version: 1,
-    type: "mc",
-    savedAt: new Date().toISOString(),
+  const record = {
     bank: {
       id: getMcBankId(),
       questionCount: originalQuestions.value.length,
       source: mcQuestionBankSource.value,
     },
-    originalQuestions: originalQuestions.value,
-    questions: questions.value,
     currentQuestionIndex: currentQuestionIndex.value,
-    selectedAnswer: selectedAnswer.value,
-    isAnswered: isAnswered.value,
     isQuizComplete: isQuizComplete.value,
     isReviewMode: isReviewMode.value,
     score: score.value,
     currentStreak: currentStreak.value,
     bestStreak: bestStreak.value,
-    answeredQuestions: answeredQuestions.value,
     answeredQuestionIds: answeredQuestions.value.map((answer) => answer.questionId),
     incorrectlyAnsweredQuestionIds: incorrectlyAnsweredQuestions.value.map((question) => getQuestionId(question)),
   }
 
-  try {
-    window.localStorage.setItem(MC_SESSION_STORAGE_KEY, JSON.stringify(session))
-    savedMcSession.value = session
-  } catch {
-    // localStorage can be unavailable or full; the current quiz remains usable.
-  }
+  const saved = saveMcSession(record)
+  if (saved) savedMcSession.value = saved
 }
 
 function clearMcSession() {
-  if (typeof window !== "undefined") window.localStorage.removeItem(MC_SESSION_STORAGE_KEY)
+  clearMcSessionStorage()
   savedMcSession.value = null
 }
 
 function resumeMcSession() {
   const session = savedMcSession.value
-  if (!session) return
+  if (!session || session.bank?.id !== getMcBankId()) return
 
-  originalQuestions.value = session.originalQuestions
-  questions.value = session.questions
+  questions.value = shuffleOptionsForQuestions(originalQuestions.value)
   mcQuestionBankSource.value = session.bank.source || { kind: "public", fileName: null }
   mcQuestionBankName.value = mcQuestionBankSource.value.kind === "import"
     ? `Eigene MC-Fragebank: ${mcQuestionBankSource.value.fileName || "lokaler Import"}`
     : "Öffentliche MC-Beispiel-Fragen"
   currentQuestionIndex.value = Math.max(0, Math.min(session.currentQuestionIndex || 0, questions.value.length - 1))
-  selectedAnswer.value = session.selectedAnswer || null
-  isAnswered.value = Boolean(session.isAnswered)
+  selectedAnswer.value = null
+  isAnswered.value = false
   isQuizComplete.value = Boolean(session.isQuizComplete)
   isReviewMode.value = Boolean(session.isReviewMode)
   score.value = Number(session.score) || 0
   currentStreak.value = Number(session.currentStreak) || 0
   bestStreak.value = Number(session.bestStreak) || 0
-  answeredQuestions.value = Array.isArray(session.answeredQuestions) ? session.answeredQuestions : []
+
+  const answeredIds = new Set(session.answeredQuestionIds || [])
   const wrongIds = new Set(session.incorrectlyAnsweredQuestionIds || [])
+  answeredQuestions.value = originalQuestions.value
+    .map((question, index) => ({ question, id: getQuestionId(question, index) }))
+    .filter(({ id }) => answeredIds.has(id))
+    .map(({ question, id }) => ({
+      questionId: id,
+      category: question.category || "Allgemein",
+      isCorrect: !wrongIds.has(id),
+    }))
   incorrectlyAnsweredQuestions.value = originalQuestions.value.filter((question, index) => wrongIds.has(getQuestionId(question, index)))
   activeMode.value = "mc"
   isQuizStarted.value = true
@@ -682,6 +675,11 @@ function handlePrivateLibraryImport(result) {
   if (result.packages.length) packageBanksById.value = addPackageBanks(packageBanksById.value, result.packages)
 }
 
+function applyMasterLernmentorLibrary({ library, fileName }) {
+  masterLernmentorLibrary.value = library
+  masterLernmentorFileName.value = fileName
+}
+
 </script>
 
 <template>
@@ -736,11 +734,29 @@ function handlePrivateLibraryImport(result) {
           <button type="button" :class="{ active: activeMode === 'mistakes' }" :aria-pressed="activeMode === 'mistakes'" @click="switchMode('mistakes')"><span class="mode-step">4</span><span><strong>Fehlertraining</strong><small>Fehler aus Pakettraining, Themengebiet-Check und Klausurmodus wiederholen</small></span></button>
         </div>
       </section>
+
+      <section class="mode-group mode-group-master-lernmentor" aria-labelledby="master-lernmentor-title">
+        <header class="mode-group-header">
+          <h2 id="master-lernmentor-title">Master-Lernmentor</h2>
+        </header>
+        <div class="mode-group-buttons mode-group-buttons-master-lernmentor">
+          <button type="button" :class="{ active: activeMode === 'masterLernmentor' }" :aria-pressed="activeMode === 'masterLernmentor'" @click="switchMode('masterLernmentor')">
+            <span><strong>Master-Lernmentor</strong><small>Den kompletten PWL-Master, Kapitel für Kapitel – verstehen und in eigenen Worten beherrschen.</small></span>
+          </button>
+        </div>
+      </section>
     </nav>
 
     <PrivateQuestionImporter :library-status="privateLibraryStatus" @library-loaded="handlePrivateLibraryImport" />
 
-    <template v-if="isMistakeMode"><MistakeTrainer :package-banks-by-id="packageBanksById" /></template>
+    <template v-if="isMasterLernmentorMode">
+      <MasterLernmentor
+        :library="masterLernmentorLibrary"
+        :file-name="masterLernmentorFileName"
+        @library-loaded="applyMasterLernmentorLibrary"
+      />
+    </template>
+    <template v-else-if="isMistakeMode"><MistakeTrainer :package-banks-by-id="packageBanksById" /></template>
     <template v-else-if="isExamMode"><ExamMode :package-banks-by-id="packageBanksById" /></template>
     <template v-else-if="isTopicMode">
       <TopicCheck :package-banks-by-id="packageBanksById" />
@@ -806,12 +822,12 @@ function handlePrivateLibraryImport(result) {
         </div>
 
         <div v-else class="training-start-options">
-          <p v-if="savedMcSession" class="saved-progress-notice">
+          <p v-if="canResumeMcSession" class="saved-progress-notice">
             Gespeicherte Sitzung vom {{ new Date(savedMcSession.savedAt).toLocaleString("de-DE") }} verfügbar.
           </p>
           <div class="start-actions">
             <button
-              v-if="savedMcSession"
+              v-if="canResumeMcSession"
               class="start-button"
               type="button"
               @click="resumeMcSession"
@@ -819,7 +835,7 @@ function handlePrivateLibraryImport(result) {
               Letzte Sitzung fortsetzen
             </button>
             <button class="secondary-button" type="button" @click="startNewMcQuiz">
-              {{ savedMcSession ? "Neu starten" : "Mit aktueller Fragebank starten" }}
+              {{ canResumeMcSession ? "Neu starten" : "Mit aktueller Fragebank starten" }}
             </button>
           </div>
         </div>

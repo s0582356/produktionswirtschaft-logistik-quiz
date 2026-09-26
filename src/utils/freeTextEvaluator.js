@@ -47,7 +47,7 @@ function tokenMatches(answerToken, expectedToken) {
     && editDistance(answerToken, expectedToken) <= tolerance
 }
 
-function phraseMatches(answer, phrase) {
+export function phraseMatches(answer, phrase) {
   const normalizedPhrase = normalizeText(phrase)
   if (!normalizedPhrase) return false
   if (answer.normalized.includes(normalizedPhrase)) return true

@@ -157,13 +157,13 @@ test('zero package banks cannot create an empty exam session', async () => {
   } finally { unmount() }
 })
 
-test('an unfinished exam remains resumable', async () => {
+test('an unfinished exam remains resumable, MC selection persisted only as a canonical option index', async () => {
   const packageBanksById = largeLibrary()
   const first = await mountExamState(packageBanksById)
   try {
     first.state.start(20)
     const savedKey = first.state.currentKey
-    first.state.saveAnswer('B')
+    first.state.saveAnswer('B') // options are ['A','B','C','D'] -> canonical index 1
     first.savedKey = savedKey
   } finally { first.unmount() }
 
@@ -172,7 +172,31 @@ test('an unfinished exam remains resumable', async () => {
     assert.equal(resumed.state.resume, true)
     assert.equal(resumed.state.session.sessionStatus, 'inProgress')
     assert.equal(resumed.state.session.orderedQuestionRefs.length, 20)
-    assert.equal(resumed.state.session.answers[first.savedKey].selectedAnswer, 'B')
+    // Privacy: the persisted/resumed shape carries the canonical index, never the option text.
+    assert.equal('selectedAnswer' in resumed.state.session.answers[first.savedKey], false)
+    assert.equal(resumed.state.session.answers[first.savedKey].selectedOptionIndex, 1)
+    // Restore resolution: the component can still show/compare against the option text.
+    resumed.state.session.currentQuestionIndex = resumed.state.session.orderedQuestionRefs.findIndex(
+      (ref) => `${ref.packageId}::${ref.questionId}` === first.savedKey,
+    )
+    assert.equal(resumed.state.currentSelectedOptionText, 'B')
+  } finally { resumed.unmount() }
+})
+
+test('Phase 5A.3: deferred grading still works after a reload resumes an index-only MC answer', async () => {
+  const packageBanksById = largeLibrary()
+  const first = await mountExamState(packageBanksById)
+  let savedKey
+  try {
+    first.state.start(5)
+    savedKey = first.state.currentKey
+    first.state.saveAnswer('A') // correct answer for every question in largeLibrary()
+  } finally { first.unmount() }
+
+  const resumed = await mountExamState(packageBanksById)
+  try {
+    resumed.state.finish()
+    assert.equal(resumed.state.session.answers[savedKey].correct, true)
   } finally { resumed.unmount() }
 })
 

@@ -22,16 +22,29 @@ const current = computed(() => {
 })
 const currentKey = computed(() => current.value && `${current.value.bank.packageId}::${current.value.question.questionId}`)
 const currentAnswer = computed(() => session.answers[currentKey.value] || null)
+// MC selections are persisted as a canonical option index (privacy: never option
+// text); resolve back to the option string for display, whichever shape the
+// current in-memory answer happens to be in (freshly answered = text, resumed
+// from storage = index).
+const currentSelectedOptionText = computed(() => {
+  const answer = currentAnswer.value
+  if (!current.value || !answer || answer.questionType !== 'mc') return undefined
+  return typeof answer.selectedOptionIndex === 'number'
+    ? current.value.question.options?.[answer.selectedOptionIndex]
+    : answer.selectedAnswer
+})
 const unanswered = computed(() => unansweredRefs(session))
-const answeredCount = computed(() => session.orderedQuestionRefs.filter((ref) => {
-  const answer = session.answers[`${ref.packageId}::${ref.questionId}`]
-  return answer && (answer.questionType !== 'freeText' || Boolean(answer.userAnswer?.trim()))
-}).length)
+// An entry only ever exists in session.answers once saveAnswer() has stored a
+// non-empty value (see saveAnswer below), so presence alone means "answered" -
+// this also holds after a reload, where persisted free-text answers keep only an
+// `answered` marker instead of the raw text (privacy: no raw answer at rest).
+const answeredCount = computed(() => session.orderedQuestionRefs.filter((ref) => (
+  Boolean(session.answers[`${ref.packageId}::${ref.questionId}`])
+)).length)
 const openCount = computed(() => session.orderedQuestionRefs.length - answeredCount.value)
 
 function isAnswered(ref) {
-  const answer = session.answers[`${ref.packageId}::${ref.questionId}`]
-  return Boolean(answer && (answer.questionType !== 'freeText' || answer.userAnswer?.trim()))
+  return Boolean(session.answers[`${ref.packageId}::${ref.questionId}`])
 }
 
 function persist() {
@@ -102,6 +115,16 @@ function gradeSubmittedExam() {
       const status = evaluateFreeText(entry.question, answer.userAnswer || '').rating
       answer.status = status
       recordMistake({ packageId: entry.bank.packageId, questionId: entry.question.questionId, questionType: 'freeText', result: status })
+    } else if (entry.question.questionType === 'mc') {
+      // Deferred grading must not rely on persisted answer text: resolve from
+      // whichever shape is present (live text, or a resumed canonical index).
+      const selectedText = typeof answer.selectedOptionIndex === 'number'
+        ? entry.question.options?.[answer.selectedOptionIndex]
+        : answer.selectedAnswer
+      answer.selectedAnswer = selectedText
+      const correct = selectedText === entry.question.correctAnswer
+      answer.correct = correct
+      recordMistake({ packageId: entry.bank.packageId, questionId: entry.question.questionId, questionType: 'mc', result: correct })
     } else {
       const correct = answer.selectedAnswer === entry.question.correctAnswer
       answer.correct = correct
@@ -182,8 +205,8 @@ const stats = computed(() => Object.values(session.answers).reduce((total, answe
               v-for="option in current.question.options"
               :key="option"
               class="answer-button"
-              :class="{ 'exam-answer-selected': currentAnswer?.selectedAnswer === option }"
-              :aria-pressed="currentAnswer?.selectedAnswer === option"
+              :class="{ 'exam-answer-selected': currentSelectedOptionText === option }"
+              :aria-pressed="currentSelectedOptionText === option"
               type="button"
               @click="saveAnswer(option)"
             ><span class="exam-choice-indicator" aria-hidden="true"></span>{{ option }}</button>

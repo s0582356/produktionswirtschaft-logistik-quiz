@@ -1,4 +1,5 @@
 import { createBankFingerprint } from './progressStore.js'
+import { buildQuestionLookup, sanitizeAnswerRecords } from './answerPrivacy.js'
 
 const PACKAGE_PROGRESS_KEY_PREFIX = 'pwl-quiz-package-progress:v1:'
 const PACKAGE_PROGRESS_SCHEMA_VERSION = 1
@@ -51,9 +52,6 @@ export function createInitialPackageProgress(packageBank) {
 
 function normalizeProgress(packageBank, progress) {
   const initial = createInitialPackageProgress(packageBank)
-  const answers = progress?.answers && typeof progress.answers === 'object'
-    ? progress.answers
-    : {}
 
   return {
     ...initial,
@@ -69,7 +67,9 @@ function normalizeProgress(packageBank, progress) {
     sessionSize: progress?.sessionSize === 'all' ? 'all' : (Number(progress?.sessionSize) || 'all'),
     questionTypeFilter: ['mixed', 'mc', 'yesNo', 'freeText'].includes(progress?.questionTypeFilter) ? progress.questionTypeFilter : 'mixed',
     orderedQuestionIds: Array.isArray(progress?.orderedQuestionIds) ? progress.orderedQuestionIds.map(String) : [],
-    answers,
+    // Never persist raw free-text answers or MC option text; only technical
+    // answered/correct/status/canonical-index data survives.
+    answers: sanitizeAnswerRecords(progress?.answers, buildQuestionLookup(packageBank)),
     statistics: { ...createStatistics(), ...(progress?.statistics || {}) },
   }
 }

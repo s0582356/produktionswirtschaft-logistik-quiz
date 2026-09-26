@@ -32,7 +32,15 @@ const freeTextQuestionForCard = computed(() => ({ ...currentQuestion.value, cate
 const roundLabel = computed(() => getRoundLabel(session.sessionSize))
 const filterLabel = computed(() => getFilterLabel(session.questionTypeFilter))
 
-function restoreCurrentAnswer() { const answer = session.answers?.[currentQuestion.value?.questionId]; selectedAnswer.value = answer?.selectedAnswer ?? null; isAnswered.value = Boolean(answer && ['mc', 'yesNo'].includes(answer.questionType)) }
+function restoreCurrentAnswer() {
+  const answer = session.answers?.[currentQuestion.value?.questionId]
+  // MC selections are persisted as a canonical option index (privacy: never
+  // option text); resolve back to the option string for the UI here.
+  selectedAnswer.value = answer && typeof answer.selectedOptionIndex === 'number'
+    ? currentQuestion.value?.options?.[answer.selectedOptionIndex] ?? null
+    : (answer?.selectedAnswer ?? null)
+  isAnswered.value = Boolean(answer && ['mc', 'yesNo'].includes(answer.questionType))
+}
 function applyProgress(progress) {
   const fallbackIds = props.packageBank.questions.map((question) => question.questionId)
   const validIds = (progress.orderedQuestionIds || []).filter((id) => questionsById.value.has(id))

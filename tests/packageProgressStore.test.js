@@ -89,10 +89,10 @@ test('Phase 4: currentQuestionIndex bleibt erhalten', () => {
   assert.equal(loadPackageProgress(item).currentQuestionIndex, 2)
 })
 
-test('Phase 4: MC-Antwort bleibt erhalten', () => {
-  const item = bank()
+test('Phase 5A.3: MC-Antwort bleibt als kanonischer Options-Index erhalten, nicht als Text', () => {
+  const item = bank() // options: ['A', 'B', 'C', 'D'], selected 'A' -> canonical index 0
   savedProgress(item)
-  assert.deepEqual(loadPackageProgress(item).answers['p01-mc'], { questionType: 'mc', selectedAnswer: 'A', correct: true })
+  assert.deepEqual(loadPackageProgress(item).answers['p01-mc'], { questionType: 'mc', selectedOptionIndex: 0, correct: true })
 })
 
 test('Phase 4: Ja-Nein-Antwort bleibt erhalten', () => {
@@ -101,10 +101,12 @@ test('Phase 4: Ja-Nein-Antwort bleibt erhalten', () => {
   assert.deepEqual(loadPackageProgress(item).answers['p01-yn'], { questionType: 'yesNo', selectedAnswer: false, correct: false })
 })
 
-test('Phase 4: Freitext userAnswer bleibt erhalten', () => {
+test('Phase 5A.1: Freitext userAnswer wird NICHT persistiert (Privacy)', () => {
   const item = bank()
   savedProgress(item)
-  assert.equal(loadPackageProgress(item).answers['p01-free'].userAnswer, 'Meine gespeicherte Antwort')
+  const stored = loadPackageProgress(item).answers['p01-free']
+  assert.equal('userAnswer' in stored, false)
+  assert.equal(stored.answered, true)
 })
 
 test('Phase 4: Freitext-Status bleibt erhalten', () => {
@@ -166,13 +168,88 @@ test('Phase 4: Paketstore verändert bestehende MC- und Freitext-Keys nicht', ()
   assert.equal(storage.get('pwl-quiz-progress:v1:freeText-demo'), '{"freeText":"unverändert"}')
 })
 
+const RAW_USER_ANSWER_SENTINEL = 'RAW_USER_ANSWER_SENTINEL_5921'
+const PRIVATE_OPTION_TEXT_SENTINEL = 'PRIVATE_OPTION_TEXT_SENTINEL_7319'
+
+test('Phase 5A.3: privater MC-Optionstext wird nie persistiert, nur der kanonische Index', () => {
+  const item = {
+    packageId: 'p01',
+    packageTitle: 'Paket p01',
+    questions: [{ questionId: 'p01-mc', questionType: 'mc', question: 'MC?', options: ['A', PRIVATE_OPTION_TEXT_SENTINEL, 'C', 'D'], correctAnswer: 'A' }],
+  }
+  const progress = { ...createInitialPackageProgress(item), answers: { 'p01-mc': { questionType: 'mc', selectedAnswer: PRIVATE_OPTION_TEXT_SENTINEL, correct: false } } }
+  savePackageProgress(item, progress)
+  const key = createPackageProgressKey(item.packageId, createPackageBankFingerprint(item))
+  const raw = storage.get(key)
+  assert.equal(raw.includes(PRIVATE_OPTION_TEXT_SENTINEL), false)
+  const loaded = loadPackageProgress(item)
+  assert.deepEqual(loaded.answers['p01-mc'], { questionType: 'mc', selectedOptionIndex: 1, correct: false })
+})
+
+test('Phase 5A.3: Legacy-MC-Datensatz mit privatem Optionstext wird beim Laden auf Index saniert', () => {
+  const item = {
+    packageId: 'p01',
+    packageTitle: 'Paket p01',
+    questions: [{ questionId: 'p01-mc', questionType: 'mc', question: 'MC?', options: ['A', PRIVATE_OPTION_TEXT_SENTINEL, 'C', 'D'], correctAnswer: 'A' }],
+  }
+  const key = createPackageProgressKey(item.packageId, createPackageBankFingerprint(item))
+  const legacy = { ...createInitialPackageProgress(item), answers: { 'p01-mc': { questionType: 'mc', selectedAnswer: PRIVATE_OPTION_TEXT_SENTINEL, correct: false } } }
+  storage.set(key, JSON.stringify(legacy))
+
+  const loaded = loadPackageProgress(item)
+  assert.equal('selectedAnswer' in loaded.answers['p01-mc'], false)
+  assert.equal(loaded.answers['p01-mc'].selectedOptionIndex, 1)
+
+  // re-saving after migration must not resurrect the raw option text
+  savePackageProgress(item, loaded)
+  assert.equal(storage.get(key).includes(PRIVATE_OPTION_TEXT_SENTINEL), false)
+})
+
+test('Phase 5A.1: Legacy-Paket-Datensatz mit roher Antwort wird beim Laden saniert', () => {
+  const item = bank()
+  const key = createPackageProgressKey(item.packageId, createPackageBankFingerprint(item))
+  const legacy = {
+    schemaVersion: 1,
+    packageId: item.packageId,
+    bankFingerprint: createPackageBankFingerprint(item),
+    packageTitle: item.packageTitle,
+    currentQuestionIndex: 1,
+    sessionSize: 'all',
+    questionTypeFilter: 'mixed',
+    orderedQuestionIds: [`${item.packageId}-free`],
+    sessionStatus: 'inProgress',
+    answers: { [`${item.packageId}-free`]: { questionType: 'freeText', userAnswer: RAW_USER_ANSWER_SENTINEL, status: 'yellow' } },
+    statistics: { mcYesNoCorrect: 0, mcYesNoWrong: 0, freeTextGreen: 0, freeTextYellow: 1, freeTextRed: 0 },
+    updatedAt: null,
+  }
+  storage.set(key, JSON.stringify(legacy))
+
+  const loaded = loadPackageProgress(item)
+  assert.equal('userAnswer' in loaded.answers[`${item.packageId}-free`], false)
+  assert.equal(loaded.answers[`${item.packageId}-free`].status, 'yellow')
+
+  // re-saving after migration must not resurrect the raw answer
+  savePackageProgress(item, loaded)
+  const raw = storage.get(key)
+  assert.equal(raw.includes(RAW_USER_ANSWER_SENTINEL), false)
+})
+
+test('Phase 5A.1: fehlerhafter Paket-Storage-Inhalt crasht nicht', () => {
+  const item = bank()
+  const key = createPackageProgressKey(item.packageId, createPackageBankFingerprint(item))
+  storage.set(key, '{not valid json')
+  assert.doesNotThrow(() => loadPackageProgress(item))
+  const loaded = loadPackageProgress(item)
+  assert.deepEqual(loaded.answers, {})
+})
+
 test('Phase 4: bestehende Modi und Paketmodus verwenden getrennte Storage-Namespaces', async () => {
-  const [app, freeTextStore, packageStore] = await Promise.all([
-    readFile(new URL('../src/App.vue', import.meta.url), 'utf8'),
+  const [mcSessionStore, freeTextStore, packageStore] = await Promise.all([
+    readFile(new URL('../src/utils/mcSessionStore.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/utils/progressStore.js', import.meta.url), 'utf8'),
     readFile(new URL('../src/utils/packageProgressStore.js', import.meta.url), 'utf8'),
   ])
-  assert.match(app, /pwl-quiz-mc-session:v1/)
+  assert.match(mcSessionStore, /pwl-quiz-mc-session:v1/)
   assert.match(freeTextStore, /pwl-quiz-progress:v1:/)
   assert.match(packageStore, /pwl-quiz-package-progress:v1:/)
   assert.doesNotMatch(packageStore, /pwl-quiz-mc-session:v1|pwl-quiz-progress:v1:(?!')/)
